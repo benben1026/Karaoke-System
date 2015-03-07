@@ -1,13 +1,20 @@
 ﻿<Window x:Class="P2P_Karaoke_System.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="P2P Karaoke Player" Height="620" Width="800">
-    <Grid Margin="0,0,-0.4,0.4" Background="#FF22243B">
-        <Image x:Name="img" HorizontalAlignment="Left" Height="500" VerticalAlignment="Top" Width="500"/>
-        <Button x:Name="Play" Content="Play" HorizontalAlignment="Left" Margin="186,521,0,0" VerticalAlignment="Top" Width="62" Height="46" FontSize="14" Click="Play_Click"/>
-        <Button x:Name="Stop" Content="Stop" HorizontalAlignment="Left" Margin="280,521,0,0" VerticalAlignment="Top" Width="62" Height="46" FontSize="14"/>
-        <Button x:Name="Next" Content="next" HorizontalAlignment="Left" Margin="365,521,0,0" VerticalAlignment="Top" Width="62" Height="46" FontSize="14"/>
-        <Button x:Name="Previous" Content="previous" HorizontalAlignment="Left" Margin="94,521,0,0" Width="62" FontSize="14" Height="46" VerticalAlignment="Top"/>
+        Title="P2P Karaoke Player" Height="527.099" Width="800">
+    <Grid Margin="0,0,-0.4,0.4" Background="#FF202028">
+        <Image x:Name="img" HorizontalAlignment="Left" Width="500" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\sample.jpg" Stretch="UniformToFill" Margin="0"/>
+        <Frame Content="" HorizontalAlignment="Left" Height="82" Margin="0,418,0,0" VerticalAlignment="Top" Width="500" Background="#CC202028"/>
+        <Button x:Name="Play" HorizontalAlignment="Left" Margin="176,437,0,0" VerticalAlignment="Top" Width="62" Height="46" FontSize="14" Click="Play_Click" ClipToBounds="True" BorderBrush="{x:Null}" Background="{x:Null}">
+            <Image Height="46" Width="40" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\playBtn.png" RenderTransformOrigin="0.658,-0.045"/>
+        </Button>
+        <Button x:Name="Stop" Content="Stop" HorizontalAlignment="Left" Margin="238,437,0,0" VerticalAlignment="Top" Width="62" Height="46" FontSize="14"/>
+        <Button x:Name="Next" HorizontalAlignment="Left" Margin="322,437,0,0" VerticalAlignment="Top" Width="40" Height="46" FontSize="14" Background="{x:Null}" BorderBrush="{x:Null}">
+            <Image Height="16" Width="30" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\nextBtn.png"/>
+        </Button>
+        <Button x:Name="Previous" HorizontalAlignment="Left" Margin="136,437,0,0" Width="40" FontSize="14" Height="46" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}">
+            <Image Height="16" Width="30" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\previousBtn.png"/>
+        </Button>
 
     </Grid>
 </Window>
