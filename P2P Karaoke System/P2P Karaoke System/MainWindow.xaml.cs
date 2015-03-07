@@ -24,5 +24,10 @@ namespace P2P_Karaoke_System
         {
             InitializeComponent();
         }
+
+        private void Play_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("hahaha");
+        }
     }
 }
