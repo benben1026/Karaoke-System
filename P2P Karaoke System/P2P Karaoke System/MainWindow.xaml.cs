@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace P2P_Karaoke_System
 {
     /// <summary>
-    /// MainWindow.xaml 的交互逻辑
+    /// MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -27,7 +27,6 @@ namespace P2P_Karaoke_System
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("hahaha");
         }
     }
 }
