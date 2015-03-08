@@ -22,49 +22,49 @@ namespace P2P_Karaoke_System
     public partial class MainWindow : Window
     {
         bool playing = false;
+        private System.Windows.Forms.OpenFileDialog openDialog;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            this.openDialog = new System.Windows.Forms.OpenFileDialog();
+            this.openDialog.DefaultExt = "wav";
+            this.openDialog.Filter = "WAV files|*.wav";
         }
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            if (!playing)
-                mediaElement1.Play();
-            else
-                mediaElement1.Pause();
-
-            playing = !playing;
         }
 
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
-            mediaElement1.Stop();
-            slider1.Value = 0;
-            playing = false;
         }
 
         void timer_Tick(object sender, EventArgs e)
         {
-            slider1.Value = mediaElement1.Position.TotalSeconds;
         }
 
         private void load_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.AddExtension = true;
-            dialog.DefaultExt = "*.*";
-            dialog.Filter = "Media Files (*.*)|*.*";
-            dialog.ShowDialog();
+            openDialog.ShowDialog();
+            //CloseFile();
+            /*try
+            {
+                WaveLib.WaveStream S = new WaveLib.WaveStream(OpenDlg.FileName);
+                if (S.Length <= 0)
+                    throw new Exception("Invalid WAV file");
+                m_Format = S.Format;
+                if (m_Format.wFormatTag != (short)WaveLib.WaveFormats.Pcm && m_Format.wFormatTag != (short)WaveLib.WaveFormats.Float)
+                    throw new Exception("Olny PCM files are supported");
 
-            try { mediaElement1.Source = new Uri(dialog.FileName); }
-            catch { new NullReferenceException("Error"); }
-
-            System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(timer_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-            dispatcherTimer.Start();
+                m_AudioStream = S;
+            }
+            catch (Exception e)
+            {
+                CloseFile();
+                MessageBox.Show(e.Message);
+            }*/
         }
     }
 }

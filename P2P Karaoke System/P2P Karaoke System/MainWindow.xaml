@@ -17,7 +17,6 @@
         </Button>
         <Slider x:Name="slider1" HorizontalAlignment="Left" Margin="69,467,0,0" VerticalAlignment="Top" Width="366"/>
         <Button x:Name="load" Content="open" HorizontalAlignment="Left" Margin="411,433,0,0" VerticalAlignment="Top" Width="75" Click="load_Click"/>
-        <MediaElement x:Name="mediaElement1" HorizontalAlignment="Left" Height="100" Margin="200,94,0,0" VerticalAlignment="Top" Width="100" LoadedBehavior="Manual"/>
 
     </Grid>
 </Window>
