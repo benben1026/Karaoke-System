@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,13 +23,15 @@ namespace P2P_Karaoke_System
     public partial class MainWindow : Window
     {
         bool playing = false;
-        private System.Windows.Forms.OpenFileDialog openDialog;
+        private Microsoft.Win32.OpenFileDialog openDialog;
+        private WavFormat format;
+        private Stream audioStream;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            this.openDialog = new System.Windows.Forms.OpenFileDialog();
+            this.openDialog = new Microsoft.Win32.OpenFileDialog();
             this.openDialog.DefaultExt = "wav";
             this.openDialog.Filter = "WAV files|*.wav";
         }
@@ -45,26 +48,33 @@ namespace P2P_Karaoke_System
         {
         }
 
+        public void CloseFile()
+        {
+
+        }
+
         private void load_Click(object sender, RoutedEventArgs e)
         {
-            openDialog.ShowDialog();
-            //CloseFile();
-            /*try
-            {
-                WaveLib.WaveStream S = new WaveLib.WaveStream(OpenDlg.FileName);
-                if (S.Length <= 0)
-                    throw new Exception("Invalid WAV file");
-                m_Format = S.Format;
-                if (m_Format.wFormatTag != (short)WaveLib.WaveFormats.Pcm && m_Format.wFormatTag != (short)WaveLib.WaveFormats.Float)
-                    throw new Exception("Olny PCM files are supported");
-
-                m_AudioStream = S;
-            }
-            catch (Exception e)
+            if (openDialog.ShowDialog() == true)
             {
                 CloseFile();
-                MessageBox.Show(e.Message);
-            }*/
+                try
+                {
+                    WavStream S = new WavStream(openDialog.FileName);
+                    if (S.Length <= 0)
+                        throw new Exception("Invalid WAV file");
+                    format = S.Format;
+                    if (format.wFormatTag != (short)WavFormats.PCM && format.wFormatTag != (short)WavFormats.FLOAT)
+                        throw new Exception("Olny PCM files are supported");
+
+                    audioStream = S;
+                }
+                catch (Exception err)
+                {
+                    CloseFile();
+                    System.Windows.Forms.MessageBox.Show(err.Message);
+                }
+            }
         }
     }
 }
