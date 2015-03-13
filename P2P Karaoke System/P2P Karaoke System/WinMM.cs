@@ -35,5 +35,18 @@ namespace P2P_Karaoke_System
 
     class WinMM
     {
+        
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WaveHdr
+    {
+        public IntPtr lpData; // pointer to locked data buffer
+        public int dwBufferLength; // length of data buffer
+        public int dwBytesRecorded; // used for input only
+        public IntPtr dwUser; // for client's use
+        public int dwFlags; // assorted flags (see defines)
+        public int dwLoops; // loop control counter
+        public IntPtr lpNext; // PWaveHdr, reserved for driver
+        public int reserved; // reserved for driver
     }
 }
