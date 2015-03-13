@@ -31,6 +31,7 @@ namespace P2P_Karaoke_System
         // For file format other than WAV
         private NAudio.Wave.DirectSoundOut nAudioOutput = null;
         private NAudio.Wave.BlockAlignReductionStream nAudioStream = null;
+        MusicDataContext musicDB;
 
         public MainWindow()
         {
@@ -38,6 +39,9 @@ namespace P2P_Karaoke_System
 
             this.openDialog = new Microsoft.Win32.OpenFileDialog();
             this.openDialog.Filter = "Audio File (*.wav, *.mp3, *.mp4, *.wma, *.m4a)|*.wav;*.mp3;*.mp4;*.wma;*.m4a;";
+            this.openDialog.DefaultExt = "wav";
+
+            musicDB = new MusicDataContext(Properties.Settings.Default.MusicConnectString);
         }
 
         private void Filler(IntPtr data, int size)
@@ -162,6 +166,9 @@ namespace P2P_Karaoke_System
                     nAudioOutput.Play();
                 }
             }
+            Audio audio = new Audio();
+            audio.MediaPath = "TestPath";
+            musicDB.Audios.InsertOnSubmit(audio);
         }
 
         private void p2p_Click(object sender, RoutedEventArgs e)

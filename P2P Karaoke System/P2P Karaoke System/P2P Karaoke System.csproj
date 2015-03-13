@@ -111,6 +111,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Music.dbml</DependentUpon>
     </Compile>
+    <Compile Include="MusicInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
