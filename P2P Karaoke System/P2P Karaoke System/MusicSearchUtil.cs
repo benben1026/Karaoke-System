@@ -28,8 +28,16 @@ namespace P2P_Karaoke_System {
             String[] searchWords = searchString.Split(' ');
             foreach (String s in searchWords) {
                 for (int i = 0; i < size; i++) {
-                    musicIsWantedRecord[i] = musicIsWantedRecord[i] && (inputMusicList[i].Title.Contains(s) || inputMusicList[i].Singer.Contains(s));
-                    //If music data does not contain keyword s, musicIsWantedRecord[i] will be false
+                	// calculate the relevancy
+                	if(inputMusicList[i].Title.Contains(s)){
+                		inputMusicList[i].Relevancy ++;
+                	}
+                	if(inputMusicList[i].Singer.Contains(s)){
+                		inputMusicList[i].Relevancy ++;
+                	}
+
+                    musicIsWantedRecord[i] = musicIsWantedRecord[i] && inputMusicList[i].relevancy;
+                    //If music data does not contain keyword(s), i.e. relevancy = 0, musicIsWantedRecord[i] will be false
                 }
             }
             for (int i = 0; i < size; i++) {

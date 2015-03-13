@@ -13,7 +13,7 @@ namespace P2P_Karaoke_System.p2p
 {
     class Receiver
     {
-        private static int segmentSize = 2048;
+        private static double segmentSize = 2048.0;
         // chunk size in bytes
 
         private static string data = null;
@@ -80,9 +80,27 @@ namespace P2P_Karaoke_System.p2p
             if (method.Equals("search", StringComparison.InvariantCultureIgnoreCase))
             {
                 string keyword = parameter[1];
-               
+                List<MusicData> musicList = new List<MusicData>();
+                // get the music list from UI(?)
+
+                List<MusicData> searchResult = MusicSearchUtil.SearchedMusicList(keyword, musicList);
+
                 Console.WriteLine("keyword = {0}", keyword);
-                output = "200 SEARCH\nsearch_result<END>";
+
+                // construct the output message
+                string header = "200 SEARCH\r\n";
+                string tail = "<END>";
+                int items = searchResult.Count();
+                output = "";
+                // search result data: properties delimited by &, file delimited by newline
+                for (int i = 0; i < items; i++)
+                {
+                    output += searchResult[i].Filename + "&" + searchResult[i].Title + "&" 
+                               + searchResult[i].Singer + "&" + searchResult[i].Album + "&" 
+                               + searchResult[i].Hashvalue + "&" + searchResult[i].Size.ToSting() 
+                               + "&" + + searchResult[i].Relevancy.ToSting() + "\r\n"
+                }
+
                 byteOut = Encoding.UTF8.GetBytes(output);
             }
             else if (method.Equals("get", StringComparison.InvariantCultureIgnoreCase))
@@ -103,9 +121,10 @@ namespace P2P_Karaoke_System.p2p
                 if (String.Compare(md5, hash, true) == 0)
                 {
                     // read the segment we need from the file
-                    byte[] byteData = new byte[segmentSize];
+                    int segSize = Convert.ToInt32(segmentSize);
+                    byte[] byteData = new byte[segSize];
                     fs.Seek(4, SeekOrigin.Begin);
-                    fs.Read(byteData, (Convert.ToInt32(segID)*segmentSize), segmentSize);
+                    fs.Read(byteData, (Convert.ToInt32(segID) * segSize), segSize);
 
                     // construct the output message
                     string header = "200 GET\r\n" + filename + "&" + md5 + "&" + segID + "\r\n"; //file_data<END>
