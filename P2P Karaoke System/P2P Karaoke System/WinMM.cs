@@ -37,6 +37,17 @@ namespace P2P_Karaoke_System
     {
         
     }
+    enum Messages : uint
+    {
+        MM_WIM_OPEN = 0x3BE,
+        MM_WIM_CLOSE = 0x3BF,
+        MM_WIM_DATA = 0x3C0,
+
+        MM_WOM_OPEN = 0x3BB,
+        MM_WOM_CLOSE = 0x3BC,
+        MM_WOM_DONE = 0x3BD,
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct WaveHdr
     {
@@ -48,5 +59,16 @@ namespace P2P_Karaoke_System
         public int dwLoops; // loop control counter
         public IntPtr lpNext; // PWaveHdr, reserved for driver
         public int reserved; // reserved for driver
+    }
+
+    internal class Native
+    {
+        private const string mmdll = "winmm.dll";
+
+        [DllImport(mmdll)]
+        public static extern int waveOutPrepareHeader(IntPtr hWaveOut, ref WaveHdr lpWaveOutHdr, int uSize);
+        [DllImport(mmdll)]
+        public static extern int waveOutUnprepareHeader(IntPtr hWaveOut, ref WaveHdr lpWaveOutHdr, int uSize);
+        
     }
 }
