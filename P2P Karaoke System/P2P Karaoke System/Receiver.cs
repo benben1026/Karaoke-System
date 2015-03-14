@@ -127,37 +127,20 @@ namespace P2P_Karaoke_System
                     fs.Read(byteData, (Convert.ToInt32(segID) * segSize), segSize);
 
                     // construct the output message
-                    string header = "200 GET " ;
-                    // header + ushort1 + info + ushort2 + data
-                    
-                    string info = filename + "&" + md5 + "&" + segID + " ";
+                    string header = "200 GET\r\n" + filename + "&" + md5 + "&" + segID + "\r\n"; //file_data<END>
+                    string tail = "\r\n<END>";
                     byte[] byteHead = Encoding.UTF8.GetBytes(header);
-                    byte[] byteInfo = Encoding.UTF8.GetBytes(info);
-                    ushort size1 = (ushort) byteInfo.Length;
-                    //size of file information
-                    ushort size2 = (ushort) byteData.Length;
-                    //size of data segment
-                    byte[] info1 = BitConverter.GetBytes(size1);
-                    byte[] info2 = BitConverter.GetBytes(size2);
+                    byte[] byteTail = Encoding.UTF8.GetBytes(tail);
 
                     // merge output and file data
                     int offset = 0;
-                    byteOut = new byte[byteHead.Length + byteData.Length + byteInfo.Length + 4];
+                    byteOut = new byte[byteHead.Length + byteData.Length + byteTail.Length];
                     Buffer.BlockCopy(byteHead, 0, byteOut, offset, byteHead.Length);
                     offset += byteHead.Length;
-                    Buffer.BlockCopy(info1, 0, byteOut, offset, 2);
-                    offset += 2;
-                    Buffer.BlockCopy(byteInfo, 0, byteOut, offset, byteInfo.Length);
-                    offset += byteInfo.Length;
-                    Buffer.BlockCopy(info2, 0, byteOut, offset, 2);
-                    offset += 2;
                     Buffer.BlockCopy(byteData, 0, byteOut, offset, byteData.Length);
+                    offset += byteData.Length;
+                    Buffer.BlockCopy(byteData, 0, byteOut, offset, byteTail.Length);
 
-                }
-                else 
-                {
-                    output = "300 GET SHORT ERROR-MEESAGE";
-                    byteOut = Encoding.UTF8.GetBytes(output);
                 }
             }
             else
