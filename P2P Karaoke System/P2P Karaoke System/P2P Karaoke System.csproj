@@ -74,6 +74,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AudioPlayer.cs" />
+    <Compile Include="EditInfoWindow.xaml.cs">
+      <DependentUpon>EditInfoWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MusicCopy.cs" />
     <Compile Include="MusicData.cs" />
     <Compile Include="MusicSearchUtil.cs" />
@@ -82,6 +85,10 @@
     <Compile Include="WaveOut.cs" />
     <Compile Include="WavStream.cs" />
     <Compile Include="WinMM.cs" />
+    <Page Include="EditInfoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
