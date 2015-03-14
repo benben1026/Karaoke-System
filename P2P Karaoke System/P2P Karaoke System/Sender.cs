@@ -21,6 +21,7 @@ namespace P2P_Karaoke_System
         private static double segmentSize = 2048.0;
         private static int[] flag = null;
         private static bool ifGettingData = false;
+        private static MusicCopy musicDownload = null;
 
         private static Socket ConnectSocket(string serverIP, int port)
         {
@@ -130,12 +131,13 @@ namespace P2P_Karaoke_System
             searchResult[index] = DecodeSearchResult(bytesReceived);
         }
 
-        public static void StartGetMusic(MusicData music)
+        public static void StartGetMusic(MusicCopy music)
         {
             if (ifGettingData)
             {
                 return;
             }
+            musicDownload = music;
             int numOfSeg = Convert.ToInt32(Math.Ceiling(music.Size / segmentSize));
             ifGettingData = true;
             flag = new int[numOfSeg];
@@ -144,8 +146,16 @@ namespace P2P_Karaoke_System
                 flag[i] = 0;
             }
             fileData = new byte[music.Size];
+            for (int i = 0; i < music.CopyInfo.Count; i++)
+            {
+
+            }
         }
 
+        private static void GetMusicThread(int index)
+        {
+            
+        }
 
         private static List<MusicCopy> DecodeSearchResult(byte[] byteIn)
         {

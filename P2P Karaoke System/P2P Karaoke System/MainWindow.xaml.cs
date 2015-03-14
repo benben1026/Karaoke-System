@@ -133,7 +133,9 @@ namespace P2P_Karaoke_System
 
         private void p2p_Click(object sender, RoutedEventArgs e)
         {
+            Sender.InitialIpList();
             Thread test = new Thread(() => Sender.StartSearch(" hello world"));
+            test.Start();
         }
     }
 }
