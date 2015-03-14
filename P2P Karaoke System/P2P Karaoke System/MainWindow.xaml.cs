@@ -130,6 +130,12 @@ namespace P2P_Karaoke_System
             }
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            CloseFile();
+            base.OnClosed(e);
+        }
+
         private void load_Click(object sender, RoutedEventArgs e)
         {
             if (openDialog.ShowDialog() == true)
