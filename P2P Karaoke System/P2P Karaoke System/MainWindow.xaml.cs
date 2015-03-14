@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace P2P_Karaoke_System
 {
@@ -128,6 +129,11 @@ namespace P2P_Karaoke_System
                     System.Windows.Forms.MessageBox.Show(err.Message);
                 }
             }
+        }
+
+        private void p2p_Click(object sender, RoutedEventArgs e)
+        {
+            Thread test = new Thread(() => Sender.StartSearch(" hello world"));
         }
     }
 }

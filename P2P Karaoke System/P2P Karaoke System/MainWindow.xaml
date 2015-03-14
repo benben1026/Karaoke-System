@@ -7,21 +7,21 @@
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="200" />
         </Grid.ColumnDefinitions>
-        <Image x:Name="img" HorizontalAlignment="Left" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\sample.jpg" Stretch="UniformToFill" Margin="0"/>
+        <Image x:Name="img" HorizontalAlignment="Left" Source="..\images\sample.jpg" Stretch="UniformToFill" Margin="0"/>
         <Frame Content="" HorizontalAlignment="Left" Height="82" Margin="0,418,0,0" VerticalAlignment="Top" Width="500" Background="#CC202028"/>
         <Button x:Name="Play" HorizontalAlignment="Left" Margin="176,421,0,0" VerticalAlignment="Top" Width="62" Height="46" FontSize="14" Click="Play_Click" ClipToBounds="True" BorderBrush="{x:Null}" Background="{x:Null}">
-            <Image Height="46" Width="40" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\playBtn.png" RenderTransformOrigin="0.658,-0.045"/>
+            <Image Height="46" Width="40" Source="..\images\playBtn.png" RenderTransformOrigin="0.658,-0.045"/>
         </Button>
         <Button x:Name="Stop" Content="Stop" HorizontalAlignment="Left" Margin="256,430,0,0" VerticalAlignment="Top" Width="42" Height="25" FontSize="14" Click="Stop_Click"/>
         <Button x:Name="Next" HorizontalAlignment="Left" Margin="316,421,0,0" VerticalAlignment="Top" Width="40" Height="46" FontSize="14" Background="{x:Null}" BorderBrush="{x:Null}">
-            <Image Height="16" Width="30" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\nextBtn.png"/>
+            <Image Height="16" Width="30" Source="..\images\nextBtn.png"/>
         </Button>
         <Button x:Name="Previous" HorizontalAlignment="Left" Margin="136,421,0,0" Width="40" FontSize="14" Height="46" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}">
-            <Image Height="16" Width="30" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\previousBtn.png"/>
+            <Image Height="16" Width="30" Source="..\images\previousBtn.png"/>
         </Button>
         <Slider x:Name="slider1" HorizontalAlignment="Left" Margin="69,467,0,0" VerticalAlignment="Top" Width="366"/>
         <Button x:Name="load" Content="open" HorizontalAlignment="Left" Margin="411,433,0,0" VerticalAlignment="Top" Width="75" Click="load_Click"/>
         <Frame x:Name="mediaFrame" Content="" HorizontalAlignment="Left" Height="100" Margin="0,318,0,0" VerticalAlignment="Top" Width="100"/>
-
+        <Button x:Name="p2p" Content="p2ptest" HorizontalAlignment="Left" Margin="511,433,0,0" VerticalAlignment="Top" Width="75" Click="p2p_Click"/>
     </Grid>
 </Window>

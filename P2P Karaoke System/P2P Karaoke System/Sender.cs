@@ -7,12 +7,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace P2P_Karaoke_System.p2p
+namespace P2P_Karaoke_System
 {
     class Sender
     {
         private static int port = 3280;
+        private static int peerNum = 10;
         private static string[] ipList = null;
+
+        private static List<MusicCopy>[] searchResult = new List<MusicCopy>[peerNum];
 
         private static byte[] fileData = null;
         private static double segmentSize = 2048.0;
@@ -88,20 +91,31 @@ namespace P2P_Karaoke_System.p2p
         {
             string request = "SEARCH&" + keyword + "<EOR>";
             byte[] byteRequest = Encoding.UTF8.GetBytes(request);
+            Thread[] threadList = new Thread[ipList.Length];
+            for (int i = 0; i < ipList.Length; i++)
+            {
+                if (String.IsNullOrEmpty(ipList[i]))
+                {
+                    continue;
+                }
+                threadList[i] = new Thread(() => SearchThread(ipList[i], i, byteRequest));
+                threadList[i].Start();
+            }
+            Thread.Sleep(2000);
+            MergeMusicList(searchResult);
         }
 
-        private static void searchThread(string ip, byte[] bytesSent) 
+        private static void SearchThread(string ip, int index, byte[] bytesSent) 
         {
-            Console.WriteLine("Connecting to {0}", ip);
-            Socket s = ConnectSocket(ip, port);
+            Console.WriteLine("Connecting to {0}", ipList[index]);
+            Socket s = ConnectSocket(ipList[index], port);
             if (s == null)
             {
-                Console.WriteLine("{0}:Connection Failed", ip);
+                Console.WriteLine("{0}:Connection Failed", ipList[index]);
                 return;
             }
-            Console.WriteLine("{0}:Connection success", ip);
+            Console.WriteLine("{0}:Connection success", ipList[index]);
             s.Send(bytesSent, bytesSent.Length, 0);
-
             int bytes = 0;
             byte[] bytesReceived = new byte[256];
             do
@@ -113,8 +127,7 @@ namespace P2P_Karaoke_System.p2p
                     break;
                 }
             } while (bytes > 0);
-            //List<MusicCopy> temp =  DecodeSearchResult(bytesReceived);
-            Console.Read();
+            searchResult[index] = DecodeSearchResult(bytesReceived);
         }
 
         public static void StartGetMusic(MusicData music)
@@ -169,13 +182,13 @@ namespace P2P_Karaoke_System.p2p
         }
 
 
-        private static List<MusicCopy> MergeMusicList(List<MusicCopy> [] musicList)
+        private static List<MusicCopy> MergeMusicList(List<MusicCopy>[] musicList)
         {
             int listItems = musicList.Length;
             List<MusicCopy> oldList = musicList[0];
             int oldItems = oldList.Count();
 
-            for (int k = 1; k < listItems ; k++)
+            for (int k = 1; k < listItems; k++)
             {
                 List<MusicCopy> newList = musicList[k];
 
@@ -202,15 +215,21 @@ namespace P2P_Karaoke_System.p2p
             }
 
             return oldList;
+        }
 
         public static void InitialIpList() 
         {
-            ipList = new string[5];
+            ipList = new string[peerNum];
             ipList[0] = "192.168.173.1";
             ipList[1] = "192.168.173.1";
             ipList[2] = "192.168.173.1";
             ipList[3] = "192.168.173.1";
             ipList[4] = "192.168.173.1";
+            ipList[5] = "";
+            ipList[6] = "";
+            ipList[7] = "";
+            ipList[8] = "";
+            ipList[9] = "";
 
         }
 

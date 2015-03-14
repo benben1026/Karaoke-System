@@ -9,7 +9,7 @@ using System.Threading;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace P2P_Karaoke_System.p2p
+namespace P2P_Karaoke_System
 {
     class Receiver
     {
