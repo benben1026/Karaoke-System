@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
 
 namespace P2P_Karaoke_System
 {
@@ -20,7 +21,9 @@ namespace P2P_Karaoke_System
         private static byte[] fileData = null;
         private static double segmentSize = 2048.0;
         private static int[] flag = null;
+        private static bool flagLock = false;
         private static bool ifGettingData = false;
+        private static MusicCopy musicDownload = null;
 
         private static Socket ConnectSocket(string serverIP, int port)
         {
@@ -87,7 +90,7 @@ namespace P2P_Karaoke_System
             return Encoding.UTF8.GetBytes(request);
         }
 
-        public static void StartSearch(string keyword) 
+        public static void StartSearch(string keyword)
         {
             string request = "SEARCH&" + keyword + "<EOR>";
             byte[] byteRequest = Encoding.UTF8.GetBytes(request);
@@ -109,7 +112,7 @@ namespace P2P_Karaoke_System
             MergeMusicList(searchResult);
         }
 
-        private static void SearchThread(string ip, int index, byte[] bytesSent) 
+        private static void SearchThread(string ip, int index, byte[] bytesSent)
         {
             Console.WriteLine("Connecting to {0}", ipList[index]);
             Socket s = ConnectSocket(ipList[index], port);
@@ -134,12 +137,13 @@ namespace P2P_Karaoke_System
             searchResult[index] = DecodeSearchResult(bytesReceived);
         }
 
-        public static void StartGetMusic(MusicData music)
+        public static void StartGetMusic(MusicCopy music)
         {
             if (ifGettingData)
             {
                 return;
             }
+            musicDownload = music;
             int numOfSeg = Convert.ToInt32(Math.Ceiling(music.Size / segmentSize));
             ifGettingData = true;
             flag = new int[numOfSeg];
@@ -195,7 +199,7 @@ namespace P2P_Karaoke_System
                     break;
                 }
                 int bytes = 0;
-                    
+
                 byte[] bytesReceived = new byte[8];
                 bytes = s.Receive(bytesReceived, 8, 0);
                 string status = Encoding.UTF8.GetString(bytesReceived, 0, 3);
@@ -251,7 +255,7 @@ namespace P2P_Karaoke_System
             List<MusicCopy> outputMusicList = new List<MusicCopy>();
             string result = System.Text.Encoding.UTF8.GetString(byteIn);
             string[] stringSeparators = new string[] { "\r\n" };
-            string[] resultSeg = result.Split( stringSeparators, StringSplitOptions.RemoveEmptyEntries );
+            string[] resultSeg = result.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
             int i = 0;
             foreach (string s in resultSeg)
             {
@@ -268,12 +272,13 @@ namespace P2P_Karaoke_System
                 {
                     break;
                 }
-                else {
+                else
+                {
                     string[] separators = new string[] { "&" };
                     string[] musicProperty = s.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
                     outputMusicList.Add(new MusicCopy(musicProperty[0], musicProperty[1], musicProperty[2], musicProperty[3], musicProperty[4], Convert.ToInt32(musicProperty[5]), Convert.ToInt32(musicProperty[6])));
-                    
+
                 }
             }
 
@@ -316,7 +321,7 @@ namespace P2P_Karaoke_System
             return oldList;
         }
 
-        public static void InitialIpList() 
+        public static void InitialIpList()
         {
             ipList = new string[peerNum];
             ipList[0] = "192.168.213.200";
