@@ -134,7 +134,13 @@ namespace P2P_Karaoke_System
         private void p2p_Click(object sender, RoutedEventArgs e)
         {
             Sender.InitialIpList();
-            Thread test = new Thread(() => Sender.StartSearch(" hello world"));
+            MusicCopy cp = new MusicCopy("travel1.wma", "travel1", "Jin", "Hello", "264204303863CF9089DE5C42D34D64BD", 2009081, 1);
+            CopyIndex t = new CopyIndex(0, "travel1.wma");
+            List<CopyIndex> a = new List<CopyIndex>();
+            a.Add(t);
+            cp.CopyInfo = a;
+            //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
+            Thread test = new Thread(() => Sender.StartGetMusic(cp));
             test.Start();
         }
     }

@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="P2P Karaoke Player" Height="527.099" Width="800">
     <Window.Resources>
-        <BitmapImage x:Key="sample" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\sample.jpg"/>
-        <BitmapImage x:Key="playButton" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\playBtn.png"/>
+        <!--<BitmapImage x:Key="sample" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\sample.jpg"/>
+        <BitmapImage x:Key="playButton" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\playBtn.png"/>-->
     </Window.Resources>
     <Grid Margin="0,0,-0.4,0.4" Background="#FF202028">
         <Grid.ColumnDefinitions>

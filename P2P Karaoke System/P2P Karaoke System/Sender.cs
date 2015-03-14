@@ -94,14 +94,18 @@ namespace P2P_Karaoke_System
         {
             string request = "SEARCH&" + keyword + "<EOR>";
             byte[] byteRequest = Encoding.UTF8.GetBytes(request);
-            Thread[] threadList = new Thread[ipList.Length];
-            for (int i = 0; i < ipList.Length; i++)
+            Thread[] threadList = new Thread[ipList.Count()];
+            Console.WriteLine("length = {0}", ipList.Count());
+            Console.WriteLine("length = {0}", threadList.Count());
+            for (int i = 0; i < ipList.Count(); i++)
             {
                 if (String.IsNullOrEmpty(ipList[i]))
                 {
                     continue;
                 }
-                threadList[i] = new Thread(() => SearchThread(ipList[i], i, byteRequest));
+                Console.WriteLine(i);
+                int temp = i;
+                threadList[i] = new Thread(() => SearchThread(ipList[i], temp, byteRequest));
                 threadList[i].Start();
             }
             Thread.Sleep(2000);
@@ -157,6 +161,7 @@ namespace P2P_Karaoke_System
                 }
                 threadList[i] = new Thread(() => GetMusicThread(music.CopyInfo[i].UserIndex));
                 threadList[i].Start();
+                Thread.Sleep(1);
             }
             for (int i = 0; i < music.CopyInfo.Count(); i++)
             {
@@ -203,7 +208,8 @@ namespace P2P_Karaoke_System
                     bytesReceived = new byte[2];
                     bytes = s.Receive(bytesReceived, 2, 0);
                     ushort parameterLength = BitConverter.ToUInt16(bytesReceived, 0);
-                            
+                    Console.WriteLine("parameterLength");
+
                     bytesReceived = new byte[parameterLength];
                     bytes = s.Receive(bytesReceived, parameterLength, 0);
                     string[] parameter = Encoding.UTF8.GetString(bytesReceived).Split('&');
@@ -317,11 +323,11 @@ namespace P2P_Karaoke_System
         public static void InitialIpList() 
         {
             ipList = new string[peerNum];
-            ipList[0] = "192.168.173.1";
-            ipList[1] = "192.168.173.1";
-            ipList[2] = "192.168.173.1";
-            ipList[3] = "192.168.173.1";
-            ipList[4] = "192.168.173.1";
+            ipList[0] = "192.168.213.200";
+            ipList[1] = "";
+            ipList[2] = "";
+            ipList[3] = "";
+            ipList[4] = "";
             ipList[5] = "";
             ipList[6] = "";
             ipList[7] = "";
