@@ -118,8 +118,11 @@ namespace P2P_Karaoke_System.p2p
                     }
                     else i++;
                 }
-                else
+                else if (String.Compare(s, "<END>", false) == 0)
                 {
+                    break;
+                }
+                else {
                     string[] separators = new string[] { "&" };
                     string[] musicProperty = s.Split(separators, StringSplitOptions.RemoveEmptyEntries);
                
