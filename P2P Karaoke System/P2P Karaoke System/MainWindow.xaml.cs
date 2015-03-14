@@ -207,8 +207,15 @@ namespace P2P_Karaoke_System
                 audio.Album = tag.Album;
                 audio.Title = tag.Title;
                 if (tag.JoinedPerformers.Length > 0) audio.Artist = tag.JoinedPerformers;
-//need add lyrics,pictures         
-                audio.Order = musicList.Items.Count - 1;
+      
+                if(musicList.Items.Count==0) 
+                    audio.Order=0;
+                if (musicList.Items.Count > 0)
+                {
+                    audio.Order = ((Audio)(musicList.Items[musicList.Items.Count - 1])).Order+1;
+                }
+
+
                 if (musicDB != null)
                 {
                     try
