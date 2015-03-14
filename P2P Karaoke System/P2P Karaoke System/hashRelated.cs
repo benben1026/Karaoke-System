@@ -14,16 +14,16 @@ namespace hashP2P
         public string Singer { get; set; }
         public string Album { get; set; }
         public string Hashvalue { get; set; }
-        public string Message { get; set; }
+        public int Size { get; set; }
 
-        public MusicData(string filename, string title, string singer, string album, string hashvalue)
+        public MusicData(string filename, string title, string singer, string album, int size)
         {
             this.Filename = filename;
             this.Title = title;
             this.Singer = singer;
             this.Album = album;
             this.Hashvalue = hashvalue;
-            this.Message = filename + title + singer + album + hashvalue;
+            this.Size = size;
         }
 
     }

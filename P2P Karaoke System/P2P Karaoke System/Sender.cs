@@ -12,6 +12,10 @@ namespace P2P_Karaoke_System.p2p
     class Sender
     {
         private static int port = 3280;
+        private static byte[] fileData = null;
+        private static double segmentSize = 2048.0;
+        private static int[] flag = null;
+        private static bool ifGettingData = false;
 
         private static Socket ConnectSocket(string serverIP, int port)
         {
@@ -76,6 +80,22 @@ namespace P2P_Karaoke_System.p2p
         {
             string request = "GET&" + filename + "&" + md5 + "&" + segmentId + "<EOR>";
             return Encoding.UTF8.GetBytes(request);
+        }
+
+        public static void StartGetMusic(MusicData music)
+        {
+            if (ifGettingData)
+            {
+                return;
+            }
+            int numOfSeg = Convert.ToInt32(Math.Ceiling(music.Size / segmentSize));
+            ifGettingData = true;
+            flag = new int[numOfSeg];
+            for (int i = 0; i < numOfSeg; i++)
+            {
+                flag[i] = 0;
+            }
+            fileData = new byte[music.Size];
         }
 
         /*
