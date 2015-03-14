@@ -217,8 +217,8 @@ namespace P2P_Karaoke_System
                     byte[] msg = processRequest(data);
 
                     handler.Send(msg);
-                    handler.Shutdown(SocketShutdown.Both);
-                    handler.Close();
+                    //handler.Shutdown(SocketShutdown.Both);
+                    //handler.Close();
                 }
             }
             catch (Exception e)
