@@ -84,6 +84,38 @@ namespace P2P_Karaoke_System.p2p
             return Encoding.UTF8.GetBytes(request);
         }
 
+        public static void StartSearch(string keyword) 
+        {
+            string request = "SEARCH&" + keyword + "<EOR>";
+            byte[] byteRequest = Encoding.UTF8.GetBytes(request);
+        }
+
+        private static void searchThread(string ip, byte[] bytesSent) 
+        {
+            Console.WriteLine("Connecting to {0}", ip);
+            Socket s = ConnectSocket(ip, port);
+            if (s == null)
+            {
+                Console.WriteLine("{0}:Connection Failed", ip);
+                return;
+            }
+            Console.WriteLine("{0}:Connection success", ip);
+            s.Send(bytesSent, bytesSent.Length, 0);
+
+            int bytes = 0;
+            byte[] bytesReceived = new byte[256];
+            do
+            {
+                bytes = s.Receive(bytesReceived, bytesReceived.Length, 0);
+                //Console.WriteLine(Encoding.UTF8.GetString(bytesReceived, 0, bytes));
+                if (Encoding.UTF8.GetString(bytesReceived).IndexOf("<END>") > -1)
+                {
+                    break;
+                }
+            } while (bytes > 0);
+            //List<MusicCopy> temp =  DecodeSearchResult(bytesReceived);
+            Console.Read();
+        }
 
         public static void StartGetMusic(MusicData music)
         {
