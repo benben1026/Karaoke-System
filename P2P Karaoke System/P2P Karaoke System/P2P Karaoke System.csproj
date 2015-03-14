@@ -71,6 +71,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AudioPlayer.cs" />
+    <Compile Include="WaveOut.cs" />
     <Compile Include="WavStream.cs" />
     <Compile Include="WinMM.cs" />
     <Page Include="MainWindow.xaml">

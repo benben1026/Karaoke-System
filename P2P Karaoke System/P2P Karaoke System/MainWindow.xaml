@@ -3,7 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="P2P Karaoke Player" Height="527.099" Width="800">
     <Grid Margin="0,0,-0.4,0.4" Background="#FF202028">
-        <Image x:Name="img" HorizontalAlignment="Left" Width="500" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\sample.jpg" Stretch="UniformToFill" Margin="0"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="200" />
+        </Grid.ColumnDefinitions>
+        <Image x:Name="img" HorizontalAlignment="Left" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\sample.jpg" Stretch="UniformToFill" Margin="0"/>
         <Frame Content="" HorizontalAlignment="Left" Height="82" Margin="0,418,0,0" VerticalAlignment="Top" Width="500" Background="#CC202028"/>
         <Button x:Name="Play" HorizontalAlignment="Left" Margin="176,421,0,0" VerticalAlignment="Top" Width="62" Height="46" FontSize="14" Click="Play_Click" ClipToBounds="True" BorderBrush="{x:Null}" Background="{x:Null}">
             <Image Height="46" Width="40" Source="C:\Users\Elvin\Desktop\Karaoke-System\P2P Karaoke System\images\playBtn.png" RenderTransformOrigin="0.658,-0.045"/>
