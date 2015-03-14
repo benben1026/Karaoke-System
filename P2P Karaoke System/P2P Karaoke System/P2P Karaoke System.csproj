@@ -70,7 +70,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AudioPlayer.cs" />
     <Compile Include="MusicCopy.cs" />
     <Compile Include="MusicData.cs" />
     <Compile Include="MusicSearchUtil.cs" />

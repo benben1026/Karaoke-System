@@ -23,7 +23,15 @@ namespace P2P_Karaoke_System
     /// </summary>
     public partial class MainWindow : Window
     {
-        bool playing = false;
+        enum AudioFormat : int
+        {
+            AUDIOFORMAT_WAV = 0,
+            AUDIOFORMAT_MP3 = 1,
+            AUDIOFORMAT_MP4 = 2,
+            AUDIOFORMAT_WMA = 3,
+            AUDIOFORMAT_M4A = 4,
+        }
+
         private Microsoft.Win32.OpenFileDialog openDialog;
         private WavFormat format;
         private Stream audioStream;
@@ -34,8 +42,7 @@ namespace P2P_Karaoke_System
             InitializeComponent();
 
             this.openDialog = new Microsoft.Win32.OpenFileDialog();
-            this.openDialog.DefaultExt = "wav";
-            this.openDialog.Filter = "WAV files|*.wav";
+            this.openDialog.Filter = "Audio File (*.wav, *.mp3, *.mp4, *.wma, *.m4a)|*.wav;*.mp3;*.mp4;*.wma;*.m4a";
         }
 
         private void Filler(IntPtr data, int size)
@@ -112,12 +119,16 @@ namespace P2P_Karaoke_System
             if (openDialog.ShowDialog() == true)
             {
                 CloseFile();
+                string ext = System.IO.Path.GetExtension(openDialog.FileName);
+                Console.WriteLine(ext);
+
                 try
                 {
                     WavStream S = new WavStream(openDialog.FileName);
                     if (S.Length <= 0)
                         throw new Exception("Invalid WAV file");
                     format = S.Format;
+                    Console.WriteLine(format);
                     if (format.wFormatTag != (short)WavFormats.PCM && format.wFormatTag != (short)WavFormats.FLOAT)
                         throw new Exception("Olny PCM files are supported");
 
