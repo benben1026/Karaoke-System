@@ -4,7 +4,7 @@ namespace P2P_Karaoke_System
     {
         public override string ToString()
         {
-            return Title;
+            return Title+"\n"+Album+Artist;
         }
     }
 }

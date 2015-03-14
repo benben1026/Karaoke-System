@@ -88,8 +88,6 @@ namespace P2P_Karaoke_System
 		
 		private string _Album;
 		
-		private System.Nullable<int> _Year;
-		
 		private string _MediaPath;
 		
 		private string _ImagePath;
@@ -97,6 +95,8 @@ namespace P2P_Karaoke_System
 		private string _LyricsPath;
 		
 		private System.Nullable<int> _Order;
+		
+		private System.Nullable<int> _Size;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -110,8 +110,6 @@ namespace P2P_Karaoke_System
     partial void OnArtistChanged();
     partial void OnAlbumChanging(string value);
     partial void OnAlbumChanged();
-    partial void OnYearChanging(System.Nullable<int> value);
-    partial void OnYearChanged();
     partial void OnMediaPathChanging(string value);
     partial void OnMediaPathChanged();
     partial void OnImagePathChanging(string value);
@@ -120,6 +118,8 @@ namespace P2P_Karaoke_System
     partial void OnLyricsPathChanged();
     partial void OnOrderChanging(System.Nullable<int> value);
     partial void OnOrderChanged();
+    partial void OnSizeChanging(System.Nullable<int> value);
+    partial void OnSizeChanged();
     #endregion
 		
 		public Audio()
@@ -207,26 +207,6 @@ namespace P2P_Karaoke_System
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Year", DbType="Int")]
-		public System.Nullable<int> Year
-		{
-			get
-			{
-				return this._Year;
-			}
-			set
-			{
-				if ((this._Year != value))
-				{
-					this.OnYearChanging(value);
-					this.SendPropertyChanging();
-					this._Year = value;
-					this.SendPropertyChanged("Year");
-					this.OnYearChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MediaPath", DbType="VarChar(MAX)")]
 		public string MediaPath
 		{
@@ -303,6 +283,26 @@ namespace P2P_Karaoke_System
 					this._Order = value;
 					this.SendPropertyChanged("Order");
 					this.OnOrderChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Size", DbType="Int")]
+		public System.Nullable<int> Size
+		{
+			get
+			{
+				return this._Size;
+			}
+			set
+			{
+				if ((this._Size != value))
+				{
+					this.OnSizeChanging(value);
+					this.SendPropertyChanging();
+					this._Size = value;
+					this.SendPropertyChanged("Size");
+					this.OnSizeChanged();
 				}
 			}
 		}

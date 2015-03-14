@@ -6,11 +6,11 @@
       <Column Name="Title" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Column Name="Artist" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Column Name="Album" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Column Name="Year" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="MediaPath" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
       <Column Name="ImagePath" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="LyricsPath" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="[Order]" Member="Order" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Size" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

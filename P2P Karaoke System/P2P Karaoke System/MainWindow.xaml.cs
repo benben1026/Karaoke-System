@@ -202,9 +202,27 @@ namespace P2P_Karaoke_System
         {
             if (addFileDialog.ShowDialog() == true)
             {
-                Audio audio = new Audio(addFileDialog.FileName);
-//need add lyrics               
+                Audio audio = new Audio();
+                TagLib.Tag tag = TagLib.File.Create(addFileDialog.FileName).Tag;
+                audio.Album = tag.Album;
+                audio.Title = tag.Title;
+                if (tag.JoinedPerformers.Length > 0) audio.Artist = tag.JoinedPerformers;
+//need add lyrics,pictures         
+                audio.Order = musicList.Items.Count - 1;
+                if (musicDB != null)
+                {
+                    try
+                    {
+                        musicDB.Audios.InsertOnSubmit(audio);
+                        musicDB.SubmitChanges();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Can't connect to the media database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
                 musicList.Items.Add(audio);
+
             }
 
 

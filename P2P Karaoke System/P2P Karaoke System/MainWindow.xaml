@@ -24,7 +24,7 @@
         <Button x:Name="load" Content="open" HorizontalAlignment="Left" Margin="411,433,0,0" VerticalAlignment="Top" Width="75" Click="load_Click"/>
         <Frame x:Name="mediaFrame" Content="" HorizontalAlignment="Left" Height="100" Margin="0,318,0,0" VerticalAlignment="Top" Width="100"/>
         <Button x:Name="p2p" Content="p2ptest" HorizontalAlignment="Left" Margin="511,433,0,0" VerticalAlignment="Top" Width="75" Click="p2p_Click"/>
-        <Button x:Name="Edit" Content="Edit" Grid.Column="1" HorizontalAlignment="Left" Margin="100,349,0,0" VerticalAlignment="Top" Width="75" Click="Edit_Click"/>
+        <Button x:Name="Edit" Content="Edit" Grid.Column="1" HorizontalAlignment="Left" Margin="61,439,0,0" VerticalAlignment="Top" Width="75" Click="Edit_Click"/>
         <Button x:Name="addButton" Content="add" HorizontalAlignment="Left" Margin="628,374,0,0" VerticalAlignment="Top" Width="75" Click="addButton_Click"/>
         <Button x:Name="deleteButton" Content="Delete" HorizontalAlignment="Left" Margin="628,421,0,0" VerticalAlignment="Top" Width="75" Click="deleteButton_Click"/>
         <ListBox x:Name="musicList" HorizontalAlignment="Left" Height="100" Margin="616,109,0,0" VerticalAlignment="Top" Width="100"/>
