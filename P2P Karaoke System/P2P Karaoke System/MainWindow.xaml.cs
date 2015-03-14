@@ -73,40 +73,25 @@ namespace P2P_Karaoke_System
         private void Play_Click(object sender, RoutedEventArgs e)
         {
             Stop_Click();
-            if (audioFormat.Equals(".wav"))
+            if (audioStream != null)
             {
-                if (audioStream != null)
-                {
-                    audioStream.Position = 0;
-                    thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
-                }
-            }
-            else
-            {
-                nAudioOutput.Play();
+                audioStream.Position = 0;
+                thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
             }
         }
 
         private void Stop_Click(object sender = null, RoutedEventArgs e = null)
         {
-            if (audioFormat != null && audioFormat.Equals(".wav"))
+            if (thePlayer != null)
             {
-                if (thePlayer != null)
+                try
                 {
-                    try
-                    {
-                        thePlayer.Dispose();
-                    }
-                    finally
-                    {
-                        thePlayer = null;
-                    }
+                    thePlayer.Dispose();
                 }
-            }
-            else
-            {
-                if (nAudioOutput != null)
-                    nAudioOutput.Stop();
+                finally
+                {
+                    thePlayer = null;
+                }
             }
         }
 
@@ -117,7 +102,6 @@ namespace P2P_Karaoke_System
         public void CloseFile()
         {
             Stop_Click();
-            audioFormat = null;
             if (audioStream != null)
             {
                 try
@@ -181,6 +165,7 @@ namespace P2P_Karaoke_System
                     nAudioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
                     nAudioOutput = new NAudio.Wave.DirectSoundOut();
                     nAudioOutput.Init(nAudioStream);
+                    nAudioOutput.Play();
                 }
             }
             Audio audio = new Audio();
