@@ -100,9 +100,9 @@ namespace P2P_Karaoke_System.p2p
         }
 
 
-        private static List<MusicData> DecodeSearchResult(byte[] byteIn)
+        private static List<MusicCopy> DecodeSearchResult(byte[] byteIn)
         {
-            List<MusicData> outputMusicList = new List<MusicData>();
+            List<MusicCopy> outputMusicList = new List<MusicCopy>();
             string result = System.Text.Encoding.UTF8.GetString(byteIn);
             string[] stringSeparators = new string[] { "\r\n" };
             string[] resultSeg = result.Split( stringSeparators, StringSplitOptions.RemoveEmptyEntries );
@@ -125,13 +125,48 @@ namespace P2P_Karaoke_System.p2p
                 else {
                     string[] separators = new string[] { "&" };
                     string[] musicProperty = s.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-               
-                    outputMusicList.Add(new MusicData(musicProperty[0], musicProperty[1], musicProperty[2], musicProperty[3], musicProperty[4], Convert.ToInt32(musicProperty[5]), Convert.ToInt32(musicProperty[6])));
+
+                    outputMusicList.Add(new MusicCopy(musicProperty[0], musicProperty[1], musicProperty[2], musicProperty[3], musicProperty[4], Convert.ToInt32(musicProperty[5]), Convert.ToInt32(musicProperty[6])));
                     
                 }
             }
 
             return outputMusicList;
+        }
+
+        private static List<MusicCopy> MergeMusicList(List<MusicCopy> [] musicList)
+        {
+            int listItems = musicList.Length;
+            List<MusicCopy> oldList = musicList[0];
+            int oldItems = oldList.Count();
+
+            for (int k = 1; k < listItems ; k++)
+            {
+                List<MusicCopy> newList = musicList[k];
+
+                int newItems = newList.Count();
+                bool duplicate;
+
+                for (int i = 0; i < newItems; i++)
+                {
+                    duplicate = false;
+                    for (int j = 0; j < oldItems; j++)
+                    {
+                        if (newList[i].Hashvalue == oldList[j].Hashvalue && (String.Compare(newList[i].Title, oldList[j].Title, false) == 0))
+                        {
+                            duplicate = true;
+                            oldList[j].CopyNumber++;
+                            oldList[j].CopyInfo.Add(new CopyIndex(k, newList[i].Filename));
+                        }
+                    }
+                    if (!duplicate)
+                    {
+                        oldList.Add(newList[i]);
+                    }
+                }
+            }
+
+            return oldList;
         }
 
         /*
