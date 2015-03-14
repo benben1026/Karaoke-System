@@ -12,6 +12,8 @@ namespace P2P_Karaoke_System.p2p
     class Sender
     {
         private static int port = 3280;
+        private static string[] ipList = null;
+
         private static byte[] fileData = null;
         private static double segmentSize = 2048.0;
         private static int[] flag = null;
@@ -132,6 +134,16 @@ namespace P2P_Karaoke_System.p2p
             }
 
             return outputMusicList;
+        }
+
+        public static void InitialIpList() 
+        {
+            ipList = new string[5];
+            ipList[0] = "192.168.173.1";
+            ipList[1] = "192.168.173.1";
+            ipList[2] = "192.168.173.1";
+            ipList[3] = "192.168.173.1";
+            ipList[4] = "192.168.173.1";
         }
 
         /*
