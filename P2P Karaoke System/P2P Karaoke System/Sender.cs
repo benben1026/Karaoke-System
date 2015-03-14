@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.IO;
 
 namespace P2P_Karaoke_System
 {
@@ -21,9 +20,7 @@ namespace P2P_Karaoke_System
         private static byte[] fileData = null;
         private static double segmentSize = 2048.0;
         private static int[] flag = null;
-        private static bool flagLock = false;
         private static bool ifGettingData = false;
-        private static MusicCopy musicDownload = null;
 
         private static Socket ConnectSocket(string serverIP, int port)
         {
@@ -137,13 +134,12 @@ namespace P2P_Karaoke_System
             searchResult[index] = DecodeSearchResult(bytesReceived);
         }
 
-        public static void StartGetMusic(MusicCopy music)
+        public static void StartGetMusic(MusicData music)
         {
             if (ifGettingData)
             {
                 return;
             }
-            musicDownload = music;
             int numOfSeg = Convert.ToInt32(Math.Ceiling(music.Size / segmentSize));
             ifGettingData = true;
             flag = new int[numOfSeg];
