@@ -35,5 +35,55 @@ namespace P2P_Karaoke_System
 
     class WinMM
     {
+        
+    }
+    enum Messages : uint
+    {
+        MM_WIM_OPEN = 0x3BE,
+        MM_WIM_CLOSE = 0x3BF,
+        MM_WIM_DATA = 0x3C0,
+
+        MM_WOM_OPEN = 0x3BB,
+        MM_WOM_CLOSE = 0x3BC,
+        MM_WOM_DONE = 0x3BD,
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WaveHdr
+    {
+        public IntPtr lpData; // pointer to locked data buffer
+        public int dwBufferLength; // length of data buffer
+        public int dwBytesRecorded; // used for input only
+        public IntPtr dwUser; // for client's use
+        public int dwFlags; // assorted flags (see defines)
+        public int dwLoops; // loop control counter
+        public IntPtr lpNext; // PWaveHdr, reserved for driver
+        public int reserved; // reserved for driver
+    }
+
+    internal class Native
+    {
+        public const int MMSYSERR_NOERROR = 0;
+        public const int CALLBACK_FUNCTION = 0x00030000;  
+
+        // callbacks
+        public delegate void WaveDelegate(IntPtr hdrvr, Messages uMsg, int dwUser, ref WaveHdr wavhdr, int dwParam2);
+
+        private const string mmdll = "winmm.dll";
+
+        [DllImport(mmdll)]
+        public static extern int waveOutGetNumDevs();
+        [DllImport(mmdll)]
+        public static extern int waveOutPrepareHeader(IntPtr hWaveOut, ref WaveHdr lpWaveOutHdr, int uSize);
+        [DllImport(mmdll)]
+        public static extern int waveOutUnprepareHeader(IntPtr hWaveOut, ref WaveHdr lpWaveOutHdr, int uSize);
+        [DllImport(mmdll)]
+        public static extern int waveOutWrite(IntPtr hWaveOut, ref WaveHdr lpWaveOutHdr, int uSize);
+        [DllImport(mmdll)]
+        public static extern int waveOutOpen(out IntPtr hWaveOut, int uDeviceID, ref WavFormat lpFormat, WaveDelegate dwCallback, int dwInstance, int dwFlags);
+        [DllImport(mmdll)]
+        public static extern int waveOutReset(IntPtr hWaveOut);
+        [DllImport(mmdll)]
+        public static extern int waveOutClose(IntPtr hWaveOut);
     }
 }

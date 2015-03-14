@@ -26,6 +26,7 @@ namespace P2P_Karaoke_System
         private Microsoft.Win32.OpenFileDialog openDialog;
         private WavFormat format;
         private Stream audioStream;
+        private WaveOutPlayer thePlayer;
 
         public MainWindow()
         {
@@ -36,12 +37,53 @@ namespace P2P_Karaoke_System
             this.openDialog.Filter = "WAV files|*.wav";
         }
 
-        private void Play_Click(object sender, RoutedEventArgs e)
+        private void Filler(IntPtr data, int size)
         {
+            byte[] b = new byte[size];
+            if (audioStream != null)
+            {
+                int pos = 0;
+                while (pos < size)
+                {
+                    int toget = size - pos;
+                    int got = audioStream.Read(b, pos, toget);
+                    if (got < toget)
+                        audioStream.Position = 0; // loop if the file ends
+                    pos += got;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < b.Length; i++)
+                    b[i] = 0;
+            }
+            System.Runtime.InteropServices.Marshal.Copy(b, 0, data, size);
+
         }
 
-        private void Stop_Click(object sender, RoutedEventArgs e)
+        private void Play_Click(object sender, RoutedEventArgs e)
         {
+            Stop_Click();
+            if (audioStream != null)
+            {
+                audioStream.Position = 0;
+                thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
+            }
+        }
+
+        private void Stop_Click(object sender = null, RoutedEventArgs e = null)
+        {
+            if (thePlayer != null)
+            {
+                try
+                {
+                    thePlayer.Dispose();
+                }
+                finally
+                {
+                    thePlayer = null;
+                }
+            }
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -50,7 +92,18 @@ namespace P2P_Karaoke_System
 
         public void CloseFile()
         {
-
+            Stop_Click();
+            if (audioStream != null)
+            {
+                try
+                {
+                    audioStream.Close();
+                }
+                finally
+                {
+                    audioStream = null;
+                }
+            }
         }
 
         private void load_Click(object sender, RoutedEventArgs e)

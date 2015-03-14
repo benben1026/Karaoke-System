@@ -74,6 +74,7 @@
     <Compile Include="MusicData.cs" />
     <Compile Include="Receiver.cs" />
     <Compile Include="Sender.cs" />
+    <Compile Include="WaveOut.cs" />
     <Compile Include="WavStream.cs" />
     <Compile Include="WinMM.cs" />
     <Page Include="MainWindow.xaml">

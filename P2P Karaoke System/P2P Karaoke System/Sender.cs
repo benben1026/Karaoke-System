@@ -82,6 +82,7 @@ namespace P2P_Karaoke_System.p2p
             return Encoding.UTF8.GetBytes(request);
         }
 
+
         public static void StartGetMusic(MusicData music)
         {
             if (ifGettingData)
@@ -96,6 +97,38 @@ namespace P2P_Karaoke_System.p2p
                 flag[i] = 0;
             }
             fileData = new byte[music.Size];
+        }
+
+
+        private static List<MusicData> DecodeSearchResult(byte[] byteIn)
+        {
+            List<MusicData> outputMusicList = new List<MusicData>();
+            string result = System.Text.Encoding.UTF8.GetString(byteIn);
+            string[] stringSeparators = new string[] { "\r\n" };
+            string[] resultSeg = result.Split( stringSeparators, StringSplitOptions.RemoveEmptyEntries );
+            int i = 0;
+            foreach (string s in resultSeg)
+            {
+                if (i == 0)
+                {
+                    if (String.Compare(s, "200 SEARCH", false) != 0)
+                    {
+                        // error
+                        return null;
+                    }
+                    else i++;
+                }
+                else
+                {
+                    string[] separators = new string[] { "&" };
+                    string[] musicProperty = s.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+               
+                    outputMusicList.Add(new MusicData(musicProperty[0], musicProperty[1], musicProperty[2], musicProperty[3], musicProperty[4], Convert.ToInt32(musicProperty[5]), Convert.ToInt32(musicProperty[6]),));
+                    
+                }
+            }
+
+            return outputMusicList;
         }
 
         /*
