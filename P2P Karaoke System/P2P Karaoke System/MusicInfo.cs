@@ -10,7 +10,7 @@ namespace P2P_Karaoke_System
     {
         private string title, artist, album;
         private int order,year;
-        private string ImagePath,MediaPath,LyricsPath;
+        private string imagePath,mediaPath,lyricsPath;
 
         public string Title
         {
@@ -54,12 +54,31 @@ namespace P2P_Karaoke_System
         }
         public string ImagePath
         {
-            get { return ImagePath; }
+            get { return imagePath; }
             set
             {
-                ImagePath = value;
+                imagePath = value;
             }
         }
-
+        public string LyricsPath
+        {
+            get { return lyricsPath; }
+            set
+            {
+                lyricsPath = value;
+            }
+        }
+        public string MediaPath
+        {
+            get { return mediaPath; }
+            set
+            {
+                mediaPath = value;
+            }
+        }
+        public override string ToString()
+        {
+            return Title;
+        }
     }
 }

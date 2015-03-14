@@ -22,6 +22,7 @@ namespace P2P_Karaoke_System
 	using System;
 	
 	
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="Music")]
 	public partial class MusicDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -29,7 +30,16 @@ namespace P2P_Karaoke_System
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
+    partial void InsertAudio(Audio instance);
+    partial void UpdateAudio(Audio instance);
+    partial void DeleteAudio(Audio instance);
     #endregion
+		
+		public MusicDataContext() : 
+				base(global::P2P_Karaoke_System.Properties.Settings.Default.MusicConnectionString, mappingSource)
+		{
+			OnCreated();
+		}
 		
 		public MusicDataContext(string connection) : 
 				base(connection, mappingSource)
@@ -64,9 +74,11 @@ namespace P2P_Karaoke_System
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="")]
-	public partial class Audio
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Audio")]
+	public partial class Audio : INotifyPropertyChanging, INotifyPropertyChanged
 	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _Id;
 		
@@ -76,7 +88,7 @@ namespace P2P_Karaoke_System
 		
 		private string _Album;
 		
-		private int _Year;
+		private System.Nullable<int> _Year;
 		
 		private string _MediaPath;
 		
@@ -84,13 +96,38 @@ namespace P2P_Karaoke_System
 		
 		private string _LyricsPath;
 		
-		private int _Order;
+		private System.Nullable<int> _Order;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnTitleChanging(string value);
+    partial void OnTitleChanged();
+    partial void OnArtistChanging(string value);
+    partial void OnArtistChanged();
+    partial void OnAlbumChanging(string value);
+    partial void OnAlbumChanged();
+    partial void OnYearChanging(System.Nullable<int> value);
+    partial void OnYearChanged();
+    partial void OnMediaPathChanging(string value);
+    partial void OnMediaPathChanged();
+    partial void OnImagePathChanging(string value);
+    partial void OnImagePathChanged();
+    partial void OnLyricsPathChanging(string value);
+    partial void OnLyricsPathChanged();
+    partial void OnOrderChanging(System.Nullable<int> value);
+    partial void OnOrderChanged();
+    #endregion
 		
 		public Audio()
 		{
+			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
 		public int Id
 		{
 			get
@@ -101,12 +138,16 @@ namespace P2P_Karaoke_System
 			{
 				if ((this._Id != value))
 				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
 					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="VarChar(50)")]
 		public string Title
 		{
 			get
@@ -117,12 +158,16 @@ namespace P2P_Karaoke_System
 			{
 				if ((this._Title != value))
 				{
+					this.OnTitleChanging(value);
+					this.SendPropertyChanging();
 					this._Title = value;
+					this.SendPropertyChanged("Title");
+					this.OnTitleChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Artist", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Artist", DbType="VarChar(50)")]
 		public string Artist
 		{
 			get
@@ -133,12 +178,16 @@ namespace P2P_Karaoke_System
 			{
 				if ((this._Artist != value))
 				{
+					this.OnArtistChanging(value);
+					this.SendPropertyChanging();
 					this._Artist = value;
+					this.SendPropertyChanged("Artist");
+					this.OnArtistChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Album", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Album", DbType="VarChar(MAX)")]
 		public string Album
 		{
 			get
@@ -149,13 +198,17 @@ namespace P2P_Karaoke_System
 			{
 				if ((this._Album != value))
 				{
+					this.OnAlbumChanging(value);
+					this.SendPropertyChanging();
 					this._Album = value;
+					this.SendPropertyChanged("Album");
+					this.OnAlbumChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Year")]
-		public int Year
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Year", DbType="Int")]
+		public System.Nullable<int> Year
 		{
 			get
 			{
@@ -165,12 +218,16 @@ namespace P2P_Karaoke_System
 			{
 				if ((this._Year != value))
 				{
+					this.OnYearChanging(value);
+					this.SendPropertyChanging();
 					this._Year = value;
+					this.SendPropertyChanged("Year");
+					this.OnYearChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MediaPath", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MediaPath", DbType="VarChar(MAX)")]
 		public string MediaPath
 		{
 			get
@@ -181,12 +238,16 @@ namespace P2P_Karaoke_System
 			{
 				if ((this._MediaPath != value))
 				{
+					this.OnMediaPathChanging(value);
+					this.SendPropertyChanging();
 					this._MediaPath = value;
+					this.SendPropertyChanged("MediaPath");
+					this.OnMediaPathChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImagePath", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImagePath", DbType="NVarChar(MAX)")]
 		public string ImagePath
 		{
 			get
@@ -197,12 +258,16 @@ namespace P2P_Karaoke_System
 			{
 				if ((this._ImagePath != value))
 				{
+					this.OnImagePathChanging(value);
+					this.SendPropertyChanging();
 					this._ImagePath = value;
+					this.SendPropertyChanged("ImagePath");
+					this.OnImagePathChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LyricsPath", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LyricsPath", DbType="NVarChar(MAX)")]
 		public string LyricsPath
 		{
 			get
@@ -213,13 +278,17 @@ namespace P2P_Karaoke_System
 			{
 				if ((this._LyricsPath != value))
 				{
+					this.OnLyricsPathChanging(value);
+					this.SendPropertyChanging();
 					this._LyricsPath = value;
+					this.SendPropertyChanged("LyricsPath");
+					this.OnLyricsPathChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Order")]
-		public int Order
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Order]", Storage="_Order", DbType="Int")]
+		public System.Nullable<int> Order
 		{
 			get
 			{
@@ -229,8 +298,32 @@ namespace P2P_Karaoke_System
 			{
 				if ((this._Order != value))
 				{
+					this.OnOrderChanging(value);
+					this.SendPropertyChanging();
 					this._Order = value;
+					this.SendPropertyChanged("Order");
+					this.OnOrderChanged();
 				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}

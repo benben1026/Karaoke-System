@@ -1,1 +1,16 @@
-﻿
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Music" Class="MusicDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\v11.0;AttachDbFilename=|DataDirectory|\Music.mdf;Integrated Security=True" SettingsObjectName="P2P_Karaoke_System.Properties.Settings" SettingsPropertyName="MusicConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Audio" Member="Audios">
+    <Type Name="Audio">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Artist" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Album" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="Year" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MediaPath" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="ImagePath" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="LyricsPath" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="[Order]" Member="Order" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

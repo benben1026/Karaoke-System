@@ -68,9 +68,11 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -86,12 +88,18 @@
     <Compile Include="Receiver.cs" />
     <Compile Include="Sender.cs" />
     <Compile Include="WaveOut.cs" />
+    <Compile Include="EditInfoWindow.xaml.cs">
+      <DependentUpon>EditInfoWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Music.cs">
+      <DependentUpon>Music.dbml</DependentUpon>
+    </Compile>
     <Compile Include="WavStream.cs" />
     <Compile Include="WinMM.cs" />
-    <!-- <Page Include="EditInfoWindow.xaml">
+    <Page Include="EditInfoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page> -->
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

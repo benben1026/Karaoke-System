@@ -8,13 +8,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
+using Microsoft.Win32;
 
 namespace P2P_Karaoke_System
 {
@@ -23,6 +23,8 @@ namespace P2P_Karaoke_System
     /// </summary>
     public partial class MainWindow : Window
     {
+        bool playing = false;
+        MusicDataContext musicDB;
         private Microsoft.Win32.OpenFileDialog openDialog;
         private WavFormat format;
         private Stream audioStream;
@@ -31,7 +33,7 @@ namespace P2P_Karaoke_System
         // For file format other than WAV
         private NAudio.Wave.DirectSoundOut nAudioOutput = null;
         private NAudio.Wave.BlockAlignReductionStream nAudioStream = null;
-        MusicDataContext musicDB;
+        private OpenFileDialog openFileDialog, addFileDialog;
 
         public MainWindow()
         {
@@ -183,7 +185,7 @@ namespace P2P_Karaoke_System
             a.Add(t);
             cp.CopyInfo = a;
             //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
-            Thread test = new Thread(() => Sender.StartGetMusic(cp));
+            // Thread test = new Thread(() => Sender.StartGetMusic(cp));
             test.Start();
 
             //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
@@ -194,6 +196,36 @@ namespace P2P_Karaoke_System
         {
             EditInfoWindow m = new EditInfoWindow();
             m.Show();
+        }
+
+        private void addButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (addFileDialog.ShowDialog() == true)
+            {
+                Audio audio = new Audio(addFileDialog.FileName);
+//need add lyrics               
+                musicList.Items.Add(audio);
+            }
+
+
+        }
+
+        private void deleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (musicList.SelectedIndex < 0)
+                return;
+            if (musicDB != null)
+            {
+                try
+                {
+                    musicDB.Audios.DeleteOnSubmit((Audio)musicList.SelectedItem);
+                    musicDB.SubmitChanges();
+                }
+                catch
+                {
+                    MessageBox.Show("Datebase Connection Failure","Error",MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
     }
 }

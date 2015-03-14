@@ -22,5 +22,7 @@
         <TextBlock x:Name="LRCBlock" HorizontalAlignment="Left" Margin="32,138,0,0" TextWrapping="Wrap" Text="LRC" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
         <TextBox x:Name="lrcBox" HorizontalAlignment="Left" Height="23" Margin="60,131,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <Image x:Name="CoverIMG" Grid.Column="1" HorizontalAlignment="Left" Height="128" Margin="313,25,0,0" VerticalAlignment="Top" Width="209"/>
+        <WindowsFormsHost HorizontalAlignment="Left" Height="100" Margin="111,90,0,0" VerticalAlignment="Top" Width="100"/>
+
     </Grid>
 </Window>

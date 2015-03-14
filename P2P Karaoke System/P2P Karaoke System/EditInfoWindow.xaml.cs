@@ -73,6 +73,6 @@ namespace P2P_Karaoke_System
             tmpCoverPath = "";
             CoverIMG.Source = null;
         }
-        
     }
+
 }

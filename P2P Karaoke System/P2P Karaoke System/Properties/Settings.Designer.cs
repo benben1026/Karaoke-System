@@ -32,5 +32,16 @@ namespace P2P_Karaoke_System.Properties {
                 return ((string)(this["MusicConnectString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(LocalDB)\\v11.0;AttachDbFilename=|DataDirectory|\\Music.mdf;Integrated" +
+            " Security=True")]
+        public string MusicConnectionString {
+            get {
+                return ((string)(this["MusicConnectionString"]));
+            }
+        }
     }
 }
