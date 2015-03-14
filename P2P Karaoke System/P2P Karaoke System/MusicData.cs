@@ -18,7 +18,8 @@ namespace P2P_Karaoke_System {
         public int Size { get; set; }
         public int Relevancy { get; set; }
 
-        public MusicData(String filename, String title, String singer, String album, int size) {
+        public MusicData(string filename, string title, string singer, string album, string hashvalue, int size)
+        {
             this.Filename = filename;
             this.Title = title;
             this.Singer = singer;
@@ -26,6 +27,17 @@ namespace P2P_Karaoke_System {
             this.Hashvalue = hashvalue;
             this.Size = size;
             this.Relevancy = 0;
+        }
+
+        public MusicData(string filename, string title, string singer, string album, string hashvalue, int size, int relevancy)
+        {
+            this.Filename = filename;
+            this.Title = title;
+            this.Singer = singer;
+            this.Album = album;
+            this.Hashvalue = hashvalue;
+            this.Size = size;
+            this.Relevancy = relevancy;
         }
     }
 }

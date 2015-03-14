@@ -91,16 +91,16 @@ namespace P2P_Karaoke_System.p2p
                 string header = "200 SEARCH\r\n";
                 string tail = "<END>";
                 int items = searchResult.Count();
-                output = "";
+                output = header;
                 // search result data: properties delimited by &, file delimited by newline
                 for (int i = 0; i < items; i++)
                 {
-                    output += searchResult[i].Filename + "&" + searchResult[i].Title + "&" 
-                               + searchResult[i].Singer + "&" + searchResult[i].Album + "&" 
-                               + searchResult[i].Hashvalue + "&" + searchResult[i].Size.ToSting() 
-                               + "&" + + searchResult[i].Relevancy.ToSting() + "\r\n"
+                    output += searchResult[i].Filename + "&" + searchResult[i].Title + "&"
+                               + searchResult[i].Singer + "&" + searchResult[i].Album + "&"
+                               + searchResult[i].Hashvalue + "&" + Convert.ToString(searchResult[i].Size) + "&"
+                               + Convert.ToString(searchResult[i].Relevancy) + "\r\n";
                 }
-
+                output += tail;
                 byteOut = Encoding.UTF8.GetBytes(output);
             }
             else if (method.Equals("get", StringComparison.InvariantCultureIgnoreCase))

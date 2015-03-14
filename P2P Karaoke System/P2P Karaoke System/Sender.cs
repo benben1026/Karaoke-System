@@ -123,7 +123,7 @@ namespace P2P_Karaoke_System.p2p
                     string[] separators = new string[] { "&" };
                     string[] musicProperty = s.Split(separators, StringSplitOptions.RemoveEmptyEntries);
                
-                    outputMusicList.Add(new MusicData(musicProperty[0], musicProperty[1], musicProperty[2], musicProperty[3], musicProperty[4], Convert.ToInt32(musicProperty[5]), Convert.ToInt32(musicProperty[6]),));
+                    outputMusicList.Add(new MusicData(musicProperty[0], musicProperty[1], musicProperty[2], musicProperty[3], musicProperty[4], Convert.ToInt32(musicProperty[5]), Convert.ToInt32(musicProperty[6])));
                     
                 }
             }

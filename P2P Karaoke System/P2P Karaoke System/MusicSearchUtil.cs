@@ -36,7 +36,7 @@ namespace P2P_Karaoke_System {
                 		inputMusicList[i].Relevancy ++;
                 	}
 
-                    musicIsWantedRecord[i] = musicIsWantedRecord[i] && inputMusicList[i].relevancy;
+                    musicIsWantedRecord[i] = musicIsWantedRecord[i] && ( inputMusicList[i].Relevancy != 0 );
                     //If music data does not contain keyword(s), i.e. relevancy = 0, musicIsWantedRecord[i] will be false
                 }
             }
