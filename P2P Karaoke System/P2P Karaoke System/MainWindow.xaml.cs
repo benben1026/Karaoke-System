@@ -31,7 +31,6 @@ namespace P2P_Karaoke_System
         private WaveOutPlayer thePlayer;
         private string audioFormat = null;
         // For file format other than WAV
-        private NAudio.Wave.DirectSoundOut nAudioOutput = null;
         private NAudio.Wave.BlockAlignReductionStream nAudioStream = null;
         private OpenFileDialog openFileDialog, addFileDialog;
 
@@ -60,6 +59,39 @@ namespace P2P_Karaoke_System
                         audioStream.Position = 0; // loop if the file ends
                     pos += got;
                 }
+                pos = 0;
+                while (pos < size)
+                {
+                    int toget = size - pos;
+                    int got = audioStream.Read(b, pos, toget);
+                    if (got < toget)
+                        audioStream.Position = 0; // loop if the file ends
+                    pos += got;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < b.Length; i++)
+                    b[i] = 0;
+            }
+            System.Runtime.InteropServices.Marshal.Copy(b, 0, data, size);
+
+        }
+
+        private void Filler2(IntPtr data, int size)
+        {
+            byte[] b = new byte[size];
+            if (nAudioStream != null)
+            {
+                int pos = 0;
+                while (pos < size)
+                {
+                    int toget = size - pos;
+                    int got = nAudioStream.Read(b, pos, toget);
+                    if (got < toget)
+                        nAudioStream.Position = 0; // loop if the file ends
+                    pos += got;
+                }
             }
             else
             {
@@ -73,10 +105,22 @@ namespace P2P_Karaoke_System
         private void Play_Click(object sender, RoutedEventArgs e)
         {
             Stop_Click();
-            if (audioStream != null)
+            if (audioFormat == null) return;
+            if (audioFormat == ".wav")
             {
-                audioStream.Position = 0;
-                thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
+                if (audioStream != null)
+                {
+                    audioStream.Position = 0;
+                    thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
+                }
+            }
+            else
+            {
+                if (nAudioStream != null)
+                {
+                    nAudioStream.Position = 0;
+                    thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler2));
+                }
             }
         }
 
@@ -92,7 +136,7 @@ namespace P2P_Karaoke_System
                 {
                     thePlayer = null;
                 }
-            }
+            }  
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -117,12 +161,6 @@ namespace P2P_Karaoke_System
 
         private void DisposeWave()
         {
-            if (nAudioOutput != null)
-            {
-                if (nAudioOutput.PlaybackState == NAudio.Wave.PlaybackState.Playing)
-                    nAudioOutput.Stop();
-                nAudioOutput = null;
-            }
             if (nAudioStream != null)
             {
                 nAudioStream.Dispose();
@@ -168,10 +206,14 @@ namespace P2P_Karaoke_System
                 else
                 {
                     NAudio.Wave.WaveStream pcm = new NAudio.Wave.AudioFileReader(openDialog.FileName);
+                    format.wFormatTag = 3;
+                    format.nChannels = (short)pcm.WaveFormat.Channels;
+                    format.nSamplesPerSec = (int)pcm.WaveFormat.SampleRate;
+                    format.nAvgBytesPerSec = (int)pcm.WaveFormat.AverageBytesPerSecond;
+                    format.nBlockAlign = (short)pcm.WaveFormat.BlockAlign;
+                    format.wBitsPerSample = (short)pcm.WaveFormat.BitsPerSample;
+                    format.cbSize = (short)pcm.WaveFormat.ExtraSize;
                     nAudioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
-                    nAudioOutput = new NAudio.Wave.DirectSoundOut();
-                    nAudioOutput.Init(nAudioStream);
-                    nAudioOutput.Play();
                 }
             }
             Audio audio = new Audio();
