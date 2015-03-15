@@ -191,7 +191,7 @@ namespace P2P_Karaoke_System
                 return;
             }
 
-            for (int i = startByte; i < endByte; i++) 
+            for (int i = startByte; i < endByte; i += segmentSize) 
             {
                 Console.WriteLine("Transmit no{0} packet", i);
                 GetResponse gres = new GetResponse(filename, hash);

@@ -226,7 +226,6 @@ namespace P2P_Karaoke_System
             byte[] request = ConstructGetRequest(startByte, endByte);
             s.Send(request, request.Length, 0);
 
-            Console.WriteLine("1");
             while (true)
             {
                 int bytes = 0;
@@ -234,7 +233,6 @@ namespace P2P_Karaoke_System
                 for (int remain = 5; remain > 0; remain -= bytes)
                 {
                     bytes = s.Receive(byteReceived, 5 - remain, remain, 0);
-                    Console.WriteLine("1");
                 }
                 int payloadSize = BitConverter.ToInt32(byteReceived, 1);
                 byte type = byteReceived[0];
@@ -393,7 +391,7 @@ namespace P2P_Karaoke_System
         public static void InitialIpList()
         {
             ipList = new string[peerNum];
-            ipList[0] = "192.168.213.200";
+            ipList[0] = "192.168.211.197";
             ipList[1] = "";
             ipList[2] = "";
             ipList[3] = "";
