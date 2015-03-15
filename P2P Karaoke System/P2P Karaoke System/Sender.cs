@@ -221,11 +221,12 @@ namespace P2P_Karaoke_System
                 return;
             }
             Console.WriteLine("{0}:Connection success", ipList[index]);
-            Console.WriteLine("segmentSize = {0}, filename = {1}, segNum = {2}, packetLeft = {3}", segmentSize, musicDownload.Filename, flag.Count(), packetLeft);
+            //Console.WriteLine("segmentSize = {0}, filename = {1}, segNum = {2}, packetLeft = {3}", segmentSize, musicDownload.Filename, flag.Count(), packetLeft);
             
             byte[] request = ConstructGetRequest(startByte, endByte);
             s.Send(request, request.Length, 0);
 
+            Console.WriteLine("1");
             while (true)
             {
                 int bytes = 0;
@@ -233,6 +234,7 @@ namespace P2P_Karaoke_System
                 for (int remain = 5; remain > 0; remain -= bytes)
                 {
                     bytes = s.Receive(byteReceived, 5 - remain, remain, 0);
+                    Console.WriteLine("1");
                 }
                 int payloadSize = BitConverter.ToInt32(byteReceived, 1);
                 byte type = byteReceived[0];
@@ -241,7 +243,7 @@ namespace P2P_Karaoke_System
                 {
                     bytes = s.Receive(byteReceived, payloadSize - remain, remain, 0);
                 }
-
+                Console.WriteLine("type = {0}, size = {1}, realSize = {2}", type, payloadSize, byteReceived.Length);
                 if (type == 0x11)
                 {
 
