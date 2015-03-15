@@ -27,13 +27,13 @@ namespace P2P_Karaoke_System
         
         private bool isPlaying = false;
         MusicDataContext musicDB;
-        private Microsoft.Win32.OpenFileDialog openDialog;
+        private Microsoft.Win32.OpenFileDialog openDialog, addFileDialog;
         private WavFormat format;
         private Stream audioStream;
         private WaveOutPlayer thePlayer;
         private string audioFormat = null;
-        // For file format other than WAV
-        private OpenFileDialog openFileDialog, addFileDialog;
+
+        public List<MusicCopy> musicDataList;
 
         public MainWindow()
         {
@@ -42,6 +42,12 @@ namespace P2P_Karaoke_System
             this.openDialog = new Microsoft.Win32.OpenFileDialog();
             this.openDialog.Filter = "Audio File (*.wav, *.mp3, *.mp4, *.wma, *.m4a)|*.wav;*.mp3;*.mp4;*.wma;*.m4a;";
             this.openDialog.DefaultExt = "wav";
+
+            this.addFileDialog = new Microsoft.Win32.OpenFileDialog();
+            this.addFileDialog.Filter = "Audio File (*.wav, *.mp3, *.mp4, *.wma, *.m4a)|*.wav;*.mp3;*.mp4;*.wma;*.m4a;";
+            this.addFileDialog.DefaultExt = "wav";
+
+            musicDataList = new List<MusicCopy>();
 
             musicDB = new MusicDataContext(Properties.Settings.Default.MusicConnectString);
             if (musicDB == null)
@@ -354,12 +360,12 @@ namespace P2P_Karaoke_System
                     }
                     catch
                     {
-                        MessageBox.Show("Can't connect to the media database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Can't connect to the media database.");
                     }
                 }
                 musicList.Items.Add(audio);
                 MusicCopy musicData = new MusicCopy(audio.MediaPath, audio.Title, audio.Artist, audio.Album, audio.HashValue, (int)audio.Size);
-                Receiver.musicDataList.Add(musicData);
+                musicDataList.Add(musicData);
             }
 
 

@@ -18,7 +18,7 @@ namespace P2P_Karaoke_System
         }
     }
 
-    class MusicCopy
+    public class MusicCopy
     {
         public string Filename { get; set; }
         public string Title { get; set; }

@@ -13,12 +13,11 @@ namespace P2P_Karaoke_System
 {
     class Receiver
     {
-        public static List<MusicCopy> musicDataList { get; set; }
-
         private static int segmentSize = 2048;
         // chunk size in bytes
 
         private static string data = null;
+
         /*
         private static void ChildThreadListening()
         {
@@ -219,11 +218,11 @@ namespace P2P_Karaoke_System
             }
         }
 
-        public static void ProcessSearchRequest(byte[] obj, Socket s)
+        public static void ProcessSearchRequest(byte[] obj, Socket s, List<MusicCopy> musicDataList)
         {
             SearchRequest sreq = (SearchRequest)SearchRequest.ToObject(obj);
             string keyword = sreq.GetKeyword();
-            List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(keyword, Receiver.musicDataList);
+            List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(keyword, musicDataList);
             
             // construct search response
             SearchResponse sres = new SearchResponse(searchResult);
