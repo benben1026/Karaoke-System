@@ -20,7 +20,7 @@
         <Button x:Name="Previous" HorizontalAlignment="Left" Margin="136,421,0,0" Width="40" FontSize="14" Height="46" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}">
             <Image Height="16" Width="30" Source="Images/previousBtn.png"/>
         </Button>
-        <Slider x:Name="progressSlider" HorizontalAlignment="Left" Margin="69,467,0,0" VerticalAlignment="Top" Width="366"/>
+        <Slider x:Name="progressSlider" HorizontalAlignment="Left" Margin="69,467,0,0" VerticalAlignment="Top" Width="366" PreviewMouseLeftButtonUp="progressSlider_PreviewMouseLeftButtonUp"/>
         <Button x:Name="load" Content="open" HorizontalAlignment="Left" Margin="411,433,0,0" VerticalAlignment="Top" Width="75" Click="load_Click"/>
         <Frame x:Name="mediaFrame" Content="" HorizontalAlignment="Left" Height="100" Margin="0,318,0,0" VerticalAlignment="Top" Width="100"/>
         <Button x:Name="p2p" Content="p2ptest" HorizontalAlignment="Left" Margin="511,433,0,0" VerticalAlignment="Top" Width="75" Click="p2p_Click"/>
