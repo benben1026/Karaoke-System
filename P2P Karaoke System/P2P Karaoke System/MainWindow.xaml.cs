@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Threading;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -23,7 +24,7 @@ namespace P2P_Karaoke_System
     /// </summary>
     public partial class MainWindow : Window
     {
-        bool playing = false;
+        private bool isPlaying = false;
         MusicDataContext musicDB;
         private Microsoft.Win32.OpenFileDialog openDialog;
         private WavFormat format;
@@ -51,15 +52,6 @@ namespace P2P_Karaoke_System
             if (audioStream != null)
             {
                 int pos = 0;
-                while (pos < size)
-                {
-                    int toget = size - pos;
-                    int got = audioStream.Read(b, pos, toget);
-                    if (got < toget)
-                        audioStream.Position = 0; // loop if the file ends
-                    pos += got;
-                }
-                pos = 0;
                 while (pos < size)
                 {
                     int toget = size - pos;
@@ -108,18 +100,26 @@ namespace P2P_Karaoke_System
             if (audioFormat == null) return;
             if (audioFormat == ".wav")
             {
-                if (audioStream != null)
+                if (audioStream != null && isPlaying == false)
                 {
-                    audioStream.Position = 0;
                     thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
+                    isPlaying = true;
+                }
+                else
+                {
+                    isPlaying = false;
                 }
             }
             else
             {
-                if (nAudioStream != null)
+                if (nAudioStream != null && isPlaying == false)
                 {
-                    nAudioStream.Position = 0;
                     thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler2));
+                    isPlaying = true;
+                }
+                else
+                {
+                    isPlaying = false;
                 }
             }
         }
@@ -215,6 +215,9 @@ namespace P2P_Karaoke_System
                     format.cbSize = (short)pcm.WaveFormat.ExtraSize;
                     nAudioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
                 }
+                DispatcherTimer timer = new DispatcherTimer();
+                timer.Tick += new EventHandler(timer_Tick);
+                timer.Interval = new TimeSpan(0, 0, 1);
             }
             Audio audio = new Audio();
             audio.MediaPath = "TestPath";
