@@ -226,8 +226,8 @@ namespace P2P_Karaoke_System
 
             Sender.InitialIpList();
             //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
-            Thread test = new Thread(() => Receiver.StartListening());
-            MusicCopy cp = new MusicCopy("travel1.wma", "travel1", "Jin", "Hello", "264204303863CF9089DE5C42D34D64BD", 2009081, 1);
+            //Thread test = new Thread(() => Receiver.StartListening());
+            MusicCopy cp = new MusicCopy("travel1.wma", "travel1", "Jin", "Hello", "87ECA84BBFF77E54D21711A496857159CC5FA033", 2009081, 1);
             CopyIndex t = new CopyIndex(0, "travel1.wma");
             List<CopyIndex> a = new List<CopyIndex>();
             a.Add(t);
@@ -242,8 +242,8 @@ namespace P2P_Karaoke_System
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            EditInfoWindow m = new EditInfoWindow();
-            m.Show();
+            //EditInfoWindow m = new EditInfoWindow();
+            //m.Show();
         }
 
         private void addButton_Click(object sender, RoutedEventArgs e)

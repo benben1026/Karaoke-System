@@ -19,8 +19,9 @@ namespace P2P_Karaoke_System
         private static List<MusicCopy>[] searchResult = new List<MusicCopy>[peerNum];
 
         private static byte[] fileData = null;
-        private static double segmentSize = 2048.0;
+        private static int segmentSize = 4096;
         private static int[] flag = null;
+        private static int packetLeft;
         private static bool flagLock = false;
         private static bool ifGettingData = false;
         private static MusicCopy musicDownload = null;
@@ -80,19 +81,19 @@ namespace P2P_Karaoke_System
 
         private static byte[] ConstructSearchRequest(string keyword)
         {
-            string request = "SEARCH&" + keyword + "<EOR>";
+            string request = "SEARCH&" + keyword + "&<EOR>";
             return Encoding.UTF8.GetBytes(request);
         }
 
         private static byte[] ConstructGetRequest(string filename, string md5, int segmentId)
         {
-            string request = "GET&" + filename + "&" + md5 + "&" + segmentId + "<EOR>";
+            string request = "GET&" + filename + "&" + md5 + "&" + segmentId + "&<EOR>";
             return Encoding.UTF8.GetBytes(request);
         }
 
         public static void StartSearch(string keyword)
         {
-            string request = "SEARCH&" + keyword + "<EOR>";
+            string request = "SEARCH&" + keyword + "&<EOR>";
             byte[] byteRequest = Encoding.UTF8.GetBytes(request);
             Thread[] threadList = new Thread[ipList.Count()];
             Console.WriteLine("length = {0}", ipList.Count());
@@ -107,6 +108,7 @@ namespace P2P_Karaoke_System
                 int temp = i;
                 threadList[i] = new Thread(() => SearchThread(ipList[i], temp, byteRequest));
                 threadList[i].Start();
+                Thread.Sleep(1);
             }
             Thread.Sleep(2000);
             MergeMusicList(searchResult);
@@ -144,7 +146,8 @@ namespace P2P_Karaoke_System
                 return;
             }
             musicDownload = music;
-            int numOfSeg = Convert.ToInt32(Math.Ceiling(music.Size / segmentSize));
+            int numOfSeg = ((music.Size - 1) / segmentSize) + 1;
+            packetLeft = numOfSeg;
             ifGettingData = true;
             flag = new int[numOfSeg];
             for (int i = 0; i < numOfSeg; i++)
@@ -152,6 +155,7 @@ namespace P2P_Karaoke_System
                 flag[i] = 0;
             }
             fileData = new byte[music.Size];
+            Console.WriteLine("filedata = {0}",fileData);
             Thread[] threadList = new Thread[music.CopyInfo.Count()];
             for (int i = 0; i < music.CopyInfo.Count(); i++)
             {
@@ -163,12 +167,14 @@ namespace P2P_Karaoke_System
                 threadList[i].Start();
                 Thread.Sleep(1);
             }
-            for (int i = 0; i < music.CopyInfo.Count(); i++)
-            {
-                threadList[i].Join(20000);
-            }
+            while (packetLeft != 0);
+            //for (int i = 0; i < music.CopyInfo.Count(); i++)
+            //{
+            //    threadList[i].Join(20000);
+            //}
             FileStream fs = new FileStream(music.Filename, FileMode.Create);
             fs.Write(fileData, 0, music.Size);
+            fs.Close();
         }
 
         private static void GetMusicThread(int index)
@@ -181,6 +187,7 @@ namespace P2P_Karaoke_System
                 return;
             }
             Console.WriteLine("{0}:Connection success", ipList[index]);
+            Console.WriteLine("segmentSize = {0}, filename = {1}, segNum = {2}, packetLeft = {3}", segmentSize, musicDownload.Filename, flag.Count(), packetLeft);
             while (true)
             {
                 int i = 0;
@@ -201,32 +208,72 @@ namespace P2P_Karaoke_System
                 int bytes = 0;
 
                 byte[] bytesReceived = new byte[8];
-                bytes = s.Receive(bytesReceived, 8, 0);
+                for (int remain = 8; remain > 0; remain -= bytes)
+                {
+                    bytes = s.Receive(bytesReceived, 8 - remain, remain, 0);
+                }
+                //byte[] bytesReceived = new byte[8];
+                //bytes = s.Receive(bytesReceived, 8, 0);
                 string status = Encoding.UTF8.GetString(bytesReceived, 0, 3);
+                Console.WriteLine("status = {0}", status);
                 if (String.Compare(status, "200") == 0)
                 {
                     bytesReceived = new byte[2];
-                    bytes = s.Receive(bytesReceived, 2, 0);
+                    for (int remain = 2; remain > 0; remain -= bytes)
+                    {
+                        bytes = s.Receive(bytesReceived, 2 - remain, remain, 0);
+                    }
+                    //bytesReceived = new byte[2];
+                    //bytes = s.Receive(bytesReceived, 2, 0);
                     ushort parameterLength = BitConverter.ToUInt16(bytesReceived, 0);
-                    Console.WriteLine("parameterLength");
+                    //Console.WriteLine("parameterLength = {0}", parameterLength);
 
                     bytesReceived = new byte[parameterLength];
-                    bytes = s.Receive(bytesReceived, parameterLength, 0);
+                    for (int remain = parameterLength; remain > 0; remain -= bytes)
+                    {
+                        bytes = s.Receive(bytesReceived, parameterLength - remain, remain, 0);
+                    }
+                    //bytesReceived = new byte[parameterLength];
+                    //bytes = s.Receive(bytesReceived, parameterLength, 0);
                     string[] parameter = Encoding.UTF8.GetString(bytesReceived).Split('&');
                     int segmentId = Convert.ToInt32(parameter[2]);
+                    Console.WriteLine("segmentId = {0}", segmentId);
 
                     bytesReceived = new byte[2];
-                    bytes = s.Receive(bytesReceived, 2, 0);
+                    for (int remain = 2; remain > 0; remain -= bytes)
+                    {
+                        bytes = s.Receive(bytesReceived, 2 - remain, remain, 0);
+                    }
+                    //bytesReceived = new byte[2];
+                    //bytes = s.Receive(bytesReceived, 2, 0);
                     ushort payloadLength = BitConverter.ToUInt16(bytesReceived, 0);
+                    //Console.WriteLine("payloadLength = {0}", payloadLength);
 
                     bytesReceived = new byte[payloadLength];
-                    bytes = s.Receive(bytesReceived, payloadLength, 0);
-                    bytesReceived.CopyTo(fileData, Convert.ToInt64(segmentId * segmentSize));
+                    for (int remain = payloadLength; remain > 0; remain -= bytes)
+                    {
+                        bytes = s.Receive(bytesReceived, payloadLength - remain, remain, 0);
+                    }
+                    Array.Copy(bytesReceived, 0, fileData, (int)(segmentId * segmentSize), payloadLength);
+                    //bytesReceived.CopyTo(fileData, Convert.ToInt64(segmentId * segmentSize));
+                    //Console.WriteLine("data = {0}", BitConverter.ToString(bytesReceived));
                     AccessFlag(1, i, 2);
+                    //while (true)
+                    //{
+                    //    bytes = s.Receive(bytesReceived, 1, 0);
+                    //    if (bytes == 0)
+                    //    {
+                    //        break;
+                    //    }
+                    //}
+
+                    Thread.Sleep(100);
                 }
                 else
                 {
+                    Console.WriteLine("Response Error: status = {0}", status);
                     AccessFlag(1, i, 0);
+                    Thread.Sleep(2000);
                 }
             }
             s.Shutdown(SocketShutdown.Both);
@@ -245,6 +292,10 @@ namespace P2P_Karaoke_System
             else if (mode == 1)
             {
                 flag[index] = status;
+                if (status == 2)
+                {
+                    packetLeft--;
+                }
             }
             flagLock = false;
             return temp;
