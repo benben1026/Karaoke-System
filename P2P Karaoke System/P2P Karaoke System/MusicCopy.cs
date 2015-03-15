@@ -30,6 +30,19 @@ namespace P2P_Karaoke_System
         public int CopyNumber { get; set; }
         public List<CopyIndex> CopyInfo { get; set; } // {userIndex, fileName}
 
+        public MusicCopy(string filename, string title, string singer, string album, string hashvalue, int size)
+        {
+            this.Filename = filename;
+            this.Title = title;
+            this.Singer = singer;
+            this.Album = album;
+            this.Hashvalue = hashvalue;
+            this.Size = size;
+            this.Relevancy = 0;
+            this.CopyNumber = 0;
+            this.CopyInfo = new List<CopyIndex>();
+        }
+
         public MusicCopy(string filename, string title, string singer, string album, string hashvalue, int size, int relevancy)
         {
             this.Filename = filename;
@@ -39,8 +52,8 @@ namespace P2P_Karaoke_System
             this.Hashvalue = hashvalue;
             this.Size = size;
             this.Relevancy = relevancy;
+            this.CopyNumber = 0;
             this.CopyInfo = new List<CopyIndex>();
         }
-
     }
 }

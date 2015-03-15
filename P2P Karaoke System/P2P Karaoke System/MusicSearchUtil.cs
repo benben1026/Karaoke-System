@@ -16,10 +16,11 @@ using System.Threading.Tasks;
 namespace P2P_Karaoke_System {
     static class MusicSearchUtil {
 
-        public static List<MusicData> SearchedMusicList(String searchString, List<MusicData> inputMusicList) {
+        public static List<MusicCopy> SearchedMusicList(String searchString, List<MusicCopy> inputMusicList)
+        {
             int size = inputMusicList.Count();
             bool[] musicIsWantedRecord = new bool[size];  //Store the result of searching
-            List<MusicData> outputMusicList = new List<MusicData>();
+            List<MusicCopy> outputMusicList = new List<MusicCopy>();
 
             for (int i = 0; i < size; i++) {
                 musicIsWantedRecord[i] = true;

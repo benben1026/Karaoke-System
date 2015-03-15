@@ -115,7 +115,7 @@ namespace P2P_Karaoke_System
 
         }
 
-        public static void StartSearch(string keyword)
+        public static List<MusicCopy> StartSearch(string keyword)
         {
             string request = "SEARCH&" + keyword + "&<EOR>";
             byte[] byteRequest = Encoding.UTF8.GetBytes(request);
@@ -129,16 +129,18 @@ namespace P2P_Karaoke_System
                     continue;
                 }
                 Console.WriteLine(i);
-                int temp = i;
-                threadList[i] = new Thread(() => SearchThread(ipList[i], temp, byteRequest));
+                threadList[i] = new Thread(() => SearchThread(i, byteRequest));
                 threadList[i].Start();
                 Thread.Sleep(1);
             }
-            Thread.Sleep(2000);
-            MergeMusicList(searchResult);
+            for (int i = 0; i < ipList.Count(); i++)
+            {
+                threadList[i].Join(20000);
+            }
+            return MergeMusicList(searchResult);
         }
 
-        private static void SearchThread(string ip, int index, byte[] bytesSent)
+        private static void SearchThread(int index, byte[] bytesSent)
         {
             Console.WriteLine("Connecting to {0}", ipList[index]);
             Socket s = ConnectSocket(ipList[index], port);
@@ -149,18 +151,41 @@ namespace P2P_Karaoke_System
             }
             Console.WriteLine("{0}:Connection success", ipList[index]);
             s.Send(bytesSent, bytesSent.Length, 0);
-            int bytes = 0;
-            byte[] bytesReceived = new byte[256];
-            do
+
+            
+            while(true)
             {
-                bytes = s.Receive(bytesReceived, bytesReceived.Length, 0);
-                //Console.WriteLine(Encoding.UTF8.GetString(bytesReceived, 0, bytes));
-                if (Encoding.UTF8.GetString(bytesReceived).IndexOf("<END>") > -1)
+                int bytes = 0;
+                byte[] byteReceived = new byte[5];
+                for (int remain = 5; remain > 0; remain -= bytes)
                 {
+                    bytes = s.Receive(byteReceived, 5 - remain, remain, 0);
+                }
+                int payloadSize = BitConverter.ToInt32(byteReceived, 1);
+                byte type = byteReceived[0];
+                byteReceived = new byte[payloadSize];
+                for (int remain = payloadSize; remain > 0; remain -= bytes)
+                {
+                    bytes = s.Receive(byteReceived, payloadSize - remain, remain, 0);
+                }
+
+                if (type == 0x11)
+                {
+                    searchResult[index] = ProcessSearchResponse(byteReceived);
+                    if (searchResult[index] == null)
+                    {
+                        ifError = true; 
+                    }
                     break;
                 }
-            } while (bytes > 0);
-            searchResult[index] = DecodeSearchResult(bytesReceived);
+                else if (type == 0x12)
+                {
+                    
+                }
+            }
+
+            s.Shutdown(SocketShutdown.Both);
+            s.Close();
         }
 
         public static void StartGetMusic(MusicCopy music)
@@ -296,62 +321,19 @@ namespace P2P_Karaoke_System
 
         }
 
-        private static int AccessFlag(int mode, int index, int status)
+        private static List<MusicCopy> ProcessSearchResponse(byte[] obj)
         {
-            while (flagLock) ;
-            flagLock = true;
-            int temp = -1;
-            if (mode == 0)
+            SearchResponse sres = (SearchResponse)SearchResponse.ToObject(obj);
+            if (sres.GetStatus() != 1)
             {
-                temp = flag[index];
+                Console.WriteLine("Error occured when getting search results: {0}", sres.GetMsg());
+                return null;
             }
-            else if (mode == 1)
+            else
             {
-                flag[index] = status;
-                if (status == 2)
-                {
-                    packetLeft--;
-                }
+                return sres.GetResult();
             }
-            flagLock = false;
-            return temp;
         }
-
-        private static List<MusicCopy> DecodeSearchResult(byte[] byteIn)
-        {
-            List<MusicCopy> outputMusicList = new List<MusicCopy>();
-            string result = System.Text.Encoding.UTF8.GetString(byteIn);
-            string[] stringSeparators = new string[] { "\r\n" };
-            string[] resultSeg = result.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
-            int i = 0;
-            foreach (string s in resultSeg)
-            {
-                if (i == 0)
-                {
-                    if (String.Compare(s, "200 SEARCH", false) != 0)
-                    {
-                        // error
-                        return null;
-                    }
-                    else i++;
-                }
-                else if (String.Compare(s, "<END>", false) == 0)
-                {
-                    break;
-                }
-                else
-                {
-                    string[] separators = new string[] { "&" };
-                    string[] musicProperty = s.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-
-                    outputMusicList.Add(new MusicCopy(musicProperty[0], musicProperty[1], musicProperty[2], musicProperty[3], musicProperty[4], Convert.ToInt32(musicProperty[5]), Convert.ToInt32(musicProperty[6])));
-
-                }
-            }
-
-            return outputMusicList;
-        }
-
 
         private static List<MusicCopy> MergeMusicList(List<MusicCopy>[] musicList)
         {
@@ -387,6 +369,64 @@ namespace P2P_Karaoke_System
 
             return oldList;
         }
+
+        //private static List<MusicCopy> DecodeSearchResult(byte[] byteIn)
+        //{
+        //    List<MusicCopy> outputMusicList = new List<MusicCopy>();
+        //    string result = System.Text.Encoding.UTF8.GetString(byteIn);
+        //    string[] stringSeparators = new string[] { "\r\n" };
+        //    string[] resultSeg = result.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
+        //    int i = 0;
+        //    foreach (string s in resultSeg)
+        //    {
+        //        if (i == 0)
+        //        {
+        //            if (String.Compare(s, "200 SEARCH", false) != 0)
+        //            {
+        //                // error
+        //                return null;
+        //            }
+        //            else i++;
+        //        }
+        //        else if (String.Compare(s, "<END>", false) == 0)
+        //        {
+        //            break;
+        //        }
+        //        else
+        //        {
+        //            string[] separators = new string[] { "&" };
+        //            string[] musicProperty = s.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
+        //            outputMusicList.Add(new MusicCopy(musicProperty[0], musicProperty[1], musicProperty[2], musicProperty[3], musicProperty[4], Convert.ToInt32(musicProperty[5]), Convert.ToInt32(musicProperty[6])));
+
+        //        }
+        //    }
+
+        //    return outputMusicList;
+        //}
+
+        private static int AccessFlag(int mode, int index, int status)
+        {
+            while (flagLock) ;
+            flagLock = true;
+            int temp = -1;
+            if (mode == 0)
+            {
+                temp = flag[index];
+            }
+            else if (mode == 1)
+            {
+                flag[index] = status;
+                if (status == 2)
+                {
+                    packetLeft--;
+                }
+            }
+            flagLock = false;
+            return temp;
+        }
+
+        
 
         public static void InitialIpList()
         {

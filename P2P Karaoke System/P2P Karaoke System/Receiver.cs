@@ -13,6 +13,8 @@ namespace P2P_Karaoke_System
 {
     class Receiver
     {
+        public static List<MusicCopy> musicDataList { get; set; }
+
         private static int segmentSize = 2048;
         // chunk size in bytes
 
@@ -80,10 +82,10 @@ namespace P2P_Karaoke_System
             if (method.Equals("search", StringComparison.InvariantCultureIgnoreCase))
             {
                 string keyword = parameter[1];
-                List<MusicData> musicList = new List<MusicData>();
+                List<MusicCopy> musicList = new List<MusicCopy>();
                 // get the music list from UI(?)
 
-                List<MusicData> searchResult = MusicSearchUtil.SearchedMusicList(keyword, musicList);
+                List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(keyword, musicList);
 
                 Console.WriteLine("keyword = {0}", keyword);
 
@@ -205,6 +207,24 @@ namespace P2P_Karaoke_System
                 Buffer.BlockCopy(serialize, 0, response, 5, serialize.Length);
                 s.Send(response);
             }
+        }
+
+        public static void ProcessSearchRequest(byte[] obj, Socket s)
+        {
+            SearchRequest sreq = (SearchRequest)SearchRequest.ToObject(obj);
+            string keyword = sreq.GetKeyword();
+            List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(keyword, Receiver.musicDataList);
+            
+            // construct search response
+            SearchResponse sres = new SearchResponse(searchResult);
+            byte[] serialize = sres.ToByte();
+            byte[] type = { 0x11 };
+            byte[] size = BitConverter.GetBytes(serialize.Length);
+            byte[] response = new byte[5 + serialize.Length];
+            Buffer.BlockCopy(type, 0, response, 0, 1);
+            Buffer.BlockCopy(size, 0, response, 1, 4);
+            Buffer.BlockCopy(serialize, 0, response, 5, serialize.Length);
+            s.Send(response);
         }
 
         public static void StartListening()

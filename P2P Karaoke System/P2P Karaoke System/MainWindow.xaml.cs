@@ -247,8 +247,8 @@ namespace P2P_Karaoke_System
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            //EditInfoWindow m = new EditInfoWindow();
-            //m.Show();
+            EditInfoWindow m = new EditInfoWindow();
+            m.Show();
         }
 
         private void addButton_Click(object sender, RoutedEventArgs e)
