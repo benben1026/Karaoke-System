@@ -193,19 +193,19 @@ namespace P2P_Karaoke_System
             if (bufferCount > 0)
             {
                 buffers = new WaveOutBuffer(waveOut, bufferSize);
-                WaveOutBuffer Prev = buffers;
+                WaveOutBuffer previousBuffer = buffers;
                 try
                 {
                     for (int i = 1; i < bufferCount; i++)
                     {
                         WaveOutBuffer Buf = new WaveOutBuffer(waveOut, bufferSize);
-                        Prev.NextBuffer = Buf;
-                        Prev = Buf;
+                        previousBuffer.NextBuffer = Buf;
+                        previousBuffer = Buf;
                     }
                 }
                 finally
                 {
-                    Prev.NextBuffer = buffers;
+                    previousBuffer.NextBuffer = buffers;
                 }
             }
         }
@@ -214,31 +214,31 @@ namespace P2P_Karaoke_System
             currentBuffer = null;
             if (buffers != null)
             {
-                WaveOutBuffer First = buffers;
+                WaveOutBuffer firstBuffer = buffers;
                 buffers = null;
 
-                WaveOutBuffer Current = First;
+                WaveOutBuffer currentOne = firstBuffer;
                 do
                 {
-                    WaveOutBuffer Next = Current.NextBuffer;
-                    Current.Dispose();
-                    Current = Next;
-                } while (Current != First);
+                    WaveOutBuffer nextBuffer = currentOne.NextBuffer;
+                    currentOne.Dispose();
+                    currentOne = nextBuffer;
+                } while (currentOne != firstBuffer);
+            }
+        }
+        private void WaitForAllBuffers()
+        {
+            WaveOutBuffer buffer = buffers;
+            while (buffer.NextBuffer != buffers)
+            {
+                buffer.WaitFor();
+                buffer = buffer.NextBuffer;
             }
         }
         private void Advance()
         {
             currentBuffer = currentBuffer == null ? buffers : currentBuffer.NextBuffer;
             currentBuffer.WaitFor();
-        }
-        private void WaitForAllBuffers()
-        {
-            WaveOutBuffer Buf = buffers;
-            while (Buf.NextBuffer != buffers)
-            {
-                Buf.WaitFor();
-                Buf = Buf.NextBuffer;
-            }
         }
     }
 }
