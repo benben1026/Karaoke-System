@@ -122,8 +122,8 @@ namespace P2P_Karaoke_System
                 return;
             }
             
-            RIPEMD160 myRIPEMD160 = RIPEMD160Managed.Create();
-            byte[] hashvalue = myRIPEMD160.ComputeHash(fs);
+            MD5 myMD5 = MD5.Create();
+            byte[] hashvalue = myMD5.ComputeHash(fs);
             string hash = ConvertHashValue(hashvalue);
 
             Console.WriteLine("oldmd5 = {0}", oldMd5);

@@ -84,8 +84,18 @@ namespace P2P_Karaoke_System
 
         private static byte[] ConstructSearchRequest(string keyword)
         {
-            string request = "SEARCH&" + keyword + "&<EOR>";
-            return Encoding.UTF8.GetBytes(request);
+            //string request = "SEARCH&" + keyword + "&<EOR>";
+            //return Encoding.UTF8.GetBytes(request);
+
+            SearchRequest sres = new SearchRequest(keyword);
+            byte[] obj = sres.ToByte();
+            byte[] type = { 0x01 };
+            byte[] size = BitConverter.GetBytes(obj.Length);
+            byte[] request = new byte[5 + obj.Length];
+            Buffer.BlockCopy(type, 0, request, 0, 1);
+            Buffer.BlockCopy(size, 0, request, 1, 4);
+            Buffer.BlockCopy(obj, 0, request, 5, obj.Length);
+            return request;
         }
 
         private static byte[] ConstructGetRequest(int startByte, int endByte)
@@ -95,7 +105,7 @@ namespace P2P_Karaoke_System
             
             GetRequest gres = new GetRequest(musicDownload.Filename, musicDownload.Hashvalue, startByte, endByte);
             byte[] obj = gres.ToByte();
-            byte[] type = {0x01};
+            byte[] type = {0x02};
             byte[] size = BitConverter.GetBytes(obj.Length);
             byte[] request = new byte[5 + obj.Length];
             Buffer.BlockCopy(type, 0, request, 0, 1);

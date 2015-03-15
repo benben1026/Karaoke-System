@@ -222,7 +222,7 @@ namespace P2P_Karaoke_System
                     {
                         bytes = handler.Receive(byteReceived, payloadSize - remain, remain, 0);
                     }
-
+                    Console.WriteLine("type = {0}, size = {1}, realSize = {2}", type, payloadSize, byteReceived.Length);
                     if (type == 0x01)
                     {
                         

@@ -248,21 +248,21 @@ namespace P2P_Karaoke_System
             Console.WriteLine("size = {0}", output.Length);
             */
 
-            /*
+            
             //waiting for conncetion...
             Thread test = new Thread(() => Receiver.StartListening());
             test.Start();
-            */ 
+            
             
             //Get data from other peers
-            Sender.InitialIpList();
-            MusicCopy cp = new MusicCopy("travel1.wma", "travel1", "Jin", "Hello", "87ECA84BBFF77E54D21711A496857159CC5FA033", 2009081, 1);
-            CopyIndex t = new CopyIndex(0, "travel1.wma");
-            List<CopyIndex> a = new List<CopyIndex>();
-            a.Add(t);
-            cp.CopyInfo = a;
-            Thread test = new Thread(() => Sender.StartGetMusic(cp));
-            test.Start();
+            //Sender.InitialIpList();
+            //MusicCopy cp = new MusicCopy("travel1.wma", "travel1", "Jin", "Hello", "87ECA84BBFF77E54D21711A496857159CC5FA033", 2009081, 1);
+            //CopyIndex t = new CopyIndex(0, "travel1.wma");
+            //List<CopyIndex> a = new List<CopyIndex>();
+            //a.Add(t);
+            //cp.CopyInfo = a;
+            //Thread test = new Thread(() => Sender.StartGetMusic(cp));
+            //test.Start();
             
         }
 
