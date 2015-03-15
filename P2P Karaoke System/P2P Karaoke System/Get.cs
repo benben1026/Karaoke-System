@@ -91,6 +91,31 @@ namespace P2P_Karaoke_System
             return this.msg;
         }
 
+        public string GetMd5()
+        {
+            return this.md5;
+        }
+
+        public int GetStartByte()
+        {
+            return this.startByte;
+        }
+
+        public int GetEndByte()
+        {
+            return this.endByte;
+        }
+
+        public bool CopyData(byte[] dst)
+        {
+            if (dst.Length < endByte)
+            {
+                return false;
+            }
+            this.data.CopyTo(dst, this.startByte);
+            return true;
+        }
+
         public void GetData(FileStream fs, string oldMd5, int startByte, int endByte)
         {
             if (endByte <= startByte)
@@ -140,6 +165,16 @@ namespace P2P_Karaoke_System
             MemoryStream ms = new MemoryStream();
             bf.Serialize(ms, this);
             return ms.ToArray();
+        }
+
+        public static Object toObject(byte[] arrBytes)
+        {
+            MemoryStream memStream = new MemoryStream();
+            BinaryFormatter binForm = new BinaryFormatter();
+            memStream.Write(arrBytes, 0, arrBytes.Length);
+            memStream.Seek(0, SeekOrigin.Begin);
+            object obj = (object)binForm.Deserialize(memStream);
+            return obj;
         }
     }
 }

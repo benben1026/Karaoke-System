@@ -21,6 +21,7 @@ namespace P2P_Karaoke_System
         private static byte[] fileData = null;
         private static int segmentSize = 4096;
         private static int[] flag = null;
+        private static int[][] dataReceived = null;
         private static int packetLeft;
         private static bool flagLock = false;
         private static bool ifGettingData = false;
@@ -85,10 +86,21 @@ namespace P2P_Karaoke_System
             return Encoding.UTF8.GetBytes(request);
         }
 
-        private static byte[] ConstructGetRequest(string filename, string md5, int segmentId)
+        private static byte[] ConstructGetRequest(int startByte, int endByte)
         {
-            string request = "GET&" + filename + "&" + md5 + "&" + segmentId + "&<EOR>";
-            return Encoding.UTF8.GetBytes(request);
+            //string request = "GET&" + filename + "&" + md5 + "&" + segmentId + "&<EOR>";
+            //return Encoding.UTF8.GetBytes(request);
+            
+            GetRequest gres = new GetRequest(musicDownload.Filename, musicDownload.Hashvalue, startByte, endByte);
+            byte[] obj = gres.ToByte();
+            byte[] type = {0x01};
+            byte[] size = BitConverter.GetBytes(obj.Length);
+            byte[] request = new byte[5 + obj.Length];
+            Buffer.BlockCopy(type, 0, request, 0, 1);
+            Buffer.BlockCopy(size, 0, request, 1, 4);
+            Buffer.BlockCopy(obj, 0, request, 5, obj.Length);
+            return request;
+
         }
 
         public static void StartSearch(string keyword)
@@ -145,40 +157,50 @@ namespace P2P_Karaoke_System
             {
                 return;
             }
-            musicDownload = music;
-            int numOfSeg = ((music.Size - 1) / segmentSize) + 1;
-            packetLeft = numOfSeg;
             ifGettingData = true;
-            flag = new int[numOfSeg];
-            for (int i = 0; i < numOfSeg; i++)
+            musicDownload = music;
+            int numOfPeer = music.CopyInfo.Count();
+            Thread[] threadList = new Thread[numOfPeer];
+            fileData = new byte[music.Size];
+            int sizePP = music.Size / numOfPeer;
+            flag = new int[numOfPeer];
+            dataReceived = new int[numOfPeer][];
+            for (int i = 0; i < numOfPeer; i++)
             {
                 flag[i] = 0;
             }
-            fileData = new byte[music.Size];
-            Console.WriteLine("filedata = {0}",fileData);
-            Thread[] threadList = new Thread[music.CopyInfo.Count()];
-            for (int i = 0; i < music.CopyInfo.Count(); i++)
+            for (int i = 0; i < numOfPeer; i++)
             {
-                if (String.IsNullOrEmpty(music.CopyInfo[i].FileName) || music.CopyInfo[i].UserIndex < 0 || music.CopyInfo[i].UserIndex >= peerNum)
+                if (i == numOfPeer - 1)
                 {
-                    continue;
+                    threadList[i] = new Thread(() => GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, musicDownload.Size));
+
                 }
-                threadList[i] = new Thread(() => GetMusicThread(music.CopyInfo[i].UserIndex));
+                else
+                {
+                    threadList[i] = new Thread(() => GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, (i + 1) * sizePP - 1));
+
+                }
                 threadList[i].Start();
                 Thread.Sleep(1);
             }
-            while (packetLeft != 0);
-            //for (int i = 0; i < music.CopyInfo.Count(); i++)
-            //{
-            //    threadList[i].Join(20000);
-            //}
+            for (int i = 0; i < numOfPeer; i++)
+            {
+                threadList[i].Join(20000);
+            }
             FileStream fs = new FileStream(music.Filename, FileMode.Create);
             fs.Write(fileData, 0, music.Size);
             fs.Close();
         }
 
-        private static void GetMusicThread(int index)
+        private static void GetMusicThread(int index, int threadIndex, int startByte, int endByte)
         {
+            int numOfSeg = (endByte - startByte) / segmentSize + 1; //celling
+            dataReceived[threadIndex] = new int[numOfSeg];
+            for (int i = 0; i < numOfSeg; i++)
+            {
+                dataReceived[threadIndex][i] = 0;
+            }
             Console.WriteLine("Connecting to {0}", ipList[index]);
             Socket s = ConnectSocket(ipList[index], port);
             if (s == null)
@@ -188,96 +210,70 @@ namespace P2P_Karaoke_System
             }
             Console.WriteLine("{0}:Connection success", ipList[index]);
             Console.WriteLine("segmentSize = {0}, filename = {1}, segNum = {2}, packetLeft = {3}", segmentSize, musicDownload.Filename, flag.Count(), packetLeft);
+            
+            byte[] request = ConstructGetRequest(startByte, endByte);
+            s.Send(request, request.Length, 0);
+
             while (true)
             {
-                int i = 0;
-                for (i = 0; i < flag.Count(); i++)
-                {
-                    if (AccessFlag(0, i, 0) == 0)
-                    {
-                        byte[] request = ConstructGetRequest(musicDownload.Filename, musicDownload.Hashvalue, i);
-                        s.Send(request, request.Length, 0);
-                        AccessFlag(1, i, 1);
-                        break;
-                    }
-                }
-                if (i == flag.Count())
-                {
-                    break;
-                }
                 int bytes = 0;
-
-                byte[] bytesReceived = new byte[8];
-                for (int remain = 8; remain > 0; remain -= bytes)
+                byte[] byteReceived = new byte[5];
+                for (int remain = 5; remain > 0; remain -= bytes)
                 {
-                    bytes = s.Receive(bytesReceived, 8 - remain, remain, 0);
+                    bytes = s.Receive(byteReceived, 5 - remain, remain, 0);
                 }
-                //byte[] bytesReceived = new byte[8];
-                //bytes = s.Receive(bytesReceived, 8, 0);
-                string status = Encoding.UTF8.GetString(bytesReceived, 0, 3);
-                Console.WriteLine("status = {0}", status);
-                if (String.Compare(status, "200") == 0)
+                int payloadSize = BitConverter.ToInt32(byteReceived, 1);
+                byte type = byteReceived[0];
+                byteReceived = new byte[payloadSize];
+                for (int remain = payloadSize; remain > 0; remain -= bytes)
                 {
-                    bytesReceived = new byte[2];
-                    for (int remain = 2; remain > 0; remain -= bytes)
-                    {
-                        bytes = s.Receive(bytesReceived, 2 - remain, remain, 0);
-                    }
-                    //bytesReceived = new byte[2];
-                    //bytes = s.Receive(bytesReceived, 2, 0);
-                    ushort parameterLength = BitConverter.ToUInt16(bytesReceived, 0);
-                    //Console.WriteLine("parameterLength = {0}", parameterLength);
-
-                    bytesReceived = new byte[parameterLength];
-                    for (int remain = parameterLength; remain > 0; remain -= bytes)
-                    {
-                        bytes = s.Receive(bytesReceived, parameterLength - remain, remain, 0);
-                    }
-                    //bytesReceived = new byte[parameterLength];
-                    //bytes = s.Receive(bytesReceived, parameterLength, 0);
-                    string[] parameter = Encoding.UTF8.GetString(bytesReceived).Split('&');
-                    int segmentId = Convert.ToInt32(parameter[2]);
-                    Console.WriteLine("segmentId = {0}", segmentId);
-
-                    bytesReceived = new byte[2];
-                    for (int remain = 2; remain > 0; remain -= bytes)
-                    {
-                        bytes = s.Receive(bytesReceived, 2 - remain, remain, 0);
-                    }
-                    //bytesReceived = new byte[2];
-                    //bytes = s.Receive(bytesReceived, 2, 0);
-                    ushort payloadLength = BitConverter.ToUInt16(bytesReceived, 0);
-                    //Console.WriteLine("payloadLength = {0}", payloadLength);
-
-                    bytesReceived = new byte[payloadLength];
-                    for (int remain = payloadLength; remain > 0; remain -= bytes)
-                    {
-                        bytes = s.Receive(bytesReceived, payloadLength - remain, remain, 0);
-                    }
-                    Array.Copy(bytesReceived, 0, fileData, (int)(segmentId * segmentSize), payloadLength);
-                    //bytesReceived.CopyTo(fileData, Convert.ToInt64(segmentId * segmentSize));
-                    //Console.WriteLine("data = {0}", BitConverter.ToString(bytesReceived));
-                    AccessFlag(1, i, 2);
-                    //while (true)
-                    //{
-                    //    bytes = s.Receive(bytesReceived, 1, 0);
-                    //    if (bytes == 0)
-                    //    {
-                    //        break;
-                    //    }
-                    //}
-
-                    Thread.Sleep(100);
+                    bytes = s.Receive(byteReceived, payloadSize - remain, remain, 0);
                 }
-                else
+
+                if (type == 0x01)
                 {
-                    Console.WriteLine("Response Error: status = {0}", status);
-                    AccessFlag(1, i, 0);
-                    Thread.Sleep(2000);
+
+                }
+                else if (type == 0x02)
+                {
+                    int end = ProcessGetResponse(byteReceived, threadIndex);
+
                 }
             }
+            
             s.Shutdown(SocketShutdown.Both);
             s.Close();
+        }
+
+        private static int ProcessGetResponse(byte[] obj, int threadIndex)
+        {
+            GetResponse gres = (GetResponse)GetResponse.toObject(obj);
+            if (gres.GetStatus() != 1)
+            {
+                Console.WriteLine("Error occured when getting file data: {0}", gres.GetMsg());
+                return -1;
+            }
+            else if (String.Compare(musicDownload.Hashvalue, gres.GetMd5(), true) != 0)
+            {
+                Console.WriteLine("File Modified");
+                return -1;
+            }
+            if (gres.CopyData(fileData))
+            {
+                if (flag[threadIndex] == gres.GetStartByte())
+                {
+                    flag[threadIndex] = gres.GetEndByte();
+                    //for(int i = 0;)
+                }
+                Console.WriteLine("Copy from {0} to {1}", gres.GetStartByte(), gres.GetEndByte());
+                return 0;
+            }
+            else
+            {
+                Console.WriteLine("Error occured when copying from {0} to {1}", gres.GetStartByte(), gres.GetEndByte());
+                return -1;
+            }
+
         }
 
         private static int AccessFlag(int mode, int index, int status)
