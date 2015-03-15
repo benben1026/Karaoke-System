@@ -88,10 +88,12 @@
     <!-- <Compile Include="EditInfoWindow.xaml.cs">
       <DependentUpon>EditInfoWindow.xaml</DependentUpon>
     </Compile> -->
+    <Compile Include="Get.cs" />
     <Compile Include="MusicCopy.cs" />
     <Compile Include="MusicData.cs" />
     <Compile Include="MusicSearchUtil.cs" />
     <Compile Include="Receiver.cs" />
+    <Compile Include="Search.cs" />
     <Compile Include="Sender.cs" />
     <Compile Include="WaveOut.cs" />
     <Compile Include="EditInfoWindow.xaml.cs">

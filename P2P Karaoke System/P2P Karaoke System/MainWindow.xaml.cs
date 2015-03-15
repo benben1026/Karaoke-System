@@ -223,7 +223,26 @@ namespace P2P_Karaoke_System
 
         private void p2p_Click(object sender, RoutedEventArgs e)
         {
+            /*
+            //Test object serialization
+            GetRequest gr = new GetRequest("1.mp3", "87ECA84BBFF77E54D21711A496857159CC5FA033", 0, 1024);
+            Console.WriteLine("name = {0}, md5 = {1}, start = {2}, end = {3}", gr.GetFilename(), gr.GetMd5(), gr.GetStartByte(), gr.GetEndByte());
+            byte[] output = gr.ToByte();
+            GetRequest newGr = (GetRequest)GetRequest.toObject(output);
+            Console.WriteLine("name = {0}, md5 = {1}, start = {2}, end = {3}", newGr.GetFilename(), newGr.GetMd5(), newGr.GetStartByte(), newGr.GetEndByte());
+            */
 
+            /*
+            //Test get response
+            FileStream fs = new FileStream("travel1.wma", FileMode.Open);
+            GetResponse gres = new GetResponse("travel1.wma", "87ECA84BBFF77E54D21711A496857159CC5FA033");
+            gres.GetData(fs, "87ECA84BBFF77E54D21711A496857159CC5FA033", 0, 1024);
+            Console.WriteLine("status = {0}", gres.GetStatus());
+            byte[] output = gres.ToByte();
+            Console.WriteLine("size = {0}", output.Length);
+            */ 
+             
+            /*
             Sender.InitialIpList();
             //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
             //Thread test = new Thread(() => Receiver.StartListening());
@@ -233,11 +252,12 @@ namespace P2P_Karaoke_System
             a.Add(t);
             cp.CopyInfo = a;
             //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
-            // Thread test = new Thread(() => Sender.StartGetMusic(cp));
+            Thread test = new Thread(() => Sender.StartGetMusic(cp));
             test.Start();
 
             //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
-
+            */
+            
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
