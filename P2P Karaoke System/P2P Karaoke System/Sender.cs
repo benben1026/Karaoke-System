@@ -224,7 +224,7 @@ namespace P2P_Karaoke_System
 
             for (int i = 0; i < numOfPeer; i++)
             {
-                threadList[i].Join(20000);
+                threadList[i].Join();
             }
             FileStream fs = new FileStream(music.Filename, FileMode.Create);
             fs.Write(fileData, 0, music.Size);
@@ -253,43 +253,48 @@ namespace P2P_Karaoke_System
             byte[] request = ConstructGetRequest(startByte, endByte);
             s.Send(request, request.Length, 0);
 
-            while (true)
-            {
-                int bytes = 0;
-                byte[] byteReceived = new byte[5];
-                for (int remain = 5; remain > 0; remain -= bytes)
+            try { 
+                while (true)
                 {
-                    bytes = s.Receive(byteReceived, 5 - remain, remain, 0);
-                }
-                int payloadSize = BitConverter.ToInt32(byteReceived, 1);
-                byte type = byteReceived[0];
-                byteReceived = new byte[payloadSize];
-                for (int remain = payloadSize; remain > 0; remain -= bytes)
-                {
-                    bytes = s.Receive(byteReceived, payloadSize - remain, remain, 0);
-                }
-                Console.WriteLine("type = {0}, size = {1}, realSize = {2}", type, payloadSize, byteReceived.Length);
-                if (type == 0x11)
-                {
+                    int bytes = 0;
+                    byte[] byteReceived = new byte[5];
+                    for (int remain = 5; remain > 0; remain -= bytes)
+                    {
+                        bytes = s.Receive(byteReceived, 5 - remain, remain, 0);
+                    }
+                    int payloadSize = BitConverter.ToInt32(byteReceived, 1);
+                    byte type = byteReceived[0];
+                    byteReceived = new byte[payloadSize];
+                    for (int remain = payloadSize; remain > 0; remain -= bytes)
+                    {
+                        bytes = s.Receive(byteReceived, payloadSize - remain, remain, 0);
+                    }
+                    Console.WriteLine("type = {0}, size = {1}, realSize = {2}", type, payloadSize, byteReceived.Length);
+                    if (type == 0x11)
+                    {
 
-                }
-                else if (type == 0x12)
-                {
-                    int t = ProcessGetResponse(byteReceived, threadIndex);
-                    if (t == 1)
-                    {
-                        break;
                     }
-                    else if (t == -1)
+                    else if (type == 0x12)
                     {
-                        ifError = true;
-                        break;
+                        int t = ProcessGetResponse(byteReceived, threadIndex);
+                        if (t == 1)
+                        {
+                            break;
+                        }
+                        else if (t == -1)
+                        {
+                            ifError = true;
+                            break;
+                        }
                     }
                 }
-            }
             
-            s.Shutdown(SocketShutdown.Both);
-            s.Close();
+                s.Shutdown(SocketShutdown.Both);
+                s.Close();
+            }catch(Exception e){
+                ifError = true;
+                return;
+            }
         }
 
         private static int ProcessGetResponse(byte[] obj, int threadIndex)
