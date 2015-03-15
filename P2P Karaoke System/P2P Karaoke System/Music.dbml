@@ -11,6 +11,7 @@
       <Column Name="LyricsPath" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="[Order]" Member="Order" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="Size" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HashValue" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

@@ -24,6 +24,7 @@ namespace P2P_Karaoke_System
     /// </summary>
     public partial class MainWindow : Window
     {
+        
         private bool isPlaying = false;
         MusicDataContext musicDB;
         private Microsoft.Win32.OpenFileDialog openDialog;
@@ -43,6 +44,24 @@ namespace P2P_Karaoke_System
             this.openDialog.DefaultExt = "wav";
 
             musicDB = new MusicDataContext(Properties.Settings.Default.MusicConnectString);
+            if (musicDB == null)
+            {
+                MessageBox.Show("Can't connect to the media database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            try
+            {
+                var musicQuery = from audio in musicDB.Audios orderby audio.Order select audio;
+                var audios = musicQuery.ToArray<Audio>();
+                for (int i = 0; i < audios.Length; i++)
+                {
+                    musicList.Items.Add(audios[i]);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Can't connect to the media database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Filler(IntPtr data, int size)
@@ -266,14 +285,50 @@ namespace P2P_Karaoke_System
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
+            if (musicList.SelectedIndex < 0) return;
+            Audio audio = (Audio)musicList.SelectedItem;
             EditInfoWindow m = new EditInfoWindow();
-            m.Show();
+            m.title = audio.Title;
+            m.singer = audio.Artist;
+            m.album = audio.Album;
+            m.lrcPath = audio.LyricsPath;
+            if (audio.ImagePath != null)
+            {
+                if (audio.ImagePath.Length > 0) m.coverPath = audio.ImagePath;
+                else m.coverPath = null;
+            }
+            else m.coverPath = null;
+            m.Owner = this;
+            if (m.ShowDialog() == true)
+            {
+                audio.Title = audio.Artist = audio.Album = audio.LyricsPath = audio.ImagePath = null;
+
+                if (!string.IsNullOrWhiteSpace(m.title)) audio.Title = m.title;
+                if (!string.IsNullOrWhiteSpace(m.singer)) audio.Artist = m.singer;
+                if (!string.IsNullOrWhiteSpace(m.album)) audio.Album = m.album;
+                if (!string.IsNullOrWhiteSpace(m.lrcPath)) audio.LyricsPath = m.lrcPath;
+                if (!string.IsNullOrWhiteSpace(m.coverPath) || m.coverPath == "") audio.ImagePath = m.coverPath;
+                
+                if (musicDB != null)
+                {
+                    try
+                    {
+                        musicDB.Audios.InsertOnSubmit(audio);
+                        musicDB.SubmitChanges();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Can't connect to the media database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
         }
 
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
             if (addFileDialog.ShowDialog() == true)
             {
+                
                 Audio audio = new Audio();
                 TagLib.Tag tag = TagLib.File.Create(addFileDialog.FileName).Tag;
                 audio.Album = tag.Album;
@@ -287,6 +342,8 @@ namespace P2P_Karaoke_System
                     audio.Order = ((Audio)(musicList.Items[musicList.Items.Count - 1])).Order+1;
                 }
 
+                FileInfo f = new FileInfo(addFileDialog.FileName);
+                audio.Size = (int?)f.Length;
 
                 if (musicDB != null)
                 {
@@ -301,7 +358,8 @@ namespace P2P_Karaoke_System
                     }
                 }
                 musicList.Items.Add(audio);
-
+                MusicData musicData = new MusicData(audio.MediaPath, audio.Title, audio.Artist, audio.Album, audio.HashValue, (int)audio.Size);
+                Receiver.musicDataList.Add(musicData);
             }
 
 

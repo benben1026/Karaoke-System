@@ -48,6 +48,7 @@ namespace P2P_Karaoke_System
             this.lrcPath = lrcBox.Text;
             this.coverPath = tmpCoverPath;
             this.DialogResult = true;
+
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

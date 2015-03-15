@@ -98,6 +98,8 @@ namespace P2P_Karaoke_System
 		
 		private System.Nullable<int> _Size;
 		
+		private string _HashValue;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -120,6 +122,8 @@ namespace P2P_Karaoke_System
     partial void OnOrderChanged();
     partial void OnSizeChanging(System.Nullable<int> value);
     partial void OnSizeChanged();
+    partial void OnHashValueChanging(string value);
+    partial void OnHashValueChanged();
     #endregion
 		
 		public Audio()
@@ -303,6 +307,26 @@ namespace P2P_Karaoke_System
 					this._Size = value;
 					this.SendPropertyChanged("Size");
 					this.OnSizeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HashValue", DbType="NVarChar(MAX)")]
+		public string HashValue
+		{
+			get
+			{
+				return this._HashValue;
+			}
+			set
+			{
+				if ((this._HashValue != value))
+				{
+					this.OnHashValueChanging(value);
+					this.SendPropertyChanging();
+					this._HashValue = value;
+					this.SendPropertyChanged("HashValue");
+					this.OnHashValueChanged();
 				}
 			}
 		}
