@@ -116,7 +116,7 @@ namespace P2P_Karaoke_System
                 FileStream fs = new FileStream(filename, FileMode.Open);
                 RIPEMD160 myRIPEMD160 = RIPEMD160Managed.Create();
                 byte[] hashvalue = myRIPEMD160.ComputeHash(fs);
-                string hash = convertHashValue(hashvalue);
+                string hash = ConvertHashValue(hashvalue);
 
                 if (String.Compare(md5, hash, true) == 0)
                 {
@@ -151,12 +151,12 @@ namespace P2P_Karaoke_System
             return byteOut;
         }
 
-        public static string convertHashValue(byte[] hashvalue)
+        public static string ConvertHashValue(byte[] hashvalue)
         {
             var sb = new StringBuilder("");
             foreach (var b in hashvalue)
             {
-                sb.Append(b);
+                sb.Append(b.ToString("x2"));
                 // we can change this format accordingly
             }
             return sb.ToString();
@@ -171,10 +171,30 @@ namespace P2P_Karaoke_System
             int endByte = greq.GetEndByte();
 
             FileStream fs = new FileStream(filename, FileMode.Open);
+            MD5 myMD5 = MD5.Create();
+            byte[] hashvalue = myMD5.ComputeHash(fs);
+            string hash = ConvertHashValue(hashvalue);
+
+            if (String.Compare(hash, greq.GetMd5(), true) != 0)
+            {
+                GetResponse gres = new GetResponse(filename, hash);
+                gres.SetStatus(2);
+                gres.SetMsg("File Modified");
+                byte[] serialize = gres.ToByte();
+                byte[] type = { 0x12 };
+                byte[] size = BitConverter.GetBytes(serialize.Length);
+                byte[] response = new byte[5 + serialize.Length];
+                Buffer.BlockCopy(type, 0, response, 0, 1);
+                Buffer.BlockCopy(size, 0, response, 1, 4);
+                Buffer.BlockCopy(serialize, 0, response, 5, serialize.Length);
+                s.Send(response);
+                return;
+            }
 
             for (int i = startByte; i < endByte; i++) 
             {
-                GetResponse gres = new GetResponse(filename);
+                Console.WriteLine("Transmit no{0} packet", i);
+                GetResponse gres = new GetResponse(filename, hash);
                 gres.GetData(fs, md5, i, i + segmentSize);
                 byte[] serialize = gres.ToByte();
                 byte[] type = { 0x12 };

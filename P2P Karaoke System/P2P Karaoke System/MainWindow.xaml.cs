@@ -244,10 +244,8 @@ namespace P2P_Karaoke_System
             //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
             Thread test = new Thread(() => Sender.StartGetMusic(cp));
             test.Start();
-
             //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
             */
-            
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
