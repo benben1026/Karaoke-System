@@ -193,11 +193,21 @@ namespace P2P_Karaoke_System
                 return;
             }
 
-            for (int i = startByte; i < endByte; i += segmentSize) 
+            FileInfo f = new FileInfo(filename);
+            int filesize = (int)f.Length;
+
+            for (int i = startByte; i < endByte; i += segmentSize)
             {
                 Console.WriteLine("Transmit no{0} packet", i);
                 GetResponse gres = new GetResponse(filename, hash);
-                gres.GetData(fs, md5, i, i + segmentSize);
+                if (i + segmentSize >= filesize)
+                {
+                    gres.GetData(fs, md5, i, filesize - 1);
+                }
+                else
+                {
+                    gres.GetData(fs, md5, i, i + segmentSize);
+                }
                 byte[] serialize = gres.ToByte();
                 byte[] type = { 0x12 };
                 byte[] size = BitConverter.GetBytes(serialize.Length);

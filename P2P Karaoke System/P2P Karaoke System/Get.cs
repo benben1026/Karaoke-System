@@ -120,6 +120,7 @@ namespace P2P_Karaoke_System
         {
             if (dst.Length < endByte)
             {
+                Console.WriteLine("data length = {0}, start = {1}, end = {2}", dst.Length, this.startByte, this.endByte);
                 return false;
             }
             this.data.CopyTo(dst, this.startByte);

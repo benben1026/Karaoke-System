@@ -221,6 +221,7 @@ namespace P2P_Karaoke_System
                 threadList[i].Start();
                 Thread.Sleep(1);
             }
+
             for (int i = 0; i < numOfPeer; i++)
             {
                 threadList[i].Join(20000);
@@ -228,6 +229,7 @@ namespace P2P_Karaoke_System
             FileStream fs = new FileStream(music.Filename, FileMode.Create);
             fs.Write(fileData, 0, music.Size);
             fs.Close();
+            Console.WriteLine("succeed");
         }
 
         private static void GetMusicThread(int index, int threadIndex, int startByte, int endByte)
@@ -431,8 +433,8 @@ namespace P2P_Karaoke_System
         public static void InitialIpList()
         {
             ipList = new string[peerNum];
-            ipList[0] = "192.168.211.197";
-            ipList[1] = "";
+            ipList[0] = "192.168.213.200";
+            ipList[1] = "192.168.211.197";
             ipList[2] = "";
             ipList[3] = "";
             ipList[4] = "";
