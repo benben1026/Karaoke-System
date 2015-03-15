@@ -18,6 +18,8 @@ namespace P2P_Karaoke_System
 
         private static List<MusicCopy>[] searchResult = new List<MusicCopy>[peerNum];
 
+        private static int sizePP;
+        private static bool ifError = false;
         private static byte[] fileData = null;
         private static int segmentSize = 4096;
         private static int[] flag = null;
@@ -162,12 +164,12 @@ namespace P2P_Karaoke_System
             int numOfPeer = music.CopyInfo.Count();
             Thread[] threadList = new Thread[numOfPeer];
             fileData = new byte[music.Size];
-            int sizePP = music.Size / numOfPeer;
+            sizePP = (music.Size - 1) / numOfPeer + 1; // celling
             flag = new int[numOfPeer];
             dataReceived = new int[numOfPeer][];
             for (int i = 0; i < numOfPeer; i++)
             {
-                flag[i] = 0;
+                flag[i] = i * sizePP;
             }
             for (int i = 0; i < numOfPeer; i++)
             {
@@ -230,14 +232,22 @@ namespace P2P_Karaoke_System
                     bytes = s.Receive(byteReceived, payloadSize - remain, remain, 0);
                 }
 
-                if (type == 0x01)
+                if (type == 0x11)
                 {
 
                 }
-                else if (type == 0x02)
+                else if (type == 0x12)
                 {
-                    int end = ProcessGetResponse(byteReceived, threadIndex);
-
+                    int t = ProcessGetResponse(byteReceived, threadIndex);
+                    if (t == 1)
+                    {
+                        break;
+                    }
+                    else if (t == -1)
+                    {
+                        ifError = true;
+                        break;
+                    }
                 }
             }
             
@@ -260,12 +270,12 @@ namespace P2P_Karaoke_System
             }
             if (gres.CopyData(fileData))
             {
-                if (flag[threadIndex] == gres.GetStartByte())
-                {
-                    flag[threadIndex] = gres.GetEndByte();
-                    //for(int i = 0;)
-                }
+                flag[threadIndex] = gres.GetEndByte();
                 Console.WriteLine("Copy from {0} to {1}", gres.GetStartByte(), gres.GetEndByte());
+                if (flag[threadIndex] + 1 % sizePP == 0 || flag[threadIndex] == musicDownload.Size)
+                {
+                    return 1;
+                }
                 return 0;
             }
             else

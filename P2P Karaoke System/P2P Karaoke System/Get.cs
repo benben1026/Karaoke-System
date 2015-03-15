@@ -75,10 +75,9 @@ namespace P2P_Karaoke_System
         private int endByte;
         private byte[] data;
 
-        public GetResponse(string filename, string md5)
+        public GetResponse(string filename)
         {
             this.filname = filename;
-            this.md5 = md5;
         }
 
         public ushort GetStatus()
@@ -131,6 +130,7 @@ namespace P2P_Karaoke_System
             Console.WriteLine("newmd5 = {0}", hash);
             if (String.Compare(oldMd5, hash, true) == 0)
             {
+                this.md5 = hash;
                 this.status = 1;
                 this.msg = "OK";
                 this.startByte = startByte;

@@ -13,7 +13,7 @@ namespace P2P_Karaoke_System
 {
     class Receiver
     {
-        private static double segmentSize = 2048.0;
+        private static int segmentSize = 2048;
         // chunk size in bytes
 
         private static string data = null;
@@ -162,54 +162,102 @@ namespace P2P_Karaoke_System
             return sb.ToString();
         }
 
+        public static void ProcessGetRequest(byte[] obj, Socket s)
+        {
+            GetRequest greq = (GetRequest)GetRequest.toObject(obj);
+            string filename = greq.GetFilename();
+            string md5 = greq.GetMd5();
+            int startByte = greq.GetStartByte();
+            int endByte = greq.GetEndByte();
+
+            FileStream fs = new FileStream(filename, FileMode.Open);
+
+            for (int i = startByte; i < endByte; i++) 
+            {
+                GetResponse gres = new GetResponse(filename);
+                gres.GetData(fs, md5, i, i + segmentSize);
+                byte[] serialize = gres.ToByte();
+                byte[] type = { 0x12 };
+                byte[] size = BitConverter.GetBytes(serialize.Length);
+                byte[] response = new byte[5 + serialize.Length];
+                Buffer.BlockCopy(type, 0, response, 0, 1);
+                Buffer.BlockCopy(size, 0, response, 1, 4);
+                Buffer.BlockCopy(serialize, 0, response, 5, serialize.Length);
+                s.Send(response);
+            }
+        }
+
         public static void StartListening()
         {
-            byte[] bytes = new Byte[1024];
+            //byte[] bytes = new Byte[1024];
 
             IPAddress ipAddress = IPAddress.Any;
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 3280);
 
             Socket listener = new Socket(localEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-            try
-            {
-                listener.Bind(localEndPoint);
-                listener.Listen(10);
+            
+            listener.Bind(localEndPoint);
+            listener.Listen(10);
 
-                while (true)
-                {
+            while (true)
+            {
+                try { 
                     Console.WriteLine("waiting for connection...");
                     //program is suspended
                     Socket handler = listener.Accept();
                     data = null;
                     Console.WriteLine("Connected.");
 
-                    while (true)
+                    int bytes = 0;
+                    byte[] byteReceived = new byte[5];
+                    for (int remain = 5; remain > 0; remain -= bytes)
                     {
-                        bytes = new byte[1024];
-                        int bytesRec = handler.Receive(bytes);
-                        data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                        if (data.IndexOf("<EOR>") > -1)
-                        {
-                            break;
-                        }
+                        bytes = handler.Receive(byteReceived, 5 - remain, remain, 0);
+                    }
+                    int payloadSize = BitConverter.ToInt32(byteReceived, 1);
+                    byte type = byteReceived[0];
+                    byteReceived = new byte[payloadSize];
+                    for (int remain = payloadSize; remain > 0; remain -= bytes)
+                    {
+                        bytes = handler.Receive(byteReceived, payloadSize - remain, remain, 0);
                     }
 
-                    Console.WriteLine("Text received : {0}", data);
-                    //Echo the data back to the client
-                    byte[] msg = processRequest(data);
-
-                    handler.Send(msg);
-                    //handler.Shutdown(SocketShutdown.Both);
-                    //handler.Close();
+                    if (type == 0x01)
+                    {
+                        
+                    }
+                    else if (type == 0x02)
+                    {
+                        ProcessGetRequest(byteReceived, handler);
+                    }
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Socket Error:{0}", e.ToString());
+                }
+                //while (true)
+                //{
+                //    bytes = new byte[1024];
+                //    int bytesRec = handler.Receive(bytes);
+                //    data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+                //    if (data.IndexOf("<EOR>") > -1)
+                //    {
+                //        break;
+                //    }
+                //}
+
+                //Console.WriteLine("Text received : {0}", data);
+                //Echo the data back to the client
+                //byte[] msg = processRequest(data);
+
+                //handler.Send(msg);
+                //handler.Shutdown(SocketShutdown.Both);
+                //handler.Close();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            Console.WriteLine("\nPress ENTER to continue...");
-            Console.Read();
+            
+            //Console.WriteLine("\nPress ENTER to continue...");
+            //Console.Read();
         }
 
         /*
