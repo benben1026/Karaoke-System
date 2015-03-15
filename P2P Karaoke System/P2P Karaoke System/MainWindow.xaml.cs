@@ -28,10 +28,11 @@ namespace P2P_Karaoke_System
         MusicDataContext musicDB;
         private Microsoft.Win32.OpenFileDialog openDialog;
         private WavFormat format;
-        private Stream audioStream;
+        private WavStream audioStream;
         private WaveOutPlayer thePlayer;
         private string audioFormat = null;
         // For file format other than WAV
+        private NAudio.Wave.BlockAlignReductionStream nAudioStream = null;
         private OpenFileDialog openFileDialog, addFileDialog;
 
         public MainWindow()
@@ -72,15 +73,15 @@ namespace P2P_Karaoke_System
         private void Filler2(IntPtr data, int size)
         {
             byte[] b = new byte[size];
-            if (audioStream != null)
+            if (nAudioStream != null)
             {
                 int pos = 0;
                 while (pos < size)
                 {
                     int toget = size - pos;
-                    int got = audioStream.Read(b, pos, toget);
+                    int got = nAudioStream.Read(b, pos, toget);
                     if (got < toget)
-                        audioStream.Position = 0; // loop if the file ends
+                        nAudioStream.Position = 0; // loop if the file ends
                     pos += got;
                 }
             }
@@ -107,10 +108,21 @@ namespace P2P_Karaoke_System
             }
             else
             {
-                if (audioStream != null)
+                if (audioFormat == ".wav")
                 {
-                    thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
-                    isPlaying = true;
+                    if (audioStream != null)
+                    {
+                        thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
+                        isPlaying = true;
+                    }
+                }
+                else
+                {
+                    if (nAudioStream != null)
+                    {
+                        thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler2));
+                        isPlaying = true;
+                    }
                 }
             }
         }
@@ -119,7 +131,8 @@ namespace P2P_Karaoke_System
         {
             isPlaying = false;
             if (audioStream != null) audioStream.Position = 0;
-
+            if (nAudioStream != null) nAudioStream.Position = 0;
+            progressSlider.Maximum = 0;
             if (thePlayer != null)
             {
                 try { thePlayer.Dispose(); }
@@ -129,7 +142,7 @@ namespace P2P_Karaoke_System
 
         void timer_Tick(object sender, EventArgs e)
         {
-            progressSlider.Value = 5;
+            progressSlider.Value =currentPosition();
         }
 
         public void CloseFile()
@@ -137,17 +150,23 @@ namespace P2P_Karaoke_System
             Stop_Click();
             if (audioStream != null)
             {
-                try { audioStream.Close(); }
-                finally { audioStream = null; }
+                try
+                {
+                    audioStream.Close();
+                }
+                finally
+                {
+                    audioStream = null;
+                }
             }
         }
 
         private void DisposeWave()
         {
-            if (audioStream != null)
+            if (nAudioStream != null)
             {
-                audioStream.Dispose();
-                audioStream = null;
+                nAudioStream.Dispose();
+                nAudioStream = null;
             }
         }
 
@@ -196,17 +215,40 @@ namespace P2P_Karaoke_System
                     format.nBlockAlign = (short)pcm.WaveFormat.BlockAlign;
                     format.wBitsPerSample = (short)pcm.WaveFormat.BitsPerSample;
                     format.cbSize = (short)pcm.WaveFormat.ExtraSize;
-
-                    audioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
+                    nAudioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
                 }
+
                 DispatcherTimer timer = new DispatcherTimer();
                 timer.Tick += new EventHandler(timer_Tick);
                 timer.Interval = new TimeSpan(0, 0, 1);
                 timer.Start();
+
+                progressSlider.Maximum = currentDuration();
+                Console.WriteLine("Duration: " + currentDuration() + "s");
             }
             Audio audio = new Audio();
             audio.MediaPath = "TestPath";
             musicDB.Audios.InsertOnSubmit(audio);
+        }
+
+        public int currentDuration()
+        {
+            if (audioFormat == null) return 0;
+
+            if (audioFormat.Equals(".wav"))
+                return (int)(audioStream.Length / format.nAvgBytesPerSec);
+            else
+                return (int)(nAudioStream.Length / format.nAvgBytesPerSec);
+        }
+
+        public int currentPosition()
+        {
+            if (audioFormat == null) return 0;
+
+            if (audioFormat.Equals(".wav"))
+                return (int)(audioStream.Position / format.nAvgBytesPerSec);
+            else
+                return (int)(nAudioStream.Position / format.nAvgBytesPerSec);
         }
 
         private void p2p_Click(object sender, RoutedEventArgs e)
@@ -228,23 +270,23 @@ namespace P2P_Karaoke_System
             Console.WriteLine("status = {0}", gres.GetStatus());
             byte[] output = gres.ToByte();
             Console.WriteLine("size = {0}", output.Length);
-            */
-
-            
-            //waiting for conncetion...
-            Thread test = new Thread(() => Receiver.StartListening());
+            */ 
+             
+            /*
+            Sender.InitialIpList();
+            //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
+            //Thread test = new Thread(() => Receiver.StartListening());
+            MusicCopy cp = new MusicCopy("travel1.wma", "travel1", "Jin", "Hello", "87ECA84BBFF77E54D21711A496857159CC5FA033", 2009081, 1);
+            CopyIndex t = new CopyIndex(0, "travel1.wma");
+            List<CopyIndex> a = new List<CopyIndex>();
+            a.Add(t);
+            cp.CopyInfo = a;
+            //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
+            Thread test = new Thread(() => Sender.StartGetMusic(cp));
             test.Start();
-            
-            
-            //Get data from other peers
-            //Sender.InitialIpList();
-            //MusicCopy cp = new MusicCopy("travel1.wma", "travel1", "Jin", "Hello", "87ECA84BBFF77E54D21711A496857159CC5FA033", 2009081, 1);
-            //CopyIndex t = new CopyIndex(0, "travel1.wma");
-            //List<CopyIndex> a = new List<CopyIndex>();
-            //a.Add(t);
-            //cp.CopyInfo = a;
-            //Thread test = new Thread(() => Sender.StartGetMusic(cp));
-            //test.Start();
+
+            //Thread test = new Thread(() => Sender.StartSearch(" hello world"));
+            */
             
         }
 

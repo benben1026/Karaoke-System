@@ -71,14 +71,6 @@ namespace P2P_Karaoke_System
             Position = 0;
         }
 
-        public int Duration
-        {
-            get
-            {
-                return (int)(length * 1000 / format.nAvgBytesPerSec);
-            }
-        }
-
         public WavStream(string fileName)
         {
             lockObject = new object();
