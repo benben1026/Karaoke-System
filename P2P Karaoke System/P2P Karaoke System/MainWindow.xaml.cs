@@ -96,46 +96,49 @@ namespace P2P_Karaoke_System
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            Stop_Click();
             if (audioFormat == null) return;
-            if (audioFormat == ".wav")
+            if (isPlaying)
             {
-                if (audioStream != null && isPlaying == false)
+                if (thePlayer != null)
                 {
-                    thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
-                    isPlaying = true;
-                }
-                else
-                {
+                    try { thePlayer.Dispose(); }
+                    finally { thePlayer = null; }
                     isPlaying = false;
                 }
             }
             else
             {
-                if (nAudioStream != null && isPlaying == false)
+                if (audioFormat == ".wav")
                 {
-                    thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler2));
-                    isPlaying = true;
+                    if (audioStream != null)
+                    {
+                        thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
+                        isPlaying = true;
+                    }
                 }
                 else
                 {
-                    isPlaying = false;
+                    if (nAudioStream != null)
+                    {
+                        thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler2));
+                        isPlaying = true;
+                    }
                 }
             }
+
         }
 
         private void Stop_Click(object sender = null, RoutedEventArgs e = null)
         {
             if (thePlayer != null)
             {
-                try
-                {
-                    thePlayer.Dispose();
-                }
-                finally
-                {
-                    thePlayer = null;
-                }
+                try { thePlayer.Dispose(); }
+                finally { thePlayer = null; }
+
+                isPlaying = false;
+                if (audioStream != null) audioStream.Position = 0;
+                if (nAudioStream != null) nAudioStream.Position = 0; 
+
             }  
         }
 
