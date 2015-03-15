@@ -96,7 +96,6 @@ namespace P2P_Karaoke_System
             isPlaying = false;
             if (audioStream != null) audioStream.Position = 0;
 
-            progressSlider.Maximum = 0;
             if (thePlayer != null)
             {
                 try { thePlayer.Dispose(); }
@@ -106,7 +105,7 @@ namespace P2P_Karaoke_System
 
         void timer_Tick(object sender, EventArgs e)
         {
-            progressSlider.Value =currentPosition();
+            progressSlider.Value = currentPosition();
         }
 
         public void CloseFile()
@@ -148,6 +147,7 @@ namespace P2P_Karaoke_System
                 DisposeWave();
                 audioFormat = System.IO.Path.GetExtension(openDialog.FileName);
                 Console.WriteLine(audioFormat);
+                progressSlider.Value = 0;
 
                 if (audioFormat.Equals(".wav"))
                 {
@@ -209,6 +209,19 @@ namespace P2P_Karaoke_System
                 return 0;
             else
                 return (int)(audioStream.Position / format.nAvgBytesPerSec);
+        }
+
+        private void progressSlider_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (audioStream != null)
+            {
+                Console.WriteLine((int)((Slider)sender).Value);
+                audioStream.Position = (int)((Slider)sender).Value * format.nAvgBytesPerSec;
+            }
+            else
+            {
+                audioStream.Position = 0;
+            }
         }
 
         private void p2p_Click(object sender, RoutedEventArgs e)
