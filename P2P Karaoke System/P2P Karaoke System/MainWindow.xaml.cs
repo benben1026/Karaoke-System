@@ -32,7 +32,6 @@ namespace P2P_Karaoke_System
         private WaveOutPlayer thePlayer;
         private string audioFormat = null;
         // For file format other than WAV
-        private NAudio.Wave.BlockAlignReductionStream nAudioStream = null;
         private OpenFileDialog openFileDialog, addFileDialog;
 
         public MainWindow()
@@ -73,15 +72,15 @@ namespace P2P_Karaoke_System
         private void Filler2(IntPtr data, int size)
         {
             byte[] b = new byte[size];
-            if (nAudioStream != null)
+            if (audioStream != null)
             {
                 int pos = 0;
                 while (pos < size)
                 {
                     int toget = size - pos;
-                    int got = nAudioStream.Read(b, pos, toget);
+                    int got = audioStream.Read(b, pos, toget);
                     if (got < toget)
-                        nAudioStream.Position = 0; // loop if the file ends
+                        audioStream.Position = 0; // loop if the file ends
                     pos += got;
                 }
             }
@@ -108,42 +107,29 @@ namespace P2P_Karaoke_System
             }
             else
             {
-                if (audioFormat == ".wav")
+                if (audioStream != null)
                 {
-                    if (audioStream != null)
-                    {
-                        thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
-                        isPlaying = true;
-                    }
-                }
-                else
-                {
-                    if (nAudioStream != null)
-                    {
-                        thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler2));
-                        isPlaying = true;
-                    }
+                    thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
+                    isPlaying = true;
                 }
             }
-
         }
 
         private void Stop_Click(object sender = null, RoutedEventArgs e = null)
         {
+            isPlaying = false;
+            if (audioStream != null) audioStream.Position = 0;
+
             if (thePlayer != null)
             {
                 try { thePlayer.Dispose(); }
                 finally { thePlayer = null; }
-
-                isPlaying = false;
-                if (audioStream != null) audioStream.Position = 0;
-                if (nAudioStream != null) nAudioStream.Position = 0; 
-
             }  
         }
 
         void timer_Tick(object sender, EventArgs e)
         {
+            progressSlider.Value = 5;
         }
 
         public void CloseFile()
@@ -151,23 +137,17 @@ namespace P2P_Karaoke_System
             Stop_Click();
             if (audioStream != null)
             {
-                try
-                {
-                    audioStream.Close();
-                }
-                finally
-                {
-                    audioStream = null;
-                }
+                try { audioStream.Close(); }
+                finally { audioStream = null; }
             }
         }
 
         private void DisposeWave()
         {
-            if (nAudioStream != null)
+            if (audioStream != null)
             {
-                nAudioStream.Dispose();
-                nAudioStream = null;
+                audioStream.Dispose();
+                audioStream = null;
             }
         }
 
@@ -216,11 +196,13 @@ namespace P2P_Karaoke_System
                     format.nBlockAlign = (short)pcm.WaveFormat.BlockAlign;
                     format.wBitsPerSample = (short)pcm.WaveFormat.BitsPerSample;
                     format.cbSize = (short)pcm.WaveFormat.ExtraSize;
-                    nAudioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
+
+                    audioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
                 }
                 DispatcherTimer timer = new DispatcherTimer();
                 timer.Tick += new EventHandler(timer_Tick);
                 timer.Interval = new TimeSpan(0, 0, 1);
+                timer.Start();
             }
             Audio audio = new Audio();
             audio.MediaPath = "TestPath";
