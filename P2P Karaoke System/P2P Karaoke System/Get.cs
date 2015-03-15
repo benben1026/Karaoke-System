@@ -75,9 +75,20 @@ namespace P2P_Karaoke_System
         private int endByte;
         private byte[] data;
 
-        public GetResponse(string filename)
+        public GetResponse(string filename, string md5)
         {
             this.filname = filename;
+            this.md5 = md5;
+        }
+
+        public void SetStatus(ushort status)
+        {
+            this.status = status;
+        }
+
+        public void SetMsg(string msg)
+        {
+            this.msg = msg;
         }
 
         public ushort GetStatus()
@@ -122,15 +133,15 @@ namespace P2P_Karaoke_System
                 return;
             }
             
-            MD5 myMD5 = MD5.Create();
-            byte[] hashvalue = myMD5.ComputeHash(fs);
-            string hash = ConvertHashValue(hashvalue);
+            //MD5 myMD5 = MD5.Create();
+            //byte[] hashvalue = myMD5.ComputeHash(fs);
+            //string hash = ConvertHashValue(hashvalue);
 
-            Console.WriteLine("oldmd5 = {0}", oldMd5);
-            Console.WriteLine("newmd5 = {0}", hash);
-            if (String.Compare(oldMd5, hash, true) == 0)
-            {
-                this.md5 = hash;
+            //Console.WriteLine("oldmd5 = {0}", oldMd5);
+            //Console.WriteLine("newmd5 = {0}", hash);
+            //if (String.Compare(oldMd5, hash, true) == 0)
+            //{
+            //    this.md5 = hash;
                 this.status = 1;
                 this.msg = "OK";
                 this.startByte = startByte;
@@ -140,12 +151,12 @@ namespace P2P_Karaoke_System
                 this.data = new byte[segSize];
                 fs.Seek(startByte, SeekOrigin.Begin);
                 fs.Read(this.data, 0, segSize);
-            }
-            else
-            {
-                this.status = 2;
-                this.msg = "File Modified";
-            }
+            //}
+            //else
+            //{
+            //    this.status = 2;
+            //    this.msg = "File Modified";
+            //}
         }
 
         public static string ConvertHashValue(byte[] hashvalue)
