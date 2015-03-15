@@ -28,11 +28,10 @@ namespace P2P_Karaoke_System
         MusicDataContext musicDB;
         private Microsoft.Win32.OpenFileDialog openDialog;
         private WavFormat format;
-        private WavStream audioStream;
+        private Stream audioStream;
         private WaveOutPlayer thePlayer;
         private string audioFormat = null;
         // For file format other than WAV
-        private NAudio.Wave.BlockAlignReductionStream nAudioStream = null;
         private OpenFileDialog openFileDialog, addFileDialog;
 
         public MainWindow()
@@ -70,30 +69,6 @@ namespace P2P_Karaoke_System
 
         }
 
-        private void Filler2(IntPtr data, int size)
-        {
-            byte[] b = new byte[size];
-            if (nAudioStream != null)
-            {
-                int pos = 0;
-                while (pos < size)
-                {
-                    int toget = size - pos;
-                    int got = nAudioStream.Read(b, pos, toget);
-                    if (got < toget)
-                        nAudioStream.Position = 0; // loop if the file ends
-                    pos += got;
-                }
-            }
-            else
-            {
-                for (int i = 0; i < b.Length; i++)
-                    b[i] = 0;
-            }
-            System.Runtime.InteropServices.Marshal.Copy(b, 0, data, size);
-
-        }
-
         private void Play_Click(object sender, RoutedEventArgs e)
         {
             if (audioFormat == null) return;
@@ -108,21 +83,10 @@ namespace P2P_Karaoke_System
             }
             else
             {
-                if (audioFormat == ".wav")
+                if (audioStream != null)
                 {
-                    if (audioStream != null)
-                    {
-                        thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
-                        isPlaying = true;
-                    }
-                }
-                else
-                {
-                    if (nAudioStream != null)
-                    {
-                        thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler2));
-                        isPlaying = true;
-                    }
+                    thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
+                    isPlaying = true;
                 }
             }
         }
@@ -131,7 +95,7 @@ namespace P2P_Karaoke_System
         {
             isPlaying = false;
             if (audioStream != null) audioStream.Position = 0;
-            if (nAudioStream != null) nAudioStream.Position = 0;
+
             progressSlider.Maximum = 0;
             if (thePlayer != null)
             {
@@ -163,10 +127,10 @@ namespace P2P_Karaoke_System
 
         private void DisposeWave()
         {
-            if (nAudioStream != null)
+            if (audioStream != null)
             {
-                nAudioStream.Dispose();
-                nAudioStream = null;
+                audioStream.Dispose();
+                audioStream = null;
             }
         }
 
@@ -215,7 +179,7 @@ namespace P2P_Karaoke_System
                     format.nBlockAlign = (short)pcm.WaveFormat.BlockAlign;
                     format.wBitsPerSample = (short)pcm.WaveFormat.BitsPerSample;
                     format.cbSize = (short)pcm.WaveFormat.ExtraSize;
-                    nAudioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
+                    audioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
                 }
 
                 DispatcherTimer timer = new DispatcherTimer();
@@ -233,22 +197,18 @@ namespace P2P_Karaoke_System
 
         public int currentDuration()
         {
-            if (audioFormat == null) return 0;
-
-            if (audioFormat.Equals(".wav"))
+            if (audioFormat == null) 
+                return 0;
+            else 
                 return (int)(audioStream.Length / format.nAvgBytesPerSec);
-            else
-                return (int)(nAudioStream.Length / format.nAvgBytesPerSec);
         }
 
         public int currentPosition()
         {
-            if (audioFormat == null) return 0;
-
-            if (audioFormat.Equals(".wav"))
-                return (int)(audioStream.Position / format.nAvgBytesPerSec);
+            if (audioFormat == null)
+                return 0;
             else
-                return (int)(nAudioStream.Position / format.nAvgBytesPerSec);
+                return (int)(audioStream.Position / format.nAvgBytesPerSec);
         }
 
         private void p2p_Click(object sender, RoutedEventArgs e)
