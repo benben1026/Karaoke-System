@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Net;
 
 namespace P2P_Karaoke_System
 {
@@ -59,7 +60,19 @@ namespace P2P_Karaoke_System
             ip8 = IPBOX8.Text;
             ip9 = IPBOX9.Text;
             ip10 = IPBOX10.Text;
-            this.DialogResult = true;
+            IPAddress checkPart;
+            if ((ip1 != "" && !IPAddress.TryParse(ip1, out checkPart)) || (ip2 != "" && !IPAddress.TryParse(ip2, out checkPart)) ||
+                (ip3 != "" && !IPAddress.TryParse(ip3, out checkPart)) || (ip4 != "" && !IPAddress.TryParse(ip4, out checkPart)) ||
+                (ip5 != "" && !IPAddress.TryParse(ip5, out checkPart)) || (ip6 != "" && !IPAddress.TryParse(ip6, out checkPart)) ||
+                (ip7 != "" && !IPAddress.TryParse(ip7, out checkPart)) || (ip8 != "" && !IPAddress.TryParse(ip8, out checkPart)) ||
+                (ip9 != "" && !IPAddress.TryParse(ip9, out checkPart)) || (ip10 != "" && !IPAddress.TryParse(ip10, out checkPart)))
+            {
+                MessageBox.Show("Invalid IP Address!");
+            }
+            else
+            {
+                this.DialogResult = true;
+            }
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

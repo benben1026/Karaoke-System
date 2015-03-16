@@ -36,6 +36,7 @@ namespace P2P_Karaoke_System
         private string audioFormat = null;
 
         public List<MusicCopy> musicDataList;
+        public string[] ipListInput;
 
         public MainWindow()
         {
@@ -54,6 +55,7 @@ namespace P2P_Karaoke_System
             timer.Interval = new TimeSpan(0, 0, 1);
 
             musicDataList = new List<MusicCopy>();
+            ipListInput = new string[10];
 
             musicDB = new MusicDataContext(Properties.Settings.Default.MusicConnectString);
             if (musicDB == null)
@@ -326,37 +328,37 @@ namespace P2P_Karaoke_System
              
              
             //Get data from other peers
-            string[] ipList = new string[10];
-            ipList[0] = "192.168.208.249";
-            ipList[1] = "192.168.213.114";
-            ipList[2] = "";
-            ipList[3] = "";
-            ipList[4] = "";
-            ipList[5] = "";
-            ipList[6] = "";
-            ipList[7] = "";
-            ipList[8] = "";
-            ipList[9] = "";
-            Local l = new Local(ipList);
-            //Sender.InitialIpList();
-            Audio a = new Audio();
-            a.MediaPath = "travel1.wma";
-            a.Title = "travel1";
-            a.Artist = "Jin";
-            a.Album = "Hello";
-            a.HashValue = "264204303863cf9089de5c42d34d64bd";
-            a.Size = 2009081;
+            //string[] ipList = new string[10];
+            //ipList[0] = "192.168.208.249";
+            //ipList[1] = "192.168.213.114";
+            //ipList[2] = "";
+            //ipList[3] = "";
+            //ipList[4] = "";
+            //ipList[5] = "";
+            //ipList[6] = "";
+            //ipList[7] = "";
+            //ipList[8] = "";
+            //ipList[9] = "";
+            //Local l = new Local(ipList);
+            ////Sender.InitialIpList();
+            //Audio a = new Audio();
+            //a.MediaPath = "travel1.wma";
+            //a.Title = "travel1";
+            //a.Artist = "Jin";
+            //a.Album = "Hello";
+            //a.HashValue = "264204303863cf9089de5c42d34d64bd";
+            //a.Size = 2009081;
 
-            MusicCopy cp = new MusicCopy(a);
-            CopyIndex t1 = new CopyIndex(0, "bbb.wma", "192.168.208.249");
-            //CopyIndex t2 = new CopyIndex(1, "aaa.wma", "192.168.213.114");
-            List<CopyIndex> t = new List<CopyIndex>();
-            t.Add(t1);
-            //t.Add(t2);
-            cp.CopyInfo = t;
-            Thread test = new Thread(() => l.StartGetMusic(cp));
-            test.Start();
-            Thread.Sleep(1);
+            //MusicCopy cp = new MusicCopy(a);
+            //CopyIndex t1 = new CopyIndex(0, "bbb.wma", "192.168.208.249");
+            ////CopyIndex t2 = new CopyIndex(1, "aaa.wma", "192.168.213.114");
+            //List<CopyIndex> t = new List<CopyIndex>();
+            //t.Add(t1);
+            ////t.Add(t2);
+            //cp.CopyInfo = t;
+            //Thread test = new Thread(() => l.StartGetMusic(cp));
+            //test.Start();
+            //Thread.Sleep(1);
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
@@ -473,21 +475,31 @@ namespace P2P_Karaoke_System
         private void P2P_Setting_Click(object sender, RoutedEventArgs e)
         {
             P2P_Setting m = new P2P_Setting();
-            
-            m.IP1 = "a";
-            //m.IP2 = " ";
-            //m.IP3 = " ";
-            //m.IP4 = " ";
-            //m.IP5 = " ";
-            //m.IP6 = " ";
-            //m.IP7 = " ";
-            //m.IP8 = " ";
-            //m.IP9 = " ";
-            //m.IP10 = " ";
+
+            m.IP1 = ipListInput[0];
+            m.IP2 = ipListInput[1];
+            m.IP3 = ipListInput[2];
+            m.IP4 = ipListInput[3];
+            m.IP5 = ipListInput[4];
+            m.IP6 = ipListInput[5];
+            m.IP7 = ipListInput[6];
+            m.IP8 = ipListInput[7];
+            m.IP9 = ipListInput[8];
+            m.IP10 = ipListInput[9];
+
             m.Owner = this;
             if (m.ShowDialog() == true)
             {
-                string[] iplist = { m.IP1, m.IP2, m.IP3, m.IP4, m.IP5, m.IP6, m.IP7, m.IP8, m.IP9, m.IP10 };
+                ipListInput[0] = m.IP1;
+                ipListInput[1] = m.IP2;
+                ipListInput[2] = m.IP3;
+                ipListInput[3] = m.IP4;
+                ipListInput[4] = m.IP5;
+                ipListInput[5] = m.IP6;
+                ipListInput[6] = m.IP7;
+                ipListInput[7] = m.IP8;
+                ipListInput[8] = m.IP9;
+                ipListInput[9] = m.IP10;               
             }
         }
     }
