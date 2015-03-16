@@ -39,6 +39,11 @@ namespace P2P_Karaoke_System
             this.ipList = newIpList;
         }
 
+        public Stream GetDataStream()
+        {
+            return new MemoryStream(this.fileData);
+        }
+
         private Socket ConnectSocket(string serverIP)
         {
             IPAddress ip = IPAddress.Parse(serverIP);
@@ -56,39 +61,6 @@ namespace P2P_Karaoke_System
                 return null;
             }
         }
-        /*
-        private void SendRequest(string ip, byte[] bytesSent)
-        {
-            //string request = "TEST REQUEST FROM BENJAMIN<EOR>";
-            //Byte[] bytesSent = Encoding.UTF8.GetBytes(request);
-            Byte[] bytesReceived = new Byte[256];
-
-            Console.WriteLine("Connecting to {0}", ip);
-            Socket s = ConnectSocket(ip);
-
-            if (s == null)
-            {
-                Console.WriteLine("Connection Failed");
-                return;
-            }
-
-            Console.WriteLine("Connection success");
-            s.Send(bytesSent, bytesSent.Length, 0);
-
-            int bytes = 0;
-
-            do
-            {
-                bytes = s.Receive(bytesReceived, bytesReceived.Length, 0);
-                Console.WriteLine(Encoding.UTF8.GetString(bytesReceived, 0, bytes));
-                if (Encoding.UTF8.GetString(bytesReceived).IndexOf("<END>") > -1)
-                {
-                    break;
-                }
-            } while (bytes > 0);
-            Console.Read();
-        }
-        */
 
         private byte[] ConstructSearchRequest(string keyword)
         {
@@ -241,7 +213,25 @@ namespace P2P_Karaoke_System
             }
             while (this.ifError)
             {
-
+                for (int i = 0; i < numOfPeerAvailable; i++)
+                {
+                    if (i == numOfPeerAvailable - 1 && flag[i] != musicDownload.AudioData.Size - 1)
+                    {
+                        this.ifError = false;
+                        Thread t = new Thread(() => this.GetMusicThread(music.CopyInfo[0].UserIndex, 0, i * sizePP, (int)music.AudioData.Size));
+                        t.Start();
+                        Thread.Sleep(1);
+                        t.Join();
+                        break;
+                    }else if(flag[i] != (i + 1) * sizePP - 1){
+                        this.ifError = false;
+                        Thread t = new Thread(() => this.GetMusicThread(music.CopyInfo[i + 1].UserIndex, i + 1, flag[i], (i + 1) * sizePP - 1));
+                        t.Start();
+                        Thread.Sleep(1);
+                        t.Join();
+                        break;
+                    }
+                }
             }
             FileStream fs = new FileStream(music.AudioData.MediaPath, FileMode.Create);
             fs.Write(fileData, 0, (int)music.AudioData.Size);
