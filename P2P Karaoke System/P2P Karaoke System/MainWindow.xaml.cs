@@ -86,7 +86,10 @@ namespace P2P_Karaoke_System
                     int toget = size - pos;
                     int got = audioStream.Read(b, pos, toget);
                     if (got < toget)
+                    {
                         audioStream.Position = 0; // loop if the file ends
+                        Stop_Click();
+                    }
                     pos += got;
                 }
             }
