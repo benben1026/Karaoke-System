@@ -37,6 +37,7 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
+        <Slider x:Name="volumeSlider" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Margin="30,30,0,0" Width="100" Maximum="100" ValueChanged="Slider_ValueChanged" Value="100"/>
 
     </Grid>
 </Window>

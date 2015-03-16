@@ -119,6 +119,7 @@ namespace P2P_Karaoke_System
                 if (audioStream != null)
                 {
                     thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
+                    thePlayer.Volume = volumeSlider.Value;
                     isPlaying = true;
                 }
             }
@@ -263,6 +264,13 @@ namespace P2P_Karaoke_System
                 audioStream.Position = 0;
             }
             timer.Start();
+        }
+        
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (thePlayer == null) return;
+
+            thePlayer.Volume = (int)((Slider)sender).Value;
         }
 
         private void p2p_Click(object sender, RoutedEventArgs e)
