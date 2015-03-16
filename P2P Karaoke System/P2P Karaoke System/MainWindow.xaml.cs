@@ -102,7 +102,7 @@ namespace P2P_Karaoke_System
 
         }
 
-        private void Play_Click(object sender, RoutedEventArgs e)
+        private void Play_Click(object sender = null, RoutedEventArgs e = null)
         {
             if (audioFormat == null) return;
             if (isPlaying)
@@ -176,53 +176,58 @@ namespace P2P_Karaoke_System
         {
             if (openDialog.ShowDialog() == true)
             {
-                CloseFile();
-                DisposeWave();
-                audioFormat = System.IO.Path.GetExtension(openDialog.FileName);
-                Console.WriteLine(audioFormat);
-                progressSlider.Value = 0;
-
-                if (audioFormat.Equals(".wav"))
-                {
-                    try
-                    {
-                        WavStream S = new WavStream(openDialog.FileName);
-                        if (S.Length <= 0)
-                            throw new Exception("Invalid WAV file");
-                        format = S.Format;
-                        Console.WriteLine(format);
-                        if (format.wFormatTag != (short)WavFormats.PCM && format.wFormatTag != (short)WavFormats.FLOAT)
-                            throw new Exception("Olny PCM files are supported");
-
-                        audioStream = S;
-                    }
-                    catch (Exception err)
-                    {
-                        CloseFile();
-                        System.Windows.Forms.MessageBox.Show(err.Message);
-                    }
-                }
-                else
-                {
-                    NAudio.Wave.WaveStream pcm = new NAudio.Wave.AudioFileReader(openDialog.FileName);
-                    format.wFormatTag = 3;
-                    format.nChannels = (short)pcm.WaveFormat.Channels;
-                    format.nSamplesPerSec = (int)pcm.WaveFormat.SampleRate;
-                    format.nAvgBytesPerSec = (int)pcm.WaveFormat.AverageBytesPerSecond;
-                    format.nBlockAlign = (short)pcm.WaveFormat.BlockAlign;
-                    format.wBitsPerSample = (short)pcm.WaveFormat.BitsPerSample;
-                    format.cbSize = (short)pcm.WaveFormat.ExtraSize;
-                    audioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
-                }
-
-                timer.Start();
-
-                progressSlider.Maximum = currentDuration();
-                Console.WriteLine("Duration: " + currentDuration() + "s");
+                openFile(openDialog.FileName);
             }
             Audio audio = new Audio();
             audio.MediaPath = "TestPath";
             musicDB.Audios.InsertOnSubmit(audio);
+        }
+
+        public void openFile(string fileName)
+        {
+            CloseFile();
+            DisposeWave();
+            audioFormat = System.IO.Path.GetExtension(fileName);
+            Console.WriteLine(audioFormat);
+            progressSlider.Value = 0;
+
+            if (audioFormat.Equals(".wav"))
+            {
+                try
+                {
+                    WavStream S = new WavStream(fileName);
+                    if (S.Length <= 0)
+                        throw new Exception("Invalid WAV file");
+                    format = S.Format;
+                    Console.WriteLine(format);
+                    if (format.wFormatTag != (short)WavFormats.PCM && format.wFormatTag != (short)WavFormats.FLOAT)
+                        throw new Exception("Olny PCM files are supported");
+
+                    audioStream = S;
+                }
+                catch (Exception err)
+                {
+                    CloseFile();
+                    System.Windows.Forms.MessageBox.Show(err.Message);
+                }
+            }
+            else
+            {
+                NAudio.Wave.WaveStream pcm = new NAudio.Wave.AudioFileReader(fileName);
+                format.wFormatTag = 3;
+                format.nChannels = (short)pcm.WaveFormat.Channels;
+                format.nSamplesPerSec = (int)pcm.WaveFormat.SampleRate;
+                format.nAvgBytesPerSec = (int)pcm.WaveFormat.AverageBytesPerSecond;
+                format.nBlockAlign = (short)pcm.WaveFormat.BlockAlign;
+                format.wBitsPerSample = (short)pcm.WaveFormat.BitsPerSample;
+                format.cbSize = (short)pcm.WaveFormat.ExtraSize;
+                audioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
+            }
+
+            timer.Start();
+
+            progressSlider.Maximum = currentDuration();
+            Console.WriteLine("Duration: " + currentDuration() + "s");
         }
 
         public int currentDuration()
@@ -348,9 +353,14 @@ namespace P2P_Karaoke_System
                 
                 Audio audio = new Audio();
                 TagLib.Tag tag = TagLib.File.Create(addFileDialog.FileName).Tag;
-                audio.Album = tag.Album;
-                audio.Title = tag.Title;
+                audio.Album = tag.Album == null ? "Unknown Album" : tag.Album;
+                audio.Title = tag.Title == null ? "Unknown Title" : tag.Title;
+                audio.MediaPath = addFileDialog.FileName;
+
+                Console.WriteLine(audio.MediaPath);
+
                 if (tag.JoinedPerformers.Length > 0) audio.Artist = tag.JoinedPerformers;
+                else audio.Artist = "Unknown Artist";
       
                 if(musicList.Items.Count==0) 
                     audio.Order=0;
@@ -378,8 +388,14 @@ namespace P2P_Karaoke_System
                 MusicCopy musicData = new MusicCopy(audio.MediaPath, audio.Title, audio.Artist, audio.Album, audio.HashValue, (int)audio.Size);
                 musicDataList.Add(musicData);
             }
+        }
 
-
+        private void musicListItem_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            CloseFile();
+            Audio audio = (Audio)((ListBoxItem)e.Source).Content;
+            openFile(audio.MediaPath);
+            Play_Click();
         }
 
         private void deleteButton_Click(object sender, RoutedEventArgs e)
