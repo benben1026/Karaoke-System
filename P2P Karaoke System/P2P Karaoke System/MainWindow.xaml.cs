@@ -31,6 +31,7 @@ namespace P2P_Karaoke_System
         private WavFormat format;
         private Stream audioStream;
         private WaveOutPlayer thePlayer;
+        private DispatcherTimer timer;
         private string audioFormat = null;
 
         public List<MusicCopy> musicDataList;
@@ -46,6 +47,10 @@ namespace P2P_Karaoke_System
             this.addFileDialog = new Microsoft.Win32.OpenFileDialog();
             this.addFileDialog.Filter = "Audio File (*.wav, *.mp3, *.mp4, *.wma, *.m4a)|*.wav;*.mp3;*.mp4;*.wma;*.m4a;";
             this.addFileDialog.DefaultExt = "wav";
+
+            timer = new DispatcherTimer();
+            timer.Tick += new EventHandler(timer_Tick);
+            timer.Interval = new TimeSpan(0, 0, 1);
 
             musicDataList = new List<MusicCopy>();
 
@@ -207,9 +212,6 @@ namespace P2P_Karaoke_System
                     audioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
                 }
 
-                DispatcherTimer timer = new DispatcherTimer();
-                timer.Tick += new EventHandler(timer_Tick);
-                timer.Interval = new TimeSpan(0, 0, 1);
                 timer.Start();
 
                 progressSlider.Maximum = currentDuration();
@@ -236,6 +238,11 @@ namespace P2P_Karaoke_System
                 return (int)(audioStream.Position / format.nAvgBytesPerSec);
         }
 
+        private void progressSlider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            timer.Stop();
+        }
+
         private void progressSlider_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (audioStream != null)
@@ -247,6 +254,7 @@ namespace P2P_Karaoke_System
             {
                 audioStream.Position = 0;
             }
+            timer.Start();
         }
 
         private void p2p_Click(object sender, RoutedEventArgs e)
