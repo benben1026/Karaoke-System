@@ -111,7 +111,7 @@ namespace P2P_Karaoke_System
             //string request = "GET&" + filename + "&" + md5 + "&" + segmentId + "&<EOR>";
             //return Encoding.UTF8.GetBytes(request);
             
-            GetRequest gres = new GetRequest(musicDownload.Filename, musicDownload.Hashvalue, startByte, endByte);
+            GetRequest gres = new GetRequest(musicDownload.AudioData.MediaPath, musicDownload.AudioData.HashValue, startByte, endByte);
             byte[] obj = gres.ToByte();
             byte[] type = {0x02};
             byte[] size = BitConverter.GetBytes(obj.Length);
@@ -148,16 +148,16 @@ namespace P2P_Karaoke_System
             return MergeMusicList(searchResult);
         }
 
-        private void SearchThread(int index, byte[] bytesSent)
+        private void SearchThread(int userIndex, byte[] bytesSent)
         {
-            Console.WriteLine("Connecting to {0}", ipList[index]);
-            Socket s = this.ConnectSocket(ipList[index]);
+            Console.WriteLine("Connecting to {0}", ipList[userIndex]);
+            Socket s = this.ConnectSocket(ipList[userIndex]);
             if (s == null)
             {
-                Console.WriteLine("{0}:Connection Failed", ipList[index]);
+                Console.WriteLine("{0}:Connection Failed", ipList[userIndex]);
                 return;
             }
-            Console.WriteLine("{0}:Connection success", ipList[index]);
+            Console.WriteLine("{0}:Connection success", ipList[userIndex]);
             s.Send(bytesSent, bytesSent.Length, 0);
 
             
@@ -179,8 +179,8 @@ namespace P2P_Karaoke_System
 
                 if (type == 0x11)
                 {
-                    searchResult[index] = ProcessSearchResponse(byteReceived);
-                    if (searchResult[index] == null)
+                    searchResult[userIndex] = ProcessSearchResponse(byteReceived, userIndex);
+                    if (searchResult[userIndex] == null)
                     {
                         ifError = true; 
                     }
@@ -202,7 +202,7 @@ namespace P2P_Karaoke_System
             {
                 return;
             }
-            if (music.Size >= Int32.MaxValue)
+            if (music.AudioData.Size >= Int32.MaxValue)
             {
                 Console.WriteLine("File Too Large");
                 return;
@@ -211,8 +211,8 @@ namespace P2P_Karaoke_System
             this.musicDownload = music;
             int numOfPeerAvailable = music.CopyInfo.Count();
             Thread[] threadList = new Thread[numOfPeerAvailable];
-            this.fileData = new byte[music.Size];
-            this.sizePP = (music.Size - 1) / numOfPeerAvailable + 1; // celling
+            this.fileData = new byte[(int)music.AudioData.Size];
+            this.sizePP = ((int)music.AudioData.Size - 1) / numOfPeerAvailable + 1; // celling
             flag = new int[numOfPeerAvailable];
             //dataReceived = new int[numOfPeerAvailable][];
             for (int i = 0; i < numOfPeerAvailable; i++)
@@ -223,7 +223,7 @@ namespace P2P_Karaoke_System
             {
                 if (i == numOfPeerAvailable - 1)
                 {
-                    threadList[i] = new Thread(() => this.GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, musicDownload.Size));
+                    threadList[i] = new Thread(() => this.GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, (int)music.AudioData.Size));
 
                 }
                 else
@@ -239,8 +239,8 @@ namespace P2P_Karaoke_System
             {
                 threadList[i].Join();
             }
-            FileStream fs = new FileStream(music.Filename, FileMode.Create);
-            fs.Write(fileData, 0, music.Size);
+            FileStream fs = new FileStream(music.AudioData.MediaPath, FileMode.Create);
+            fs.Write(fileData, 0, (int)music.AudioData.Size);
             fs.Close();
             Console.WriteLine("succeed");
             ifGettingData = false;
@@ -319,7 +319,7 @@ namespace P2P_Karaoke_System
                 Console.WriteLine("Error occured when getting file data: {0}", gres.GetMsg());
                 return -1;
             }
-            else if (String.Compare(musicDownload.Hashvalue, gres.GetMd5(), true) != 0)
+            else if (String.Compare(musicDownload.AudioData.HashValue, gres.GetMd5(), true) != 0)
             {
                 Console.WriteLine("File Modified");
                 return -1;
@@ -328,7 +328,7 @@ namespace P2P_Karaoke_System
             {
                 flag[threadIndex] = gres.GetEndByte();
                 Console.WriteLine("Copy from {0} to {1}", gres.GetStartByte(), gres.GetEndByte());
-                if (flag[threadIndex] + 1 % sizePP == 0 || flag[threadIndex] == musicDownload.Size)
+                if (flag[threadIndex] + 1 % sizePP == 0 || flag[threadIndex] == (int)musicDownload.AudioData.Size)
                 {
                     return 1;
                 }
@@ -342,7 +342,7 @@ namespace P2P_Karaoke_System
 
         }
 
-        private List<MusicCopy> ProcessSearchResponse(byte[] obj)
+        private List<MusicCopy> ProcessSearchResponse(byte[] obj, int userIndex)
         {
             SearchResponse sres = (SearchResponse)SearchResponse.ToObject(obj);
             if (sres.GetStatus() != 1)
@@ -352,7 +352,14 @@ namespace P2P_Karaoke_System
             }
             else
             {
-                return sres.GetResult();
+                List<MusicCopy> searchResult =  sres.GetResult();
+                int count = searchResult.Count();
+                for (int i = 0; i < count; i++)
+                {
+                    CopyIndex adding = new CopyIndex(userIndex, searchResult[i].AudioData.MediaPath, ipList[userIndex]);
+                    searchResult[i].CopyInfo.Add(adding);
+                }
+                return searchResult;
             }
         }
 
@@ -374,11 +381,11 @@ namespace P2P_Karaoke_System
                     duplicate = false;
                     for (int j = 0; j < oldItems; j++)
                     {
-                        if (newList[i].Hashvalue == oldList[j].Hashvalue && (String.Compare(newList[i].Title, oldList[j].Title, false) == 0))
+                        if (newList[i].AudioData.HashValue == oldList[j].AudioData.HashValue && (String.Compare(newList[i].AudioData.Title, oldList[j].AudioData.Title, false) == 0))
                         {
                             duplicate = true;
                             oldList[j].CopyNumber++;
-                            oldList[j].CopyInfo.Add(new CopyIndex(k, newList[i].Filename));
+                            oldList[j].CopyInfo.Add(new CopyIndex(newList[i].CopyInfo[0].UserIndex, newList[i].AudioData.MediaPath, newList[i].CopyInfo[0].IPAddress));
                         }
                     }
                     if (!duplicate)

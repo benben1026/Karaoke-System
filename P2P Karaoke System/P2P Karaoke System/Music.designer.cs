@@ -126,7 +126,6 @@ namespace P2P_Karaoke_System
     partial void OnHashValueChanged();
     #endregion
 		
-        [Serializable]
 		public Audio()
 		{
 			OnCreated();

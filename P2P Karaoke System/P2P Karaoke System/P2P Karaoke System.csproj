@@ -89,10 +89,11 @@
       <DependentUpon>EditInfoWindow.xaml</DependentUpon>
     </Compile> -->
     <Compile Include="Get.cs" />
-    <Compile Include="LrcReader.cs" />
+    <Compile Include="Local.cs" />
     <Compile Include="MusicCopy.cs" />
     <Compile Include="MusicData.cs" />
     <Compile Include="MusicSearchUtil.cs" />
+    <Compile Include="Peer.cs" />
     <Compile Include="Search.cs" />
     <Compile Include="WaveOut.cs" />
     <Compile Include="EditInfoWindow.xaml.cs">

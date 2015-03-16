@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace P2P_Karaoke_System
 {
-    public  struct CopyIndex
+    public class CopyIndex
     {
-        public int UserIndex;
-        public string FileName;
-        //public string IPAddress;
+        public int UserIndex { get; set; }
+        public string FileName { get; set; }
+        public string IPAddress { get; set; }
 
         public CopyIndex(int userIndex, string fileName, string ipAddress)
         {
             UserIndex = userIndex;
             FileName = fileName;
-            //IPAddress = ipAddress;
+            IPAddress = ipAddress;
         }
     }
 
