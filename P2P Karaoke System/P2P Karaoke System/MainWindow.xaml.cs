@@ -32,6 +32,7 @@ namespace P2P_Karaoke_System
         private Stream audioStream;
         private WaveOutPlayer thePlayer;
         private DispatcherTimer timer;
+        private LrcReader lyricsReader;
         private string audioFormat = null;
 
         public List<MusicCopy> musicDataList;
@@ -140,6 +141,13 @@ namespace P2P_Karaoke_System
         void timer_Tick(object sender, EventArgs e)
         {
             progressSlider.Value = currentPosition();
+            //Lyrics
+            for (int i = 1; i <= 7; i++)//7 is the number of label
+            {
+                //Label la = (Label) this.FindName("Lyrics" + i);
+                //la.
+            }
+                Lyrics4.Content = lyricsReader.GetCurrentLyrics();
         }
 
         public void CloseFile()
@@ -214,6 +222,20 @@ namespace P2P_Karaoke_System
                 format.cbSize = (short)pcm.WaveFormat.ExtraSize;
                 audioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
             }
+            
+            //Lyrics
+            try
+            {
+                //assuming same filename as music file
+                lyricsReader = new LrcReader(System.IO.Path.GetDirectoryName(fileName) + "\\" + System.IO.Path.GetFileNameWithoutExtension(fileName) + ".lrc");
+                lyricsReader.StartStopwatch();
+            }
+            catch (Exception err)
+            {
+                System.Windows.Forms.MessageBox.Show(err.Message);
+            }
+            
+
 
             timer.Start();
 

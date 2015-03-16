@@ -39,6 +39,15 @@
         </ListBox>
         <Slider x:Name="volumeSlider" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Margin="30,20,0,0" Width="100" Maximum="100" ValueChanged="AdjustVolume" Value="100"/>
         <Slider x:Name="balanceSlider" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Margin="30,50,0,0" Width="100" Maximum="100" Value="50" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="balanceSlider_ValueChanged"/>
+        <StackPanel x:Name="LyricsPanel" HorizontalAlignment="Left" Height="211" Margin="110,130,0,0" VerticalAlignment="Top" Width="410" Background="#FF03A3FF" Opacity="0.5">
+            <Label x:Name="Lyrics1" Content="1"/>
+            <Label x:Name="Lyrics2" Content=""/>
+            <Label x:Name="Lyrics3" Content=""/>
+            <Label x:Name="Lyrics4" Content="" Background="#FF006DAC"/>
+            <Label x:Name="Lyrics5" Content=""/>
+            <Label x:Name="Lyrics6" Content=""/>
+            <Label x:Name="Lyrics7" Content=""/>
+        </StackPanel>
 
     </Grid>
 </Window>
