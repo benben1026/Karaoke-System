@@ -86,7 +86,7 @@ namespace P2P_Karaoke_System {
 
         //The methods that can be used by UI
 
-        public bool FileHasLoadedSuccessfully() {
+        public bool LRCFileHasLoadedSuccessfully() {
             return fileLoadedSuccessfully;
         }
 
@@ -111,20 +111,29 @@ namespace P2P_Karaoke_System {
         }
 
         public String GetCurrentLyrics() {
-            int n = 0;
-            while ((n < lyricsList.Count - 1) && lyricsList[n + 1].GetLyricsMillisecond() < sw.ElapsedMilliseconds) {
-                n++;
+            if (fileLoadedSuccessfully) {
+                int n = 0;
+                while ((n < lyricsList.Count - 1) && lyricsList[n + 1].GetLyricsMillisecond() < sw.ElapsedMilliseconds) {
+                    n++;
+                }
+                return lyricsList[n].GetLyricsContent();
+            } else {
+                return " ";
             }
-            return lyricsList[n].GetLyricsContent();
+            
         }
 
         public String GetLyricsByTimeWithOffset(int milliseconds, int offset){
-            int n = 0;
-            while ((n < lyricsList.Count - 1) && lyricsList[n + 1].GetLyricsMillisecond() < milliseconds){
-                n++;
-            }
+            if (fileLoadedSuccessfully) {
+                int n = 0;
+                while ((n < lyricsList.Count - 1) && lyricsList[n + 1].GetLyricsMillisecond() < milliseconds) {
+                    n++;
+                }
 
-            return (n + offset >= 0 && n + offset <= lyricsList.Count - 1) ? lyricsList[n + offset].GetLyricsContent() : " ";
+                return (n + offset >= 0 && n + offset <= lyricsList.Count - 1) ? lyricsList[n + offset].GetLyricsContent() : " ";
+            } else {
+                return " ";
+            }
         } 
 
         public long GetTimeCount() {

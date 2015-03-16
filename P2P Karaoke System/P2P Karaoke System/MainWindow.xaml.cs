@@ -232,8 +232,6 @@ namespace P2P_Karaoke_System
             {
                 System.Windows.Forms.MessageBox.Show(err.Message);
             }
-            
-
 
             timer.Start();
 
