@@ -106,12 +106,12 @@ namespace P2P_Karaoke_System
             return request;
         }
 
-        private byte[] ConstructGetRequest(int startByte, int endByte)
+        private byte[] ConstructGetRequest(int copyInfoIndex, int startByte, int endByte)
         {
             //string request = "GET&" + filename + "&" + md5 + "&" + segmentId + "&<EOR>";
             //return Encoding.UTF8.GetBytes(request);
             
-            GetRequest gres = new GetRequest(musicDownload.AudioData.MediaPath, musicDownload.AudioData.HashValue, startByte, endByte);
+            GetRequest gres = new GetRequest(musicDownload.CopyInfo[copyInfoIndex].FileName, musicDownload.AudioData.HashValue, startByte, endByte);
             byte[] obj = gres.ToByte();
             byte[] type = {0x02};
             byte[] size = BitConverter.GetBytes(obj.Length);
@@ -237,7 +237,11 @@ namespace P2P_Karaoke_System
 
             for (int i = 0; i < numOfPeerAvailable; i++)
             {
-                threadList[i].Join();
+                threadList[i].Join(10000);
+            }
+            while (this.ifError)
+            {
+
             }
             FileStream fs = new FileStream(music.AudioData.MediaPath, FileMode.Create);
             fs.Write(fileData, 0, (int)music.AudioData.Size);
@@ -264,7 +268,7 @@ namespace P2P_Karaoke_System
             Console.WriteLine("{0}:Connection success", this.ipList[index]);
             //Console.WriteLine("segmentSize = {0}, filename = {1}, segNum = {2}, packetLeft = {3}", segmentSize, musicDownload.Filename, flag.Count(), packetLeft);
             
-            byte[] request = this.ConstructGetRequest(startByte, endByte);
+            byte[] request = this.ConstructGetRequest(threadIndex, startByte, endByte);
             s.Send(request, request.Length, 0);
 
             try { 
@@ -291,6 +295,7 @@ namespace P2P_Karaoke_System
                     else if (type == 0x12)
                     {
                         int t = this.ProcessGetResponse(byteReceived, threadIndex);
+                        Console.WriteLine("return value = {0}", t);
                         if (t == 1)
                         {
                             break;
@@ -302,9 +307,10 @@ namespace P2P_Karaoke_System
                         }
                     }
                 }
-            
+                Console.WriteLine("try to close socket");
                 s.Shutdown(SocketShutdown.Both);
                 s.Close();
+                Console.WriteLine("socket closed");
             }catch(Exception e){
                 this.ifError = true;
                 return;
@@ -328,7 +334,8 @@ namespace P2P_Karaoke_System
             {
                 flag[threadIndex] = gres.GetEndByte();
                 Console.WriteLine("Copy from {0} to {1}", gres.GetStartByte(), gres.GetEndByte());
-                if (flag[threadIndex] + 1 % sizePP == 0 || flag[threadIndex] == (int)musicDownload.AudioData.Size)
+                Console.WriteLine("flag = {0}, sizePP = {1}, datasize = {2}", flag[threadIndex], sizePP, musicDownload.AudioData.Size);
+                if ((flag[threadIndex] + 1) % sizePP == 0 || flag[threadIndex] + 1 == musicDownload.AudioData.Size)
                 {
                     return 1;
                 }

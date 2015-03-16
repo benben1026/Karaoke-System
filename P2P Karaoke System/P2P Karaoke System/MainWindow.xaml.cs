@@ -328,17 +328,37 @@ namespace P2P_Karaoke_System
              
              
             //Get data from other peers
+            string[] ipList = new string[10];
+            ipList[0] = "192.168.208.249";
+            ipList[1] = "192.168.213.114";
+            ipList[2] = "";
+            ipList[3] = "";
+            ipList[4] = "";
+            ipList[5] = "";
+            ipList[6] = "";
+            ipList[7] = "";
+            ipList[8] = "";
+            ipList[9] = "";
+            Local l = new Local(ipList);
             //Sender.InitialIpList();
-            //MusicCopy cp = new MusicCopy("travel1.wma", "travel1", "Jin", "Hello", "264204303863cf9089de5c42d34d64bd", 2009081, 1);
-            //CopyIndex t1 = new CopyIndex(0, "travel1.wma");
-            //CopyIndex t2 = new CopyIndex(1, "travel1.wma");
-            //List<CopyIndex> a = new List<CopyIndex>();
-            //a.Add(t1);
-            //a.Add(t2);
-            //cp.CopyInfo = a;
-            //Thread test = new Thread(() => Sender.StartGetMusic(cp));
-            //test.Start();
-            //Thread.Sleep(1);
+            Audio a = new Audio();
+            a.MediaPath = "travel1.wma";
+            a.Title = "travel1";
+            a.Artist = "Jin";
+            a.Album = "Hello";
+            a.HashValue = "264204303863cf9089de5c42d34d64bd";
+            a.Size = 2009081;
+
+            MusicCopy cp = new MusicCopy(a);
+            CopyIndex t1 = new CopyIndex(0, "bbb.wma", "192.168.208.249");
+            //CopyIndex t2 = new CopyIndex(1, "aaa.wma", "192.168.213.114");
+            List<CopyIndex> t = new List<CopyIndex>();
+            t.Add(t1);
+            //t.Add(t2);
+            cp.CopyInfo = t;
+            Thread test = new Thread(() => l.StartGetMusic(cp));
+            test.Start();
+            Thread.Sleep(1);
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
