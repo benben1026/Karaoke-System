@@ -90,6 +90,7 @@
     </Compile> -->
     <Compile Include="Get.cs" />
     <Compile Include="Local.cs" />
+    <Compile Include="LrcReader.cs" />
     <Compile Include="MusicCopy.cs" />
     <Compile Include="MusicData.cs" />
     <Compile Include="MusicSearchUtil.cs" />

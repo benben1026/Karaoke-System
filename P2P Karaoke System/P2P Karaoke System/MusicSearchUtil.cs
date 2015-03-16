@@ -32,14 +32,9 @@ namespace P2P_Karaoke_System {
                 	// calculate the relevancy
                 	if(inputMusicList[i].AudioData.Title.Contains(s)){
                 		inputMusicList[i].Relevancy ++;
-<<<<<<< HEAD
                 	}
                     if (inputMusicList[i].AudioData.Artist.Contains(s))
                     {
-=======
-                	}
-                	if(inputMusicList[i].AudioData.Artist.Contains(s)){
->>>>>>> Modify music structure
                 		inputMusicList[i].Relevancy ++;
                 	}
 
