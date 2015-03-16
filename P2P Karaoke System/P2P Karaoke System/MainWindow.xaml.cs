@@ -417,7 +417,7 @@ namespace P2P_Karaoke_System
                     }
                 }
                 musicList.Items.Add(audio);
-                MusicCopy musicData = new MusicCopy(audio.MediaPath, audio.Title, audio.Artist, audio.Album, audio.HashValue, (int)audio.Size);
+                MusicCopy musicData = new MusicCopy(audio);
                 musicDataList.Add(musicData);
             }
         }

@@ -10,49 +10,34 @@ namespace P2P_Karaoke_System
     {
         public int UserIndex;
         public string FileName;
-        //add ip address
+        //public string IPAddress;
 
-        public CopyIndex(int userIndex, string fileName)
+        public CopyIndex(int userIndex, string fileName, string ipAddress)
         {
             UserIndex = userIndex;
             FileName = fileName;
-
+            //IPAddress = ipAddress;
         }
     }
 
     public class MusicCopy
     {
-        public string Filename { get; set; }
-        public string Title { get; set; }
-        public string Singer { get; set; }
-        public string Album { get; set; }
-        public string Hashvalue { get; set; }
-        public int Size { get; set; }
+        public Audio AudioData { get; set; }
         public int Relevancy { get; set; }
         public int CopyNumber { get; set; }
         public List<CopyIndex> CopyInfo { get; set; } // {userIndex, fileName}
 
-        public MusicCopy(string filename, string title, string singer, string album, string hashvalue, int size)
+        public MusicCopy(Audio audioData)
         {
-            this.Filename = filename;
-            this.Title = title;
-            this.Singer = singer;
-            this.Album = album;
-            this.Hashvalue = hashvalue;
-            this.Size = size;
+            this.AudioData = audioData;
             this.Relevancy = 0;
             this.CopyNumber = 0;
             this.CopyInfo = new List<CopyIndex>();
         }
 
-        public MusicCopy(string filename, string title, string singer, string album, string hashvalue, int size, int relevancy)
+        public MusicCopy(Audio audioData, int relevancy)
         {
-            this.Filename = filename;
-            this.Title = title;
-            this.Singer = singer;
-            this.Album = album;
-            this.Hashvalue = hashvalue;
-            this.Size = size;
+            this.AudioData = audioData;
             this.Relevancy = relevancy;
             this.CopyNumber = 0;
             this.CopyInfo = new List<CopyIndex>();
