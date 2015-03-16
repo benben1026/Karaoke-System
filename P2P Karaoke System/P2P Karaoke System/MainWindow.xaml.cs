@@ -320,9 +320,9 @@ namespace P2P_Karaoke_System
             */ 
              
             //waiting for conncetion...
-            //Peer p = new Peer();
-            //Thread test = new Thread(() => p.StartListening());
-            //test.Start();
+            Peer p = new Peer();
+            Thread test = new Thread(() => p.StartListening());
+            test.Start();
              
              
             //Get data from other peers
@@ -364,26 +364,26 @@ namespace P2P_Karaoke_System
             if (musicList.SelectedIndex < 0) return;
             Audio audio = (Audio)musicList.SelectedItem;
             EditInfoWindow m = new EditInfoWindow();
-            m.title = audio.Title;
-            m.singer = audio.Artist;
-            m.album = audio.Album;
-            m.lrcPath = audio.LyricsPath;
+            m.Audiotitle = audio.Title;
+            m.Singer = audio.Artist;
+            m.Album = audio.Album;
+            m.LrcPath = audio.LyricsPath;
             if (audio.ImagePath != null)
             {
-                if (audio.ImagePath.Length > 0) m.coverPath = audio.ImagePath;
-                else m.coverPath = null;
+                if (audio.ImagePath.Length > 0) m.CoverPath = audio.ImagePath;
+                else m.CoverPath = null;
             }
-            else m.coverPath = null;
+            else m.CoverPath = null;
             m.Owner = this;
             if (m.ShowDialog() == true)
             {
                 audio.Title = audio.Artist = audio.Album = audio.LyricsPath = audio.ImagePath = null;
 
-                if (!string.IsNullOrWhiteSpace(m.title)) audio.Title = m.title;
-                if (!string.IsNullOrWhiteSpace(m.singer)) audio.Artist = m.singer;
-                if (!string.IsNullOrWhiteSpace(m.album)) audio.Album = m.album;
-                if (!string.IsNullOrWhiteSpace(m.lrcPath)) audio.LyricsPath = m.lrcPath;
-                if (!string.IsNullOrWhiteSpace(m.coverPath) || m.coverPath == "") audio.ImagePath = m.coverPath;
+                if (!string.IsNullOrWhiteSpace(m.Audiotitle)) audio.Title = m.Audiotitle;
+                if (!string.IsNullOrWhiteSpace(m.Singer)) audio.Artist = m.Singer;
+                if (!string.IsNullOrWhiteSpace(m.Album)) audio.Album = m.Album;
+                if (!string.IsNullOrWhiteSpace(m.LrcPath)) audio.LyricsPath = m.LrcPath;
+                if (!string.IsNullOrWhiteSpace(m.CoverPath) || m.CoverPath == "") audio.ImagePath = m.CoverPath;
                 
                 if (musicDB != null)
                 {
@@ -467,6 +467,27 @@ namespace P2P_Karaoke_System
                 {
                     MessageBox.Show("Datebase Connection Failure","Error",MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+
+        private void P2P_Setting_Click(object sender, RoutedEventArgs e)
+        {
+            P2P_Setting m = new P2P_Setting();
+            
+            m.IP1 = "a";
+            //m.IP2 = " ";
+            //m.IP3 = " ";
+            //m.IP4 = " ";
+            //m.IP5 = " ";
+            //m.IP6 = " ";
+            //m.IP7 = " ";
+            //m.IP8 = " ";
+            //m.IP9 = " ";
+            //m.IP10 = " ";
+            m.Owner = this;
+            if (m.ShowDialog() == true)
+            {
+                string[] iplist = { m.IP1, m.IP2, m.IP3, m.IP4, m.IP5, m.IP6, m.IP7, m.IP8, m.IP9, m.IP10 };
             }
         }
     }

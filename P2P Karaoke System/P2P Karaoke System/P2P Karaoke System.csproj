@@ -94,6 +94,9 @@
     <Compile Include="MusicCopy.cs" />
     <Compile Include="MusicData.cs" />
     <Compile Include="MusicSearchUtil.cs" />
+    <Compile Include="P2P Setting.xaml.cs">
+      <DependentUpon>P2P Setting.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Peer.cs" />
     <Compile Include="Search.cs" />
     <Compile Include="WaveOut.cs" />
@@ -121,6 +124,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="P2P Setting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Music.designer.cs">

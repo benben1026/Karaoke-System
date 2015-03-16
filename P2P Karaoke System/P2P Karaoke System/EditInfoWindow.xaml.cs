@@ -20,11 +20,18 @@ namespace P2P_Karaoke_System
     /// </summary>
     public partial class EditInfoWindow : Window
     {
-        public string title { get { return title; } set { titleBox.Text = title = value; } }
-        public string singer { get { return singer; } set { singerBox.Text = singer = value; } }
-        public string album { get { return album; } set { albumBox.Text = album = value; } }
-        public string lrcPath { get { return lrcPath; } set { lrcBox.Text = lrcPath = value; } }
-        public string coverPath { get { return coverPath; } set { CoverIMG.Source = (ImageSource)imgSrcConverter.ConvertFromString(value); } }
+        private string title;
+        private string singer;
+        private string album;
+        private string lrcPath;
+        private string coverPath;
+
+        public string Audiotitle { get { return title; } set { titleBox.Text = title = value; } }
+        public string Singer { get { return singer; } set { singerBox.Text = singer = value; } }
+        public string Album { get { return album; } set { albumBox.Text = album = value; } }
+        public string LrcPath { get { return lrcPath; } set { lrcBox.Text = lrcPath = value; } }
+        public string CoverPath { get { return coverPath; } set { CoverIMG.Source = (ImageSource)imgSrcConverter.ConvertFromString(value); } }
+
 
         private string tmpCoverPath;
         private OpenFileDialog openLRCDialog, openImgDialog;
@@ -42,11 +49,11 @@ namespace P2P_Karaoke_System
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            this.title = string.Copy(titleBox.Text);
-            this.singer = singerBox.Text;
-            this.album = albumBox.Text;
-            this.lrcPath = lrcBox.Text;
-            this.coverPath = tmpCoverPath;
+            title = string.Copy(titleBox.Text);
+            singer = singerBox.Text;
+            album = albumBox.Text;
+            lrcPath = lrcBox.Text;
+            coverPath = tmpCoverPath;
             this.DialogResult = true;
 
         }
