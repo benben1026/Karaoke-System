@@ -322,7 +322,8 @@ namespace P2P_Karaoke_System
             */ 
              
             //waiting for conncetion...
-            //Thread test = new Thread(() => Receiver.StartListening());
+            //Peer p = new Peer();
+            //Thread test = new Thread(() => p.StartListening());
             //test.Start();
              
              

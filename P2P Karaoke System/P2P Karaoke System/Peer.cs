@@ -13,7 +13,7 @@ namespace P2P_Karaoke_System
 {
     class Peer
     {
-        private static int segmentSize = 2048;
+        private static int segmentSize = 204800;
         // chunk size in bytes
 
         public Peer()
@@ -155,7 +155,7 @@ namespace P2P_Karaoke_System
                 }
                 else
                 {
-                    gres.GetData(fs, md5, i, i + segmentSize);
+                    gres.GetData(fs, md5, i, i + segmentSize - 1);
                 }
                 byte[] serialize = gres.ToByte();
                 byte[] type = { 0x12 };
@@ -166,6 +166,7 @@ namespace P2P_Karaoke_System
                 Buffer.BlockCopy(serialize, 0, response, 5, serialize.Length);
                 s.Send(response);
             }
+            fs.Close();
         }
 
         public void ProcessSearchRequest(byte[] obj, Socket s, List<MusicCopy> musicDataList)
