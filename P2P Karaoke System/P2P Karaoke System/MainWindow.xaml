@@ -30,7 +30,7 @@
         <Button x:Name="Edit" Content="Edit" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="Edit_Click" Grid.Row="1" Margin="90,0,0,0"/>
         <Button x:Name="addButton" Content="add" HorizontalAlignment="Center" Margin="0,0,90,0" VerticalAlignment="Center" Width="75" Click="addButton_Click" Grid.Row="1" Grid.Column="1"/>
         <Button x:Name="deleteButton" Content="Delete" HorizontalAlignment="Center" Margin="0,60,90,0" VerticalAlignment="Center" Width="75" Click="deleteButton_Click" Grid.Column="1" Grid.Row="1"/>
-        <ListBox x:Name="musicList" VerticalAlignment="Top" Grid.Column="1"/>
+        <ListBox x:Name="musicList" Grid.Column="1" Background="#7F3A3C46" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Foreground="#FFD7D7D7"/>
 
     </Grid>
 </Window>
