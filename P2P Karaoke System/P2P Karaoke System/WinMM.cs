@@ -90,6 +90,8 @@ namespace P2P_Karaoke_System
         [DllImport(mmdll)]
         public static extern int waveOutGetVolume(IntPtr hWaveOut, out int dwVolume);
         [DllImport(mmdll)]
-        public static extern int waveOutSetPlaybackRate(IntPtr hwo, int dwRate);
+        public static extern int waveOutSetPlaybackRate(IntPtr hWaveOut, int dwRate);
+        [DllImport(mmdll)]
+        public static extern int waveOutSetPitch(IntPtr hWaveOut, int dwPitch);
     }
 }

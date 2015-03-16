@@ -141,7 +141,8 @@ namespace P2P_Karaoke_System
             thread = new Thread(new ThreadStart(ThreadProc));
             thread.Start();
 
-            Native.waveOutSetPlaybackRate(waveOut, 0x00018000);
+            Native.waveOutSetPlaybackRate(waveOut, 0x00004000);
+            //Native.waveOutSetPitch(waveOut, 0x00002000);
         }
         ~WaveOutPlayer()
         {
