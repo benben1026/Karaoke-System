@@ -140,6 +140,8 @@ namespace P2P_Karaoke_System
             AllocateBuffers(bufferSize, bufferCount);
             thread = new Thread(new ThreadStart(ThreadProc));
             thread.Start();
+
+            Native.waveOutSetPlaybackRate(waveOut, 0x00018000);
         }
         ~WaveOutPlayer()
         {
