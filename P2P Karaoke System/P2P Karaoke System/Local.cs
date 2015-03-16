@@ -27,11 +27,14 @@ namespace P2P_Karaoke_System
         private bool ifGettingData = false;
         private MusicCopy musicDownload = null;
 
-        public Local(string[] ipList)
+        public DataReceiver[] dataReceiverList;
+
+        public Local(string[] ipList, MusicCopy music)
         {
             this.ipList = ipList;
             this.peerNum = ipList.Count();
             this.searchResult = new List<MusicCopy>[peerNum];
+            this.musicDownload = music;
         }
 
         public void UpdateIpList(string[] newIpList)
@@ -168,23 +171,23 @@ namespace P2P_Karaoke_System
             s.Close();
         }
 
-        public void StartGetMusic(MusicCopy music)
+        public void StartGetMusic()
         {
             if (ifGettingData)
             {
                 return;
             }
-            if (music.AudioData.Size >= Int32.MaxValue)
+            if (this.musicDownload.AudioData.Size >= Int32.MaxValue)
             {
                 Console.WriteLine("File Too Large");
                 return;
             }
             ifGettingData = true;
-            this.musicDownload = music;
-            int numOfPeerAvailable = music.CopyInfo.Count();
+            int numOfPeerAvailable = this.musicDownload.CopyInfo.Count();
             Thread[] threadList = new Thread[numOfPeerAvailable];
-            this.fileData = new byte[(int)music.AudioData.Size];
-            this.sizePP = ((int)music.AudioData.Size - 1) / numOfPeerAvailable + 1; // celling
+            this.dataReceiverList = new DataReceiver[numOfPeerAvailable];
+            this.fileData = new byte[(int)this.musicDownload.AudioData.Size];
+            this.sizePP = ((int)this.musicDownload.AudioData.Size - 1) / numOfPeerAvailable + 1; // celling
             flag = new int[numOfPeerAvailable];
             //dataReceived = new int[numOfPeerAvailable][];
             for (int i = 0; i < numOfPeerAvailable; i++)
@@ -195,15 +198,19 @@ namespace P2P_Karaoke_System
             {
                 if (i == numOfPeerAvailable - 1)
                 {
-                    threadList[i] = new Thread(() => this.GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, (int)music.AudioData.Size));
+                    dataReceiverList[i] = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[i].UserIndex], port, i * sizePP, (int)this.musicDownload.AudioData.Size - 1, this.musicDownload.CopyInfo[i].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData);
 
+                    //threadList[i] = new Thread(() => this.GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, (int)music.AudioData.Size));
                 }
                 else
                 {
-                    threadList[i] = new Thread(() => this.GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, (i + 1) * sizePP - 1));
+                    dataReceiverList[i] = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[i].UserIndex], port, i * sizePP, (i + 1) * sizePP - 1, this.musicDownload.CopyInfo[i].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData);
+                    //threadList[i] = new Thread(() => this.GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, (i + 1) * sizePP - 1));
 
                 }
+                threadList[i] = new Thread(() => dataReceiverList[i].start());
                 threadList[i].Start();
+                //threadList[i].Start();
                 Thread.Sleep(1);
             }
 
@@ -211,32 +218,51 @@ namespace P2P_Karaoke_System
             {
                 threadList[i].Join(10000);
             }
-            while (this.ifError)
+            bool ok = false;
+            while (!ok)
             {
+                int j = 0;
+                for (; j < numOfPeerAvailable && dataReceiverList[j].status != 4; j++);
+                if (j == numOfPeerAvailable) {
+                    this.ifError = true;
+                    Console.WriteLine("Peer Not Avaliable");
+                    break;
+                }
                 for (int i = 0; i < numOfPeerAvailable; i++)
                 {
-                    if (i == numOfPeerAvailable - 1 && flag[i] != musicDownload.AudioData.Size - 1)
+                    ok = true;
+                    if (dataReceiverList[i].status != 4 && dataReceiverList[i].status != 5)
                     {
-                        this.ifError = false;
-                        Thread t = new Thread(() => this.GetMusicThread(music.CopyInfo[0].UserIndex, 0, i * sizePP, (int)music.AudioData.Size));
+                        dataReceiverList[i].status = 4;
+                        DataReceiver dr = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[i].UserIndex], port, dataReceiverList[i].currentByte + 1, dataReceiverList[i].toByte, this.musicDownload.CopyInfo[i].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData);
+                        Thread t = new Thread(() => dr.start());
                         t.Start();
                         Thread.Sleep(1);
                         t.Join();
-                        break;
-                    }else if(flag[i] != (i + 1) * sizePP - 1){
-                        this.ifError = false;
-                        Thread t = new Thread(() => this.GetMusicThread(music.CopyInfo[i + 1].UserIndex, i + 1, flag[i], (i + 1) * sizePP - 1));
-                        t.Start();
-                        Thread.Sleep(1);
-                        t.Join();
-                        break;
+                        if (dr.status == 5)
+                        {
+                            ok = true;
+                            continue;
+                        }
+                        else
+                        {
+                            ok = false;
+                            dataReceiverList[i].status = -4;
+                        }
                     }
                 }
             }
-            FileStream fs = new FileStream(music.AudioData.MediaPath, FileMode.Create);
-            fs.Write(fileData, 0, (int)music.AudioData.Size);
-            fs.Close();
-            Console.WriteLine("succeed");
+            if (!ifError)
+            {
+                FileStream fs = new FileStream(this.musicDownload.AudioData.MediaPath, FileMode.Create);
+                fs.Write(fileData, 0, (int)this.musicDownload.AudioData.Size);
+                fs.Close();
+                Console.WriteLine("Download file succeeded.");
+            }
+            else
+            {
+                Console.WriteLine("Fail to download file.");
+            }
             ifGettingData = false;
         }
 

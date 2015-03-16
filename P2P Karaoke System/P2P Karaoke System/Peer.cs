@@ -149,9 +149,9 @@ namespace P2P_Karaoke_System
             {
                 Console.WriteLine("Transmit no{0} packet", i);
                 GetResponse gres = new GetResponse(filename, hash);
-                if (i + segmentSize >= filesize)
+                if (i + segmentSize >= endByte)
                 {
-                    gres.GetData(fs, md5, i, filesize - 1);
+                    gres.GetData(fs, md5, i, endByte - 1);
                 }
                 else
                 {

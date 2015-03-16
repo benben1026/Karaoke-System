@@ -88,6 +88,7 @@
     <!-- <Compile Include="EditInfoWindow.xaml.cs">
       <DependentUpon>EditInfoWindow.xaml</DependentUpon>
     </Compile> -->
+    <Compile Include="DataReceiver.cs" />
     <Compile Include="Get.cs" />
     <Compile Include="Local.cs" />
     <Compile Include="LrcReader.cs" />
