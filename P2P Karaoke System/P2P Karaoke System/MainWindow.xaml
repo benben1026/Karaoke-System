@@ -37,7 +37,8 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
-        <Slider x:Name="volumeSlider" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Margin="30,30,0,0" Width="100" Maximum="100" ValueChanged="Slider_ValueChanged" Value="100"/>
+        <Slider x:Name="volumeSlider" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Margin="30,20,0,0" Width="100" Maximum="100" ValueChanged="AdjustVolume" Value="100"/>
+        <Slider x:Name="balanceSlider" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Margin="30,50,0,0" Width="100" Maximum="100" Value="50" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="balanceSlider_ValueChanged"/>
 
     </Grid>
 </Window>

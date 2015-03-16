@@ -241,24 +241,21 @@ namespace P2P_Karaoke_System
             currentBuffer.WaitFor();
         }
 
-        public double Volume
+        public void changeVolume(double leftVolume, double rightVolume)
         {
-            get
-            {
-                int volumeValue;
-                Native.waveOutGetVolume(waveOut, out volumeValue);
-                volumeValue = volumeValue & 0xFFFF;
-                return volumeValue / 0xFFFF * 100; // 0xFFFF is the largest volumn value
-            }
-            set
-            {
-                int volumeValue;
-                if (value > 100) volumeValue = 100;
-                else if (value < 0) volumeValue = 0;
-                else volumeValue = (int)(value / 100 * 0xFFFF);
-                volumeValue += volumeValue << 16; //low-order word is left-channel volume, high-order word is right-channel volume
-                Native.waveOutSetVolume(waveOut, volumeValue);
-            }
+            int leftValue;
+            if (leftVolume > 100) leftValue = 100;
+            else if (leftVolume < 0) leftValue = 0;
+            else leftValue = (int)(leftVolume / 100 * 0xFFFF);
+
+            int rightValue;
+            if (rightVolume > 100) rightValue = 100;
+            else if (rightVolume < 0) rightValue = 0;
+            else rightValue = (int)(rightVolume / 100 * 0xFFFF);
+
+            //low-order word is left-channel volume, high-order word is right-channel volume
+            int volumeValue = leftValue + (rightValue << 16);
+            Native.waveOutSetVolume(waveOut, volumeValue);
         }
     }
 }

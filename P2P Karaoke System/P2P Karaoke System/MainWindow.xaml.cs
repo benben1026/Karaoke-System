@@ -119,7 +119,7 @@ namespace P2P_Karaoke_System
                 if (audioStream != null)
                 {
                     thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
-                    thePlayer.Volume = volumeSlider.Value;
+                    AdjustVolume();
                     isPlaying = true;
                 }
             }
@@ -158,15 +158,6 @@ namespace P2P_Karaoke_System
             }
         }
 
-        private void DisposeWave()
-        {
-            if (audioStream != null)
-            {
-                audioStream.Dispose();
-                audioStream = null;
-            }
-        }
-
         protected override void OnClosed(EventArgs e)
         {
             CloseFile();
@@ -187,7 +178,6 @@ namespace P2P_Karaoke_System
         public void openFile(string fileName)
         {
             CloseFile();
-            DisposeWave();
             audioFormat = System.IO.Path.GetExtension(fileName);
             Console.WriteLine(audioFormat);
             progressSlider.Value = 0;
@@ -265,12 +255,29 @@ namespace P2P_Karaoke_System
             }
             timer.Start();
         }
-        
-        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+
+        private void balanceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (((Slider)sender).Value >= 60 || ((Slider)sender).Value <= 40)
+                balanceSlider.IsSnapToTickEnabled = false;
+            else
+                balanceSlider.IsSnapToTickEnabled = true;
+
+            AdjustVolume();
+        }
+
+        private void AdjustVolume(object sender = null, RoutedPropertyChangedEventArgs<double> e = null)
         {
             if (thePlayer == null) return;
 
-            thePlayer.Volume = (int)((Slider)sender).Value;
+            double ultimateVolume = volumeSlider.Value > 100 ? 100 : volumeSlider.Value;
+
+            double righVolumeScale = balanceSlider.Value > 50 ? 50 : balanceSlider.Value;
+            righVolumeScale = righVolumeScale / 50.0;
+            double leftVolumeScale = balanceSlider.Value < 50 ? 0 : balanceSlider.Value - 50;
+            leftVolumeScale = 1 - leftVolumeScale / 50.0;
+
+            thePlayer.changeVolume(ultimateVolume * leftVolumeScale, ultimateVolume * righVolumeScale);
         }
 
         private void p2p_Click(object sender, RoutedEventArgs e)
