@@ -118,14 +118,15 @@ namespace P2P_Karaoke_System {
             return lyricsList[n].GetLyricsContent();
         }
 
-        public String GetLyricsByTime(int milliseconds)
+        public String GetLyricsByTime(int milliseconds, int k)
         {
             int n = 0;
             while ((n < lyricsList.Count - 1) && lyricsList[n + 1].GetLyricsMillisecond() < milliseconds)
             {
                 n++;
             }
-            return lyricsList[n].GetLyricsContent();
+            
+            return n+k >= 0 && n+k <= lyricsList.Count ? lyricsList[n+k].GetLyricsContent() : " ";
         } 
 
         public long GetTimeCount() {

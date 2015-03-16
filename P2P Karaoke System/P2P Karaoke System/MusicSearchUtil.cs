@@ -30,10 +30,11 @@ namespace P2P_Karaoke_System {
             foreach (String s in searchWords) {
                 for (int i = 0; i < size; i++) {
                 	// calculate the relevancy
-                	if(inputMusicList[i].Title.Contains(s)){
+                	if(inputMusicList[i].AudioData.Title.Contains(s)){
                 		inputMusicList[i].Relevancy ++;
                 	}
-                	if(inputMusicList[i].Singer.Contains(s)){
+                    if (inputMusicList[i].AudioData.Artist.Contains(s))
+                    {
                 		inputMusicList[i].Relevancy ++;
                 	}
 
