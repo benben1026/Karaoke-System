@@ -145,7 +145,7 @@ namespace P2P_Karaoke_System
             for (int i = 1; i <= 7; i++)//7 is the number of label
             {
                 Label lyricsLabel = (Label) this.FindName("Lyrics" + i);
-                lyricsLabel.Content = lyricsReader.GetLyricsByTime(currentPosition()*1000, i - 4); //the fourth label will get the current lyrics
+                lyricsLabel.Content = lyricsReader.GetLyricsByTimeWithOffset(currentPosition() * 1000, i - 4); //the fourth label will get the current lyrics
             }
         }
 
