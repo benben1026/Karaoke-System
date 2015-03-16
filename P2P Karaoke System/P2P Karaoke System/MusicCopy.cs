@@ -10,11 +10,13 @@ namespace P2P_Karaoke_System
     {
         public int UserIndex;
         public string FileName;
+        //add ip address
 
         public CopyIndex(int userIndex, string fileName)
         {
             UserIndex = userIndex;
             FileName = fileName;
+
         }
     }
 

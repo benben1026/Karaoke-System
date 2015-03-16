@@ -301,23 +301,40 @@ namespace P2P_Karaoke_System
             Console.WriteLine("size = {0}", output.Length);
             */ 
              
+            /*
             //waiting for conncetion...
-            //Thread test = new Thread(() => Receiver.StartListening());
-            //test.Start();
+            Peer p = new Peer();
+            Thread test = new Thread(() => p.StartListening());
+            test.Start();
+            Thread.Sleep(1);
+            */
              
-             
+            /*
             //Get data from other peers
-            //Sender.InitialIpList();
-            //MusicCopy cp = new MusicCopy("travel1.wma", "travel1", "Jin", "Hello", "264204303863cf9089de5c42d34d64bd", 2009081, 1);
-            //CopyIndex t1 = new CopyIndex(0, "travel1.wma");
-            //CopyIndex t2 = new CopyIndex(1, "travel1.wma");
-            //List<CopyIndex> a = new List<CopyIndex>();
-            //a.Add(t1);
-            //a.Add(t2);
-            //cp.CopyInfo = a;
-            //Thread test = new Thread(() => Sender.StartGetMusic(cp));
-            //test.Start();
-            //Thread.Sleep(1);
+            string[] ipList = new string[10];
+            ipList[0] = "192.168.213.200";
+            ipList[1] = "192.168.211.197";
+            ipList[2] = "";
+            ipList[3] = "";
+            ipList[4] = "";
+            ipList[5] = "";
+            ipList[6] = "";
+            ipList[7] = "";
+            ipList[8] = "";
+            ipList[9] = "";
+            Local l = new Local(ipList);
+
+            MusicCopy cp = new MusicCopy("travel1.wma", "travel1", "Jin", "Hello", "264204303863cf9089de5c42d34d64bd", 2009081, 1);
+            CopyIndex t1 = new CopyIndex(0, "travel1.wma");
+            CopyIndex t2 = new CopyIndex(1, "travel1.wma");
+            List<CopyIndex> a = new List<CopyIndex>();
+            a.Add(t1);
+            a.Add(t2);
+            cp.CopyInfo = a;
+            Thread test = new Thread(() => l.StartGetMusic(cp));
+            test.Start();
+            Thread.Sleep(1);
+            */
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
