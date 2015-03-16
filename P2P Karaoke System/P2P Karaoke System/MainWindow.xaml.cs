@@ -34,6 +34,8 @@ namespace P2P_Karaoke_System
         private DispatcherTimer timer;
         private LrcReader lyricsReader;
         private string audioFormat = null;
+        private ImageSourceConverter imgSrcConverter;
+        private ImageSource defaultImage;
 
         public List<MusicCopy> musicDataList;
         public string[] ipListInput;
@@ -56,6 +58,8 @@ namespace P2P_Karaoke_System
 
             musicDataList = new List<MusicCopy>();
             ipListInput = new string[10];
+            imgSrcConverter = new ImageSourceConverter();
+            defaultImage = img.Source;
 
             musicDB = new MusicDataContext(Properties.Settings.Default.MusicConnectString);
             if (musicDB == null)
@@ -65,11 +69,12 @@ namespace P2P_Karaoke_System
             }
             try
             {
-                var musicQuery = from audio in musicDB.Audios orderby audio.Order select audio;
+                var musicQuery = from Audio audio in musicDB.Audios orderby audio.Order select audio;
                 var audios = musicQuery.ToArray<Audio>();
-                for (int i = 0; i < audios.Length; i++)
+                foreach (var audio in audios)
                 {
-                    musicList.Items.Add(audios[i]);
+                    musicList.Items.Add(audio);
+                    Console.WriteLine(audio.Title);
                 }
             }
             catch
@@ -169,25 +174,21 @@ namespace P2P_Karaoke_System
 
         protected override void OnClosed(EventArgs e)
         {
+
             CloseFile();
             base.OnClosed(e);
         }
 
         private void load_Click(object sender, RoutedEventArgs e)
         {
-            if (openDialog.ShowDialog() == true)
-            {
-                openFile(openDialog.FileName);
-            }
-            Audio audio = new Audio();
-            audio.MediaPath = "TestPath";
-            musicDB.Audios.InsertOnSubmit(audio);
+            addButton_Click();
+            openFile((Audio)musicList.Items[musicList.Items.Count - 1]);
         }
 
-        public void openFile(string fileName)
+        public void openFile(Audio audio)
         {
             CloseFile();
-            audioFormat = System.IO.Path.GetExtension(fileName);
+            audioFormat = System.IO.Path.GetExtension(audio.MediaPath);
             Console.WriteLine(audioFormat);
             progressSlider.Value = 0;
 
@@ -195,7 +196,7 @@ namespace P2P_Karaoke_System
             {
                 try
                 {
-                    WavStream S = new WavStream(fileName);
+                    WavStream S = new WavStream(audio.MediaPath);
                     if (S.Length <= 0)
                         throw new Exception("Invalid WAV file");
                     format = S.Format;
@@ -210,10 +211,19 @@ namespace P2P_Karaoke_System
                     CloseFile();
                     System.Windows.Forms.MessageBox.Show(err.Message);
                 }
+                
+                try
+                {
+                    img.Source = (ImageSource)imgSrcConverter.ConvertFromString(audio.ImagePath);
+                }
+                catch
+                {
+                    img.Source = defaultImage;
+                }
             }
             else
             {
-                NAudio.Wave.WaveStream pcm = new NAudio.Wave.AudioFileReader(fileName);
+                NAudio.Wave.WaveStream pcm = new NAudio.Wave.AudioFileReader(audio.MediaPath);
                 format.wFormatTag = 3;
                 format.nChannels = (short)pcm.WaveFormat.Channels;
                 format.nSamplesPerSec = (int)pcm.WaveFormat.SampleRate;
@@ -222,13 +232,38 @@ namespace P2P_Karaoke_System
                 format.wBitsPerSample = (short)pcm.WaveFormat.BitsPerSample;
                 format.cbSize = (short)pcm.WaveFormat.ExtraSize;
                 audioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
+
+                try
+                {
+                    img.Source = (ImageSource)imgSrcConverter.ConvertFromString(audio.ImagePath);
+                }
+                catch
+                {
+                    TagLib.Tag tag = TagLib.File.Create(audio.MediaPath).Tag;
+                    if (tag.Pictures.Length > 0)
+                    {
+                        using (MemoryStream albumArtworkMemStream = new MemoryStream(tag.Pictures[0].Data.Data))
+                        {
+                            BitmapImage albumImage = new BitmapImage();
+                            albumImage.BeginInit();
+                            albumImage.CacheOption = BitmapCacheOption.OnLoad;
+                            albumImage.StreamSource = albumArtworkMemStream;
+                            albumImage.EndInit();
+                            img.Source = albumImage;
+                        }
+                    }
+                    else
+                    {
+                        img.Source = defaultImage;
+                    }
+                }
             }
             
             //Lyrics
             try
             {
                 //assuming same filename as music file
-                lyricsReader = new LrcReader(System.IO.Path.GetDirectoryName(fileName) + "\\" + System.IO.Path.GetFileNameWithoutExtension(fileName) + ".lrc");
+                lyricsReader = new LrcReader(System.IO.Path.GetDirectoryName(audio.MediaPath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(audio.MediaPath) + ".lrc");
             }
             catch (Exception err)
             {
@@ -366,32 +401,31 @@ namespace P2P_Karaoke_System
             if (musicList.SelectedIndex < 0) return;
             Audio audio = (Audio)musicList.SelectedItem;
             EditInfoWindow m = new EditInfoWindow();
-            m.Audiotitle = audio.Title;
+            m.AudioTitle = audio.Title;
             m.Singer = audio.Artist;
             m.Album = audio.Album;
             m.LrcPath = audio.LyricsPath;
             if (audio.ImagePath != null)
             {
-                if (audio.ImagePath.Length > 0) m.CoverPath = audio.ImagePath;
-                else m.CoverPath = null;
+                if (audio.ImagePath.Length > 0) m.ImagePath = audio.ImagePath;
+                else m.ImagePath = null;
             }
-            else m.CoverPath = null;
+            else m.ImagePath = null;
             m.Owner = this;
             if (m.ShowDialog() == true)
             {
                 audio.Title = audio.Artist = audio.Album = audio.LyricsPath = audio.ImagePath = null;
 
-                if (!string.IsNullOrWhiteSpace(m.Audiotitle)) audio.Title = m.Audiotitle;
+                if (!string.IsNullOrWhiteSpace(m.AudioTitle)) audio.Title = m.AudioTitle;
                 if (!string.IsNullOrWhiteSpace(m.Singer)) audio.Artist = m.Singer;
                 if (!string.IsNullOrWhiteSpace(m.Album)) audio.Album = m.Album;
                 if (!string.IsNullOrWhiteSpace(m.LrcPath)) audio.LyricsPath = m.LrcPath;
-                if (!string.IsNullOrWhiteSpace(m.CoverPath) || m.CoverPath == "") audio.ImagePath = m.CoverPath;
+                if (!string.IsNullOrWhiteSpace(m.ImagePath) || m.ImagePath == "") audio.ImagePath = m.ImagePath;
                 
                 if (musicDB != null)
                 {
                     try
                     {
-                        musicDB.Audios.InsertOnSubmit(audio);
                         musicDB.SubmitChanges();
                     }
                     catch
@@ -399,41 +433,65 @@ namespace P2P_Karaoke_System
                         MessageBox.Show("Can't connect to the media database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
+
+                musicList.Items.Refresh();
             }
         }
 
-        private void addButton_Click(object sender, RoutedEventArgs e)
+        private void addButton_Click(object sender = null, RoutedEventArgs e = null)
         {
             if (addFileDialog.ShowDialog() == true)
             {
+                var query = from Audio a in musicList.Items
+                            where a.MediaPath == addFileDialog.FileName
+                            select a;
+                if (query.Any()) return;
                 
                 Audio audio = new Audio();
                 TagLib.Tag tag = TagLib.File.Create(addFileDialog.FileName).Tag;
                 audio.Album = tag.Album == null ? "Unknown Album" : tag.Album;
                 audio.Title = tag.Title == null ? "Unknown Title" : tag.Title;
+                //if (tag.Pictures.Length > 0)
+                //{
+                //    using (MemoryStream albumArtworkMemStream = new MemoryStream(tag.Pictures[0].Data.Data))
+                //    {
+                //        BitmapImage albumImage = new BitmapImage();
+                //        albumImage.BeginInit();
+                //        albumImage.CacheOption = BitmapCacheOption.OnLoad;
+                //        albumImage.StreamSource = albumArtworkMemStream;
+                //        albumImage.EndInit();
+                //        audio.ImagePath = albumImage;
+                //    }
+                //}
+
                 audio.MediaPath = addFileDialog.FileName;
 
-                Console.WriteLine(audio.MediaPath);
+               // Console.WriteLine(audios.MediaPath);
 
                 if (tag.JoinedPerformers.Length > 0) audio.Artist = tag.JoinedPerformers;
                 else audio.Artist = "Unknown Artist";
-      
+
+                Console.WriteLine("count: " +musicList.Items.Count);
+
                 if(musicList.Items.Count==0) 
                     audio.Order=0;
                 if (musicList.Items.Count > 0)
                 {
                     audio.Order = ((Audio)(musicList.Items[musicList.Items.Count - 1])).Order+1;
                 }
+                Console.WriteLine("order: "+audio.Order);
 
                 FileInfo f = new FileInfo(addFileDialog.FileName);
                 audio.Size = (int?)f.Length;
 
+                musicDB.Log = Console.Out;
                 if (musicDB != null)
                 {
                     try
                     {
-                        musicDB.Audios.InsertOnSubmit(audio);
+                        musicDB.Audios.InsertOnSubmit((Audio)audio);
                         musicDB.SubmitChanges();
+     
                     }
                     catch
                     {
@@ -441,8 +499,20 @@ namespace P2P_Karaoke_System
                     }
                 }
                 musicList.Items.Add(audio);
+                Console.WriteLine(musicList.Items.Count);
                 MusicCopy musicData = new MusicCopy(audio);
                 musicDataList.Add(musicData);
+
+                // DEBUG, outut all data 
+                //var musicQuery = from audio in musicDB.Audios orderby audio.Order select audio;
+                //var audioarray = musicQuery.ToArray<Audio>();
+                //for (int i = 0; i < audioarray.Length; i++)
+                //{
+                //    musicList.Items.Add(audioarray[i]);
+                //    Console.WriteLine("TEST: " + audioarray[i].Title);
+                //}
+
+               
             }
         }
 
@@ -450,7 +520,7 @@ namespace P2P_Karaoke_System
         {
             CloseFile();
             Audio audio = (Audio)((ListBoxItem)e.Source).Content;
-            openFile(audio.MediaPath);
+            openFile(audio);
             Play_Click();
         }
 
@@ -462,6 +532,7 @@ namespace P2P_Karaoke_System
             {
                 try
                 {
+                    Console.WriteLine("close");
                     musicDB.Audios.DeleteOnSubmit((Audio)musicList.SelectedItem);
                     musicDB.SubmitChanges();
                 }
@@ -469,6 +540,7 @@ namespace P2P_Karaoke_System
                 {
                     MessageBox.Show("Datebase Connection Failure","Error",MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+                musicList.Items.RemoveAt(musicList.SelectedIndex);
             }
         }
 

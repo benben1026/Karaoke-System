@@ -24,14 +24,28 @@ namespace P2P_Karaoke_System
         private string singer;
         private string album;
         private string lrcPath;
-        private string coverPath;
+        private string imagePath;
 
-        public string Audiotitle { get { return title; } set { titleBox.Text = title = value; } }
+        public string AudioTitle { get { return title; } set { titleBox.Text = title = value; } }
         public string Singer { get { return singer; } set { singerBox.Text = singer = value; } }
         public string Album { get { return album; } set { albumBox.Text = album = value; } }
         public string LrcPath { get { return lrcPath; } set { lrcBox.Text = lrcPath = value; } }
-        public string CoverPath { get { return coverPath; } set { CoverIMG.Source = (ImageSource)imgSrcConverter.ConvertFromString(value); } }
-
+        public string ImagePath
+        {
+            get { return imagePath; }
+            set
+            {
+                imagePath = value;
+                try
+                {
+                    CoverIMG.Source = (ImageSource)imgSrcConverter.ConvertFromString(value);
+                }
+                catch
+                {
+                    CoverIMG.Source = null;
+                }
+            }
+        }
 
         private string tmpCoverPath;
         private OpenFileDialog openLRCDialog, openImgDialog;
@@ -49,11 +63,11 @@ namespace P2P_Karaoke_System
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            title = string.Copy(titleBox.Text);
-            singer = singerBox.Text;
-            album = albumBox.Text;
-            lrcPath = lrcBox.Text;
-            coverPath = tmpCoverPath;
+            this.Title = string.Copy(titleBox.Text);
+            this.Singer = singerBox.Text;
+            this.Album = albumBox.Text;
+            this.LrcPath = lrcBox.Text;
+            this.ImagePath = tmpCoverPath;
             this.DialogResult = true;
 
         }

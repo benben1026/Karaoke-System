@@ -131,7 +131,7 @@ namespace P2P_Karaoke_System
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		public int Id
 		{
 			get
@@ -151,7 +151,7 @@ namespace P2P_Karaoke_System
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="VarChar(50)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="NText", UpdateCheck=UpdateCheck.Never)]
 		public string Title
 		{
 			get
@@ -171,7 +171,7 @@ namespace P2P_Karaoke_System
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Artist", DbType="VarChar(50)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Artist", DbType="NText", UpdateCheck=UpdateCheck.Never)]
 		public string Artist
 		{
 			get
@@ -191,7 +191,7 @@ namespace P2P_Karaoke_System
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Album", DbType="VarChar(MAX)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Album", DbType="NText", UpdateCheck=UpdateCheck.Never)]
 		public string Album
 		{
 			get
@@ -211,7 +211,7 @@ namespace P2P_Karaoke_System
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MediaPath", DbType="VarChar(MAX)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MediaPath", DbType="NText", UpdateCheck=UpdateCheck.Never)]
 		public string MediaPath
 		{
 			get
@@ -231,7 +231,7 @@ namespace P2P_Karaoke_System
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImagePath", DbType="NVarChar(MAX)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImagePath", DbType="NText", UpdateCheck=UpdateCheck.Never)]
 		public string ImagePath
 		{
 			get
@@ -251,7 +251,7 @@ namespace P2P_Karaoke_System
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LyricsPath", DbType="NVarChar(MAX)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LyricsPath", DbType="NText", UpdateCheck=UpdateCheck.Never)]
 		public string LyricsPath
 		{
 			get
@@ -311,7 +311,7 @@ namespace P2P_Karaoke_System
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HashValue", DbType="NVarChar(MAX)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HashValue", DbType="Char(32)")]
 		public string HashValue
 		{
 			get

@@ -2,16 +2,16 @@
   <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\v11.0;AttachDbFilename=|DataDirectory|\Music.mdf;Integrated Security=True" SettingsObjectName="P2P_Karaoke_System.Properties.Settings" SettingsPropertyName="MusicConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Audio" Member="Audios">
     <Type Name="Audio">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Title" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="Artist" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="Album" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Column Name="MediaPath" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Column Name="ImagePath" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="LyricsPath" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Artist" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Album" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="MediaPath" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="ImagePath" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="LyricsPath" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="[Order]" Member="Order" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="Size" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="HashValue" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="HashValue" Type="System.String" DbType="Char(32)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>
