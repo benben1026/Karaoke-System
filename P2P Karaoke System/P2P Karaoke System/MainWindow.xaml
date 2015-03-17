@@ -30,7 +30,7 @@
         <Button x:Name="Edit" Content="Edit" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="Edit_Click" Grid.Row="1" Margin="90,0,0,0"/>
         <Button x:Name="addButton" Content="add" HorizontalAlignment="Center" Margin="0,0,90,0" VerticalAlignment="Center" Width="75" Click="addButton_Click" Grid.Row="1" Grid.Column="1"/>
         <Button x:Name="deleteButton" Content="Delete" HorizontalAlignment="Center" Margin="0,60,90,0" VerticalAlignment="Center" Width="75" Click="deleteButton_Click" Grid.Column="1" Grid.Row="1"/>
-        <ListBox x:Name="musicList" Grid.Column="1" Background="#7F3A3C46" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Foreground="#FFD7D7D7">
+        <ListBox x:Name="musicList" Grid.Column="1" Background="#7F3A3C46" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Foreground="#FFD7D7D7" Margin="0,54,0,0">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                     <EventSetter Event="MouseDoubleClick" Handler="musicListItem_MouseDoubleClick" />
@@ -48,9 +48,11 @@
             <Label x:Name="Lyrics6" Content=""/>
             <Label x:Name="Lyrics7" Content=""/>
         </StackPanel>
+        <ListBox x:Name="searchList" Grid.Column="1" Background="#7F3A3C46" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Foreground="#FFD7D7D7" Margin="0,54,0,0"/>
         <Button x:Name="P2P_Setting" Content="P2P Setting" HorizontalAlignment="Left" Margin="33,334,0,0" VerticalAlignment="Top" Width="75" Click="P2P_Setting_Click" Grid.Column="1"/>
-        <Button x:Name="Search" Content="Search" Grid.Column="1" HorizontalAlignment="Left" Margin="18,258,0,0" VerticalAlignment="Top" Width="74" Click="Search_Click"/>
-        <TextBox x:Name="SearchBox" HorizontalAlignment="Left" Height="23" Margin="18,215,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Button x:Name="Search" Content="Search" Grid.Column="1" HorizontalAlignment="Left" Margin="125,0,0,0" VerticalAlignment="Top" Width="74" Click="Search_Click"/>
+        <TextBox x:Name="SearchBox" HorizontalAlignment="Left" Height="23" Margin="5,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1" KeyDown="SearchBox_KeyDown"/>
+        <Button x:Name="Back" Content="Back" HorizontalAlignment="Left" Margin="125,27,-1,0" VerticalAlignment="Top" Width="76" Grid.Column="1" Click="Back_Click"/>
 
     </Grid>
 </Window>

@@ -67,6 +67,9 @@ namespace P2P_Karaoke_System
             imgSrcConverter = new ImageSourceConverter();
             defaultImage = img.Source;
 
+            musicList.Visibility = Visibility.Visible;
+            searchList.Visibility = Visibility.Collapsed;
+
             musicDB = new MusicDataContext(Properties.Settings.Default.MusicConnectString);
             if (musicDB == null)
             {
@@ -597,17 +600,10 @@ namespace P2P_Karaoke_System
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-
+            searchList.Items.Clear();
             this.Keyword = SearchBox.Text;
-            Console.WriteLine(this.Keyword);
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine("#" + ipListInput[i] + "#");
-            }
-            Console.WriteLine("count is: {0} {1}", ipListInput.Count(), InputIPNumber);
-
+            Console.WriteLine("keyword is: " + this.Keyword);
             List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(this.Keyword, musicDataList);
-
             if (InputIPNumber > 0) 
             {
                 Local local = new Local(ipListInput, this.Keyword);
@@ -615,9 +611,16 @@ namespace P2P_Karaoke_System
                 List<MusicCopy>[] searchResultArray = { searchResult, peerSearchResult };
                 searchResult = local.MergeMusicList(searchResultArray);
             }
-            
-            // test search
+
+            musicList.Visibility = Visibility.Collapsed;
+            searchList.Visibility = Visibility.Visible;
             int items = searchResult.Count();
+            for (int i = 0; i < items; i++)
+            {
+                searchList.Items.Add(searchResult[i]);
+            }
+
+            // test search
             Console.WriteLine(items);
             for (int i = 0; i < items; i++)
             {
@@ -629,6 +632,22 @@ namespace P2P_Karaoke_System
                 }
             }
            
+        }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            musicList.Visibility = Visibility.Visible;
+            searchList.Visibility = Visibility.Collapsed;
+            searchList.Items.Clear();
+            SearchBox.Text = "";
+        }
+
+        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Search_Click(sender, e);
+            }
         }
     }
 }

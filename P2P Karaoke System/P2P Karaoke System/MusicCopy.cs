@@ -42,5 +42,10 @@ namespace P2P_Karaoke_System
             this.CopyNumber = 0;
             this.CopyInfo = new List<CopyIndex>();
         }
+
+        public override string ToString()
+        {
+            return this.AudioData.Title + "\n" + this.AudioData.Album + "\n" + this.AudioData.Artist + " [ " + this.CopyNumber + " ]";
+        }
     }
 }
