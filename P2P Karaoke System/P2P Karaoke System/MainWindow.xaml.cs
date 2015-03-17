@@ -39,6 +39,7 @@ namespace P2P_Karaoke_System
         private ImageSource defaultImage;
         private bool speed2XOn = false;
         private string currentPlayingPath = null;
+        private int playingIndex = -1;
 
         private string keyword;
         public string Keyword { get { return keyword; } set { SearchBox.Text = keyword = value; } }
@@ -648,6 +649,7 @@ namespace P2P_Karaoke_System
         private void musicListItem_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             CloseFile();
+            playingIndex = musicList.SelectedIndex;
             Audio audio = (Audio)((ListBoxItem)e.Source).Content;
             currentPlayingPath = audio.MediaPath;
             openFile(audio);
@@ -813,6 +815,46 @@ namespace P2P_Karaoke_System
         private void progressSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             updateCurrentTimeLabel((int)progressSlider.Value);
+        }
+
+        private void Next_Click(object sender, RoutedEventArgs e)
+        {
+            if (playingIndex < 0) return;
+            if (playingIndex + 1 < musicList.Items.Count)
+            {
+                CloseFile();
+                Audio audio = (Audio)musicList.Items.GetItemAt(playingIndex+1);
+                currentPlayingPath = audio.MediaPath;
+                playingIndex++;
+                openFile(audio);
+                Play_Click();
+            }
+            else
+            {
+                Stop_Click();
+                playingIndex = -1; 
+                img.Source = defaultImage;
+            }
+        }
+
+        private void Previous_Click(object sender, RoutedEventArgs e)
+        {
+            if (playingIndex < 0) return;
+            if (playingIndex > 0)
+            {
+                CloseFile();
+                Audio audio = (Audio)musicList.Items.GetItemAt(playingIndex - 1);
+                currentPlayingPath = audio.MediaPath;
+                playingIndex--;
+                openFile(audio);
+                Play_Click();
+            }
+            else
+            {
+                Stop_Click();
+                playingIndex = -1; 
+                img.Source = defaultImage;
+            }
         }
     }
 }
