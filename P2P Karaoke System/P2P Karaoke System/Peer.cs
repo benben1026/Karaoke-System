@@ -102,7 +102,7 @@ namespace P2P_Karaoke_System
         //    return byteOut;
         //}
 
-        public string ConvertHashValue(byte[] hashvalue)
+        public static string ConvertHashValue(byte[] hashvalue)
         {
             var sb = new StringBuilder("");
             foreach (var b in hashvalue)
@@ -127,7 +127,7 @@ namespace P2P_Karaoke_System
                 fs = new FileStream(filename, FileMode.Open);
                 MD5 myMD5 = MD5.Create();
                 byte[] hashvalue = myMD5.ComputeHash(fs);
-                hash = this.ConvertHashValue(hashvalue);
+                hash = Peer.ConvertHashValue(hashvalue);
             }
             catch (FileNotFoundException ex)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -497,6 +498,11 @@ namespace P2P_Karaoke_System
 
                 if (tag.JoinedPerformers.Length > 0) audio.Artist = tag.JoinedPerformers;
                 else audio.Artist = "Unknown Artist";
+
+                FileStream fs = new FileStream(audio.MediaPath, FileMode.Open);
+                MD5 myMD5 = MD5.Create();
+                byte[] hashvalue = myMD5.ComputeHash(fs);
+                audio.HashValue = Peer.ConvertHashValue(hashvalue);
 
                 Console.WriteLine("count: " +musicList.Items.Count);
 
