@@ -648,19 +648,24 @@ namespace P2P_Karaoke_System
         {
             searchList.Items.Clear();
             this.Keyword = SearchBox.Text;
-            Console.WriteLine("keyword is: " + this.Keyword);
+            //Console.WriteLine("keyword is: " + this.Keyword);
+            for (int i = 0; i < musicDataList.Count(); i++)
+            {
+                musicDataList[i].CopyNumber = 0;
+                musicDataList[i].CopyInfo.Clear();
+            }
             List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(this.Keyword, musicDataList);
 
             if (this.InputIPNumber > 0) 
             {
-                Console.WriteLine("InputIPNumber is: {0} \n", this.InputIPNumber);
+                //Console.WriteLine("InputIPNumber is: {0} \n", this.InputIPNumber);
                 Local local = new Local(ipListInput, this.Keyword, this.InputIPNumber);
                 List<MusicCopy> peerSearchResult = null;
 
                 Thread test = new Thread(() => { peerSearchResult = local.StartSearch(); } );
                 test.Start();
                 test.Join();
-                if (peerSearchResult.Count != 0)
+                if (peerSearchResult != null)
                 {
                     List<MusicCopy>[] searchResultArray = { searchResult, peerSearchResult };
                     searchResult = local.MergeMusicList(searchResultArray);

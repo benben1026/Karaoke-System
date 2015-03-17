@@ -26,7 +26,7 @@ namespace P2P_Karaoke_System {
 
             for (int i = 0; i < size; i++) {
                 inputMusicList[i].Relevancy = 0;
-                musicIsWantedRecord[i] = true;
+                musicIsWantedRecord[i] = false;
                 //Console.WriteLine("4: " + inputMusicList[i].AudioData.Title);
             }
 
@@ -36,16 +36,21 @@ namespace P2P_Karaoke_System {
 
                 for (int i = 0; i < size; i++) {
                 	// calculate the relevancy
+                    //Console.WriteLine(inputMusicList[i].AudioData.Title + " & " + inputMusicList[i].AudioData.Artist + " & " + inputMusicList[i].AudioData.Album);
                     if (inputMusicList[i].AudioData.Title.IndexOf(s, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                 		inputMusicList[i].Relevancy ++;
                 	}
-                    if (inputMusicList[i].AudioData.Title.IndexOf(s, StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (inputMusicList[i].AudioData.Artist.IndexOf(s, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                 		inputMusicList[i].Relevancy ++;
                 	}
+                    if (inputMusicList[i].AudioData.Album.IndexOf(s, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        inputMusicList[i].Relevancy ++;
+                    }
 
-                    musicIsWantedRecord[i] = musicIsWantedRecord[i] && ( inputMusicList[i].Relevancy != 0 );
+                    musicIsWantedRecord[i] = musicIsWantedRecord[i] || ( inputMusicList[i].Relevancy != 0 );
                     //If music data does not contain keyword(s), i.e. relevancy = 0, musicIsWantedRecord[i] will be false
                 }
             }
