@@ -78,6 +78,13 @@ namespace P2P_Karaoke_System
             ReadHeader();
         }
 
+        public WavStream(Stream inputStream)
+        {
+            lockObject = new object();
+            stream = inputStream;
+            ReadHeader();
+        }
+
         ~WavStream()
         {
             Dispose(false);

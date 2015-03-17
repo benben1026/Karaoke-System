@@ -164,17 +164,18 @@ namespace P2P_Karaoke_System
             FileInfo f = new FileInfo(filename);
             int filesize = (int)f.Length;
 
+            NAudio.Wave.AudioFileReader audioStream = new NAudio.Wave.AudioFileReader(filename);
             for (int i = startByte; i < endByte; i += segmentSize)
             {
                 Console.WriteLine("Transmit no{0} packet", i);
                 GetResponse gres = new GetResponse(filename, hash);
                 if (i + segmentSize >= endByte)
                 {
-                    gres.GetData(fs, md5, i, endByte);
+                    gres.GetData(audioStream, md5, i, endByte);
                 }
                 else
                 {
-                    gres.GetData(fs, md5, i, i + segmentSize - 1);
+                    gres.GetData(audioStream, md5, i, i + segmentSize - 1);
                 }
                 byte[] serialize = gres.ToByte();
                 byte[] type = { 0x12 };
@@ -186,6 +187,9 @@ namespace P2P_Karaoke_System
                 s.Send(response);
             }
             fs.Close();
+            fs.Dispose();
+            audioStream.Close();
+            audioStream.Dispose();
         }
 
         public void ProcessSearchRequest(byte[] obj, Socket s, List<MusicCopy> musicDataList)

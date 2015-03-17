@@ -220,9 +220,16 @@ namespace P2P_Karaoke_System
             openFile((Audio)musicList.Items[musicList.Items.Count - 1]);
         }
 
-        public void openFile(Audio audio)
+        public void openFile(Audio audio, MusicStream musicStream = null, WavFormat? fmt = null)
         {
             CloseFile();
+            if (musicStream != null)
+            {
+                audioStream = musicStream;
+                format = fmt.Value;
+                return;
+            }
+
             bool fileExists = File.Exists(audio.MediaPath);
             if (!fileExists)
             {
@@ -237,7 +244,9 @@ namespace P2P_Karaoke_System
             {
                 try
                 {
-                    WavStream S = new WavStream(audio.MediaPath);
+                    WavStream S;
+                    if (musicStream == null) S = new WavStream(audio.MediaPath);
+                    else S = new WavStream(musicStream);
                     if (S.Length <= 0)
                         throw new Exception("Invalid WAV file");
                     format = S.Format;
@@ -264,7 +273,9 @@ namespace P2P_Karaoke_System
             }
             else
             {
-                NAudio.Wave.WaveStream pcm = new NAudio.Wave.AudioFileReader(audio.MediaPath);
+                NAudio.Wave.WaveStream pcm;
+                if (musicStream == null) pcm = new NAudio.Wave.AudioFileReader(audio.MediaPath);
+                else pcm = new NAudio.Wave.Mp3FileReader(musicStream);
                 format.wFormatTag = 3;
                 format.nChannels = (short)pcm.WaveFormat.Channels;
                 format.nSamplesPerSec = (int)pcm.WaveFormat.SampleRate;
@@ -420,41 +431,43 @@ namespace P2P_Karaoke_System
             //Peer p = new Peer();
             //Thread test = new Thread(() => p.StartListening());
             //test.Start();
-             
-             
-            ////Get data from other peers
-            //string[] ipList = new string[10];
-            //ipList[0] = "192.168.215.116";
-            //ipList[1] = "192.168.213.114";
-            //ipList[2] = "";
-            //ipList[3] = "";
-            //ipList[4] = "";
-            //ipList[5] = "";
-            //ipList[6] = "";
-            //ipList[7] = "";
-            //ipList[8] = "";
-            //ipList[9] = "";
-            ////Sender.InitialIpList();
-            //Audio a = new Audio();
-            //a.MediaPath = "travel1.wma";
-            //a.Title = "travel1";
-            //a.Artist = "Jin";
-            //a.Album = "Hello";
-            //a.HashValue = "264204303863cf9089de5c42d34d64bd";
-            //a.Size = 2009081;
 
-            //MusicCopy cp = new MusicCopy(a);
-            //CopyIndex t1 = new CopyIndex(0, "travel1.wma", "192.168.215.116");
-            ////CopyIndex t2 = new CopyIndex(1, "aaa.wma", "192.168.213.114");
-            //List<CopyIndex> t = new List<CopyIndex>();
-            //t.Add(t1);
-            ////t.Add(t2);
-            //cp.CopyInfo = t;
-            //Local l = new Local(ipList, cp);
-            //Thread test = new Thread(() => l.StartGetMusic());
-            //test.Start();
-            //Thread.Sleep(1);
-            //test.Join();
+
+            //Get data from other peers
+            string[] ipList = new string[10];
+            ipList[0] = "192.168.215.116";
+            ipList[1] = "192.168.213.114";
+            ipList[2] = "";
+            ipList[3] = "";
+            ipList[4] = "";
+            ipList[5] = "";
+            ipList[6] = "";
+            ipList[7] = "";
+            ipList[8] = "";
+            ipList[9] = "";
+            //Sender.InitialIpList();
+            Audio a = new Audio();
+            a.MediaPath = "travel1.mp3";
+            a.Title = "travel1";
+            a.Artist = "Jin";
+            a.Album = "Hello";
+            a.HashValue = "ea311f5c5f17abe852e90bd5fb979d22";
+            a.Size = 41815303;
+
+            MusicCopy cp = new MusicCopy(a);
+            cp.AudioData.Size = 41815303;
+            CopyIndex t1 = new CopyIndex(0, "travel1.mp3", "192.168.215.116");
+            //CopyIndex t2 = new CopyIndex(1, "aaa.wma", "192.168.213.114");
+            List<CopyIndex> t = new List<CopyIndex>();
+            t.Add(t1);
+            //t.Add(t2);
+            cp.CopyInfo = t;
+            Local l = new Local(ipList, cp);
+            Thread test = new Thread(() => l.StartGetMusic());
+            test.Start();
+            Thread.Sleep(1);
+            openFile(l.GetAudio(), l.GetDataStream(), l.GetMusicCopy().AudioData.Format);
+            Play_Click();
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)

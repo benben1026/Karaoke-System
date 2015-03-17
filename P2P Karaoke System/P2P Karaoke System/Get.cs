@@ -128,7 +128,7 @@ namespace P2P_Karaoke_System
             return true;
         }
 
-        public void GetData(FileStream fs, string oldMd5, int startByte, int endByte)
+        public void GetData(Stream fs, string oldMd5, int startByte, int endByte)
         {
             if (endByte <= startByte)
             {

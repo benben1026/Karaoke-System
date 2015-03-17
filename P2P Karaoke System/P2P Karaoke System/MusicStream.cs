@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace P2P_Karaoke_System
 {
-    class MusicStream : Stream
+    public class MusicStream : Stream
     {
         private byte[] fileData;
         private bool[] flag;

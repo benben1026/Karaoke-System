@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace P2P_Karaoke_System
 {
+    [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public struct WavFormat
     {

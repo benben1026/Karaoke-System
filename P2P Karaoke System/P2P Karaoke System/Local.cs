@@ -53,12 +53,21 @@ namespace P2P_Karaoke_System
             return this.dataStream;
         }
 
+        public Audio GetAudio(){
+            return this.musicDownload.AudioData.ToAudio();
+        }
+
+        public MusicCopy GetMusicCopy()
+        {
+            return this.musicDownload;
+        }
+
         public void UpdateIpList(string[] newIpList)
         {
             this.ipList = newIpList;
         }
 
-        public Stream GetDataStream()
+        public MusicStream GetDataStream()
         {
             return this.dataStream;
         }
@@ -125,8 +134,6 @@ namespace P2P_Karaoke_System
             //Console.WriteLine("length = {0}", ipList.Count());
             //Console.WriteLine("length = {0}", threadList.Count());
             int count = 0;
-            int userIndex = 0;
-            int threadIndex = 0;
             for (int i = 0; i < this.ipList.Count(); i++)
             {
                 if (String.IsNullOrEmpty(ipList[i]))
@@ -134,8 +141,8 @@ namespace P2P_Karaoke_System
                     continue;
                 }
 
-                userIndex = i;
-                threadIndex = count;
+                int userIndex = i;
+                int threadIndex = count;
                 //Console.WriteLine("abc: " + i + "  ipaddress: " + this.ipList[i]);
                 threadList[count] = new Thread(() => this.SearchThread(userIndex, threadIndex));
                 threadList[count].Start();
@@ -240,7 +247,7 @@ namespace P2P_Karaoke_System
                     //threadList[i] = new Thread(() => this.GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, (i + 1) * sizePP - 1));
 
                 }
-                threadList[i] = new Thread(() => dataReceiverList[i].start());
+                threadList[i] = new Thread(dataReceiverList[i].start);
                 threadList[i].Start();
                 //threadList[i].Start();
                 Thread.Sleep(1);
@@ -267,7 +274,7 @@ namespace P2P_Karaoke_System
                     {
                         dataReceiverList[i].status = 5;
                         DataReceiver dr = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[j].UserIndex], port, dataReceiverList[i].currentByte, dataReceiverList[i].toByte, this.musicDownload.CopyInfo[j].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData, this.dataStream);
-                        Thread t = new Thread(() => dr.start());
+                        Thread t = new Thread(dr.start);
                         t.Start();
                         Thread.Sleep(1);
                         t.Join();

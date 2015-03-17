@@ -30,6 +30,7 @@ namespace P2P_Karaoke_System
         public string MediaPath { get; set; }
         public int Size { get; set; }
         public string HashValue { get; set; }
+        public WavFormat Format { get; set; }
 
         public AudioInfo(Audio audioData)
         {
@@ -37,8 +38,20 @@ namespace P2P_Karaoke_System
             this.Artist = audioData.Artist;
             this.Album = audioData.Album;
             this.MediaPath = audioData.MediaPath;
-            this.Size = (int)audioData.Size;
             this.HashValue = audioData.HashValue;
+
+            NAudio.Wave.AudioFileReader audioStream = new NAudio.Wave.AudioFileReader(audioData.MediaPath);
+            this.Size = (int)audioStream.Length;
+            WavFormat format;
+            format.wFormatTag = 3;
+            format.nChannels = (short)audioStream.WaveFormat.Channels;
+            format.nSamplesPerSec = (int)audioStream.WaveFormat.SampleRate;
+            format.nAvgBytesPerSec = (int)audioStream.WaveFormat.AverageBytesPerSecond;
+            format.nBlockAlign = (short)audioStream.WaveFormat.BlockAlign;
+            format.wBitsPerSample = (short)audioStream.WaveFormat.BitsPerSample;
+            format.cbSize = (short)audioStream.WaveFormat.ExtraSize;
+            this.Format = format;
+            audioStream.Close();
         }
 
         public Audio ToAudio()
