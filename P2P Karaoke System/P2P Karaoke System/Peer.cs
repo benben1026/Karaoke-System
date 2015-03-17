@@ -63,6 +63,8 @@ namespace P2P_Karaoke_System
                 s.Send(response);
                 return;
             }
+            fs.Close();
+            fs.Dispose();
 
             if ((String.Compare(hash, greq.GetMd5(), true) != 0) || (filename.IndexOf(".ppm", StringComparison.OrdinalIgnoreCase) > -1))
             {
@@ -105,10 +107,7 @@ namespace P2P_Karaoke_System
                 Buffer.BlockCopy(serialize, 0, response, 5, serialize.Length);
                 s.Send(response);
             }
-            fs.Close();
-            fs.Dispose();
             audioStream.Close();
-            audioStream.Dispose();
         }
 
         public void ProcessSearchRequest(byte[] obj, Socket s, List<MusicCopy> musicDataList)
