@@ -48,6 +48,29 @@ namespace P2P_Karaoke_System
             this.dataStream = new MusicStream((int)this.musicDownload.AudioData.Size);
         }
 
+        public Local(string[] ipList)
+        {
+            this.ipList = ipList;
+            this.peerNum = ipList.Count();
+
+            Audio a = new Audio();
+            a.MediaPath = "1.ppm";
+            a.Title = "";
+            a.Artist = "";
+            a.Album = "";
+            a.HashValue = "";
+            a.Size = 270015;
+            MusicCopy cp = new MusicCopy(a);
+            CopyIndex t1 = new CopyIndex(0, "1.ppm", this.ipList[0]);
+            CopyIndex t2 = new CopyIndex(1, "1.ppm", this.ipList[1]);
+            CopyIndex t3 = new CopyIndex(2, "1.ppm", this.ipList[2]);
+            List<CopyIndex> t = new List<CopyIndex>();
+            t.Add(t1);
+            t.Add(t2);
+            t.Add(t3);
+            cp.CopyInfo = t;
+        }
+
         public MusicStream GetMusicStream()
         {
             return this.dataStream;
@@ -293,9 +316,9 @@ namespace P2P_Karaoke_System
             }
             if (!ifError)
             {
-                FileStream fs = new FileStream(this.musicDownload.AudioData.MediaPath, FileMode.Create);
-                fs.Write(fileData, 0, (int)this.musicDownload.AudioData.Size);
-                fs.Close();
+                //FileStream fs = new FileStream(this.musicDownload.AudioData.MediaPath, FileMode.Create);
+                //fs.Write(fileData, 0, (int)this.musicDownload.AudioData.Size);
+                //fs.Close();
                 Console.WriteLine("Download file succeeded.");
 
                 //var fileStream = File.Create("123.wma");
@@ -309,6 +332,13 @@ namespace P2P_Karaoke_System
                 Console.WriteLine("Fail to download file.");
             }
             ifGettingData = false;
+        }
+
+        public void CreateOutputFile()
+        {
+            FileStream fs = new FileStream("1.ppm", FileMode.Create);
+            fs.Write(this.fileData, 0, (int)this.musicDownload.AudioData.Size);
+            fs.Close();
         }
 
         private void GetMusicThread(int index, int threadIndex, int startByte, int endByte)

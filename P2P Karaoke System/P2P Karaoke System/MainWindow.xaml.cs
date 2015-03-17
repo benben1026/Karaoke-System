@@ -95,6 +95,11 @@ namespace P2P_Karaoke_System
             {
                 MessageBox.Show("Can't connect to the media database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            //start p2p listening
+            Peer p = new Peer();
+            Thread test = new Thread(() => p.StartListening());
+            test.Start();
         }
 
         private void Filler(IntPtr data, int size)
@@ -421,6 +426,11 @@ namespace P2P_Karaoke_System
 
         private void p2p_Click(object sender, RoutedEventArgs e)
         {
+            Local l = new Local(this.ipListInput);
+            Thread test = new Thread(() => l.StartGetMusic());
+            test.Start();
+            Thread.Sleep(1);
+            l.CreateOutputFile();
             /*
             //Test object serialization
             GetRequest gr = new GetRequest("1.mp3", "87ECA84BBFF77E54D21711A496857159CC5FA033", 0, 1024);
@@ -447,40 +457,40 @@ namespace P2P_Karaoke_System
 
 
             //Get data from other peers
-            string[] ipList = new string[10];
-            ipList[0] = "192.168.215.116";
-            ipList[1] = "192.168.213.114";
-            ipList[2] = "";
-            ipList[3] = "";
-            ipList[4] = "";
-            ipList[5] = "";
-            ipList[6] = "";
-            ipList[7] = "";
-            ipList[8] = "";
-            ipList[9] = "";
-            //Sender.InitialIpList();
-            Audio a = new Audio();
-            a.MediaPath = "travel1.mp3";
-            a.Title = "travel1";
-            a.Artist = "Jin";
-            a.Album = "Hello";
-            a.HashValue = "ea311f5c5f17abe852e90bd5fb979d22";
-            a.Size = 41815303;
+            //string[] ipList = new string[10];
+            //ipList[0] = "192.168.215.116";
+            //ipList[1] = "192.168.213.114";
+            //ipList[2] = "";
+            //ipList[3] = "";
+            //ipList[4] = "";
+            //ipList[5] = "";
+            //ipList[6] = "";
+            //ipList[7] = "";
+            //ipList[8] = "";
+            //ipList[9] = "";
+            ////Sender.InitialIpList();
+            //Audio a = new Audio();
+            //a.MediaPath = "travel1.mp3";
+            //a.Title = "travel1";
+            //a.Artist = "Jin";
+            //a.Album = "Hello";
+            //a.HashValue = "ea311f5c5f17abe852e90bd5fb979d22";
+            //a.Size = 41815303;
 
-            MusicCopy cp = new MusicCopy(a);
-            cp.AudioData.Size = 41815303;
-            CopyIndex t1 = new CopyIndex(0, "travel1.mp3", "192.168.215.116");
-            //CopyIndex t2 = new CopyIndex(1, "aaa.wma", "192.168.213.114");
-            List<CopyIndex> t = new List<CopyIndex>();
-            t.Add(t1);
-            //t.Add(t2);
-            cp.CopyInfo = t;
-            Local l = new Local(ipList, cp);
-            Thread test = new Thread(() => l.StartGetMusic());
-            test.Start();
-            Thread.Sleep(1);
-            openFile(l.GetAudio(), l.GetDataStream(), l.GetMusicCopy().AudioData.Format);
-            Play_Click();
+            //MusicCopy cp = new MusicCopy(a);
+            //cp.AudioData.Size = 41815303;
+            //CopyIndex t1 = new CopyIndex(0, "travel1.mp3", "192.168.215.116");
+            ////CopyIndex t2 = new CopyIndex(1, "aaa.wma", "192.168.213.114");
+            //List<CopyIndex> t = new List<CopyIndex>();
+            //t.Add(t1);
+            ////t.Add(t2);
+            //cp.CopyInfo = t;
+            //Local l = new Local(ipList, cp);
+            //Thread test = new Thread(() => l.StartGetMusic());
+            //test.Start();
+            //Thread.Sleep(1);
+            //openFile(l.GetAudio(), l.GetDataStream(), l.GetMusicCopy().AudioData.Format);
+            //Play_Click();
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
