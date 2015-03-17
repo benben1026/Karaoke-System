@@ -86,29 +86,59 @@ namespace P2P_Karaoke_System
             FileInfo f = new FileInfo(filename);
             int filesize = (int)f.Length;
 
-            NAudio.Wave.AudioFileReader audioStream = new NAudio.Wave.AudioFileReader(filename);
-            for (int i = startByte; i < endByte; i += segmentSize)
-            {
-                Console.WriteLine("Transmit no{0} packet", i);
-                GetResponse gres = new GetResponse(filename, hash);
-                if (i + segmentSize >= endByte)
+             
+            if (filename.IndexOf(".ppm", StringComparison.OrdinalIgnoreCase) <= -1) {
+                NAudio.Wave.AudioFileReader audioStream = new NAudio.Wave.AudioFileReader(filename);
+                for (int i = startByte; i < endByte; i += segmentSize)
                 {
-                    gres.GetData(audioStream, md5, i, endByte);
+                    Console.WriteLine("Transmit no{0} packet", i);
+                    GetResponse gres = new GetResponse(filename, hash);
+                    if (i + segmentSize >= endByte)
+                    {
+                        gres.GetData(audioStream, md5, i, endByte);
+                    }
+                    else
+                    {
+                        gres.GetData(audioStream, md5, i, i + segmentSize - 1);
+                    }
+                    byte[] serialize = gres.ToByte();
+                    byte[] type = { 0x12 };
+                    byte[] size = BitConverter.GetBytes(serialize.Length);
+                    byte[] response = new byte[5 + serialize.Length];
+                    Buffer.BlockCopy(type, 0, response, 0, 1);
+                    Buffer.BlockCopy(size, 0, response, 1, 4);
+                    Buffer.BlockCopy(serialize, 0, response, 5, serialize.Length);
+                    s.Send(response);
                 }
-                else
-                {
-                    gres.GetData(audioStream, md5, i, i + segmentSize - 1);
-                }
-                byte[] serialize = gres.ToByte();
-                byte[] type = { 0x12 };
-                byte[] size = BitConverter.GetBytes(serialize.Length);
-                byte[] response = new byte[5 + serialize.Length];
-                Buffer.BlockCopy(type, 0, response, 0, 1);
-                Buffer.BlockCopy(size, 0, response, 1, 4);
-                Buffer.BlockCopy(serialize, 0, response, 5, serialize.Length);
-                s.Send(response);
+                audioStream.Close();
             }
-            audioStream.Close();
+            else
+            {
+                FileStream audioStream = new FileStream(filename, FileMode.Open);
+                for (int i = startByte; i < endByte; i += segmentSize)
+                {
+                    Console.WriteLine("Transmit no{0} packet", i);
+                    GetResponse gres = new GetResponse(filename, hash);
+                    if (i + segmentSize >= endByte)
+                    {
+                        gres.GetData(audioStream, md5, i, endByte);
+                    }
+                    else
+                    {
+                        gres.GetData(audioStream, md5, i, i + segmentSize - 1);
+                    }
+                    byte[] serialize = gres.ToByte();
+                    byte[] type = { 0x12 };
+                    byte[] size = BitConverter.GetBytes(serialize.Length);
+                    byte[] response = new byte[5 + serialize.Length];
+                    Buffer.BlockCopy(type, 0, response, 0, 1);
+                    Buffer.BlockCopy(size, 0, response, 1, 4);
+                    Buffer.BlockCopy(serialize, 0, response, 5, serialize.Length);
+                    s.Send(response);
+                }
+                audioStream.Close();
+            }
+            
         }
 
         public void ProcessSearchRequest(byte[] obj, Socket s, List<MusicCopy> musicDataList)
