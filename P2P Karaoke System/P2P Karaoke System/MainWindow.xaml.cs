@@ -110,7 +110,7 @@ namespace P2P_Karaoke_System
                 {
                     int toget = speedFactor*size - pos;
                     int got = audioStream.Read(b, pos, toget);
-                    if (got < toget)
+                    if (got == 0)
                     {
                         audioStream.Position = 0; // loop if the file ends
                         Stop_Click();
@@ -243,7 +243,7 @@ namespace P2P_Karaoke_System
             CloseFile();
             if (musicStream != null)
             {
-                audioStream = musicStream;
+                audioStream = new BufferedStream(musicStream);
                 format = fmt.Value;
                 return;
             }
@@ -262,9 +262,7 @@ namespace P2P_Karaoke_System
             {
                 try
                 {
-                    WavStream S;
-                    if (musicStream == null) S = new WavStream(audio.MediaPath);
-                    else S = new WavStream(musicStream);
+                    WavStream S = new WavStream(audio.MediaPath);
                     if (S.Length <= 0)
                         throw new Exception("Invalid WAV file");
                     format = S.Format;
@@ -291,9 +289,7 @@ namespace P2P_Karaoke_System
             }
             else
             {
-                NAudio.Wave.WaveStream pcm;
-                if (musicStream == null) pcm = new NAudio.Wave.AudioFileReader(audio.MediaPath);
-                else pcm = new NAudio.Wave.Mp3FileReader(musicStream);
+                NAudio.Wave.WaveStream pcm = new NAudio.Wave.AudioFileReader(audio.MediaPath);
                 format.wFormatTag = 3;
                 format.nChannels = (short)pcm.WaveFormat.Channels;
                 format.nSamplesPerSec = (int)pcm.WaveFormat.SampleRate;
@@ -773,6 +769,8 @@ namespace P2P_Karaoke_System
             Thread test = new Thread(() => local.StartGetMusic());
             test.Start();
             Thread.Sleep(1);
+            openFile(local.GetAudio(), local.GetDataStream(), local.GetMusicCopy().AudioData.Format);
+            Play_Click();
         }
 
         private void progressSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
