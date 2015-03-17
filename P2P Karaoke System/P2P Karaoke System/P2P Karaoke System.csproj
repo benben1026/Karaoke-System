@@ -173,8 +173,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\nextBtn.png" />
-    <Resource Include="Images\previousBtn.png" />
+    <Resource Include="Resources\artwork_gray.png" />
+    <Resource Include="Resources\artwork_white.png" />
+    <Resource Include="Resources\chipmunk_off.png" />
+    <Resource Include="Resources\chipmunk_on.png" />
+    <Resource Include="Resources\default.jpg" />
+    <Resource Include="Resources\information_gray.png" />
+    <Resource Include="Resources\information_white.png" />
+    <Resource Include="Resources\lyrics_gray.png" />
+    <Resource Include="Resources\lyrics_white.png" />
+    <Resource Include="Resources\pause.png" />
+    <Resource Include="Resources\play.png" />
+    <Resource Include="Resources\stop.png" />
     <Content Include="Music.mdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -182,7 +192,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DependentUpon>Music.mdf</DependentUpon>
     </Content>
-    <None Include="Resources\PlayBtn.png" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />

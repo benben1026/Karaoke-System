@@ -38,6 +38,7 @@ namespace P2P_Karaoke_System
         private ImageSourceConverter imgSrcConverter;
         private ImageSource defaultImage;
         private bool speed2XOn = false;
+        private string currentPlayingPath = null;
 
         private string keyword;
         public string Keyword { get { return keyword; } set { SearchBox.Text = keyword = value; } }
@@ -150,6 +151,7 @@ namespace P2P_Karaoke_System
                     try { thePlayer.Dispose(); }
                     finally { thePlayer = null; }
                     isPlaying = false;
+                    PlayBtn.Content = FindResource("Play");
                 }
             }
             else
@@ -159,6 +161,7 @@ namespace P2P_Karaoke_System
                     thePlayer = new WaveOutPlayer(-1, format, 16384, 3, new BufferFillEventHandler(Filler));
                     AdjustVolume();
                     isPlaying = true;
+                    PlayBtn.Content = FindResource("Pause");
                 }
             }
         }
@@ -166,6 +169,8 @@ namespace P2P_Karaoke_System
         private void Stop_Click(object sender = null, RoutedEventArgs e = null)
         {
             isPlaying = false;
+            PlayBtn.Content = FindResource("Play");
+
             if (audioStream != null) audioStream.Position = 0;
 
             if (thePlayer != null)
@@ -319,7 +324,7 @@ namespace P2P_Karaoke_System
 
         public int currentDuration()
         {
-            if (audioFormat == null) 
+            if (audioStream == null) 
                 return 0;
             else 
                 return (int)(audioStream.Length / format.nAvgBytesPerSec);
@@ -531,6 +536,7 @@ namespace P2P_Karaoke_System
                 MD5 myMD5 = MD5.Create();
                 byte[] hashvalue = myMD5.ComputeHash(fs);
                 audio.HashValue = Peer.ConvertHashValue(hashvalue);
+                fs.Close();
 
                 Console.WriteLine("count: " +musicList.Items.Count);
 
@@ -581,6 +587,7 @@ namespace P2P_Karaoke_System
         {
             CloseFile();
             Audio audio = (Audio)((ListBoxItem)e.Source).Content;
+            currentPlayingPath = audio.MediaPath;
             openFile(audio);
             Play_Click();
         }
@@ -601,6 +608,9 @@ namespace P2P_Karaoke_System
                 {
                     MessageBox.Show("Datebase Connection Failure","Error",MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+                if (currentPlayingPath == ((Audio)musicList.SelectedItem).MediaPath)
+                    CloseFile();
+
                 musicList.Items.RemoveAt(musicList.SelectedIndex);
             }
         }
