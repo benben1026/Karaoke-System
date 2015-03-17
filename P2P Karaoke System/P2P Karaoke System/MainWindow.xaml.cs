@@ -169,7 +169,10 @@ namespace P2P_Karaoke_System
         private void Stop_Click(object sender = null, RoutedEventArgs e = null)
         {
             isPlaying = false;
-            PlayBtn.Content = FindResource("Play");
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                PlayBtn.Content = FindResource("Play");
+            }));
 
             if (audioStream != null) audioStream.Position = 0;
 
@@ -180,14 +183,35 @@ namespace P2P_Karaoke_System
             }  
         }
 
+        private void updateCurrentTimeLabel(int currentTime)
+        {
+            int hr = currentTime / 3600;
+            int min = currentTime / 60 - 60 * hr;
+            int sec = currentTime % 60;
+            CurrentTimeLabel.Content = hr > 0 ?
+                string.Format("{0:00}:{1:00}:{2:00}", hr, min, sec) : string.Format("{0:00}:{1:00}", min, sec);
+        }
+
+        private void updateTotalTimeLabel(int totalTime)
+        {
+            int hr = totalTime / 3600;
+            int min = totalTime / 60 - 60 * hr;
+            int sec = totalTime % 60;
+            TotalTimeLabel.Content = hr > 0 ?
+                string.Format("{0:00}:{1:00}:{2:00}", hr, min, sec) : string.Format("{0:00}:{1:00}", min, sec);
+        }
+
         void timer_Tick(object sender, EventArgs e)
         {
-            progressSlider.Value = currentPosition();
+            int currentTime = currentPosition();
+            progressSlider.Value = currentTime;
+            updateCurrentTimeLabel(currentTime);
+
             //Lyrics
             for (int i = 1; i <= 7; i++)//7 is the number of label
             {
                 Label lyricsLabel = (Label) this.FindName("Lyrics" + i);
-                lyricsLabel.Content = lyricsReader.GetLyricsByTimeWithOffset(currentPosition() * 1000, i - 4); //the fourth label will get the current lyrics
+                lyricsLabel.Content = lyricsReader.GetLyricsByTimeWithOffset(currentTime * 1000, i - 4); //the fourth label will get the current lyrics
             }
         }
 
@@ -212,12 +236,6 @@ namespace P2P_Karaoke_System
 
             CloseFile();
             base.OnClosed(e);
-        }
-
-        private void load_Click(object sender, RoutedEventArgs e)
-        {
-            addButton_Click();
-            openFile((Audio)musicList.Items[musicList.Items.Count - 1]);
         }
 
         public void openFile(Audio audio, MusicStream musicStream = null, WavFormat? fmt = null)
@@ -310,6 +328,9 @@ namespace P2P_Karaoke_System
                     }
                 }
             }
+
+            if (audioStream != null)
+                updateTotalTimeLabel(currentDuration());
             
             //Lyrics
             try
@@ -360,10 +381,6 @@ namespace P2P_Karaoke_System
             {
                 Console.WriteLine((int)((Slider)sender).Value);
                 audioStream.Position = (int)((Slider)sender).Value * format.nAvgBytesPerSec;
-            }
-            else
-            {
-                audioStream.Position = 0;
             }
             timer.Start();
         }
@@ -756,6 +773,11 @@ namespace P2P_Karaoke_System
             Thread test = new Thread(() => local.StartGetMusic());
             test.Start();
             Thread.Sleep(1);
+        }
+
+        private void progressSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            updateCurrentTimeLabel((int)progressSlider.Value);
         }
     }
 }

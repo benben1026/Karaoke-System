@@ -19,21 +19,20 @@
         </Grid.ColumnDefinitions>
         <Image x:Name="img" HorizontalAlignment="Left" Source="Resources/default.jpg" Stretch="UniformToFill"/>
         <Frame Background="#CC202028" Grid.Row="1"/>
-        <Button x:Name="PlayBtn" HorizontalAlignment="Center"  VerticalAlignment="Top" Width="46" Height="46" Click="Play_Click" ClipToBounds="True" BorderBrush="{x:Null}" Background="{x:Null}" Grid.Row="1" Margin="0,20,50,0">
+        <Button x:Name="PlayBtn" HorizontalAlignment="Center" VerticalAlignment="Top" Width="46" Height="46" Click="Play_Click" ClipToBounds="True" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Grid.Row="1" Margin="0,20,50,0">
             <DynamicResource ResourceKey="Play"/>
         </Button>
         <Button x:Name="StopBtn" Width="46" Height="46" Click="Stop_Click" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Margin="50,20,0,0">
             <Image Height="46" Width="40" Source="Resources/stop.png" />
         </Button>
-        <Button x:Name="Next" HorizontalAlignment="Center" Margin="150,20,0,0" VerticalAlignment="Top" Width="40" Height="46" FontSize="14" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+        <Button x:Name="Next" HorizontalAlignment="Center" Margin="150,20,0,0" VerticalAlignment="Top" Width="40" Height="46" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Grid.Row="1">
             <Image Height="16" Width="30" Source="Resources/stop.png"/>
         </Button>
-        <Button x:Name="Previous" HorizontalAlignment="Center" Margin="0,20,150,0" Width="40" FontSize="14" Height="46" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+        <Button x:Name="Previous" HorizontalAlignment="Center" Margin="0,20,150,0" Width="40" FontSize="14" Height="46" VerticalAlignment="Top" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Grid.Row="1">
             <Image Height="16" Width="30" Source="Resources/stop.png"/>
         </Button>
-        <Slider x:Name="progressSlider" HorizontalAlignment="Center" Margin="0,0,0,24.6" VerticalAlignment="Bottom" Width="469" PreviewMouseLeftButtonUp="progressSlider_PreviewMouseLeftButtonUp" Grid.Row="1" PreviewMouseLeftButtonDown="progressSlider_PreviewMouseLeftButtonDown"/>
-        <Button x:Name="load" Content="open" HorizontalAlignment="Right" Margin="0,30,30,0" VerticalAlignment="Top" Width="75" Click="load_Click" Grid.Row="1"/>
-        <Button x:Name="p2p" Content="p2ptest" HorizontalAlignment="Right" Margin="0,60,30,0" VerticalAlignment="Top" Width="75" Click="p2p_Click" Grid.Row="1"/>
+        <Slider x:Name="progressSlider" HorizontalAlignment="Center" Margin="0,0,0,24" VerticalAlignment="Bottom" Width="460" PreviewMouseLeftButtonUp="progressSlider_PreviewMouseLeftButtonUp" Grid.Row="1" PreviewMouseLeftButtonDown="progressSlider_PreviewMouseLeftButtonDown" ValueChanged="progressSlider_ValueChanged"/>
+        <Button x:Name="p2p" Content="p2ptest" HorizontalAlignment="Right" Margin="0,35.6,24,0" VerticalAlignment="Top" Width="75" Click="p2p_Click" Grid.Row="1"/>
         <Button x:Name="Edit" Content="Edit" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="Edit_Click" Grid.Row="1" Margin="90,0,0,0"/>
         <Button x:Name="addButton" Content="add" HorizontalAlignment="Center" Margin="0,0,90,0" VerticalAlignment="Center" Width="75" Click="addButton_Click" Grid.Row="1" Grid.Column="1"/>
         <Button x:Name="deleteButton" Content="Delete" HorizontalAlignment="Center" Margin="0,60,90,0" VerticalAlignment="Center" Width="75" Click="deleteButton_Click" Grid.Column="1" Grid.Row="1"/>
@@ -68,6 +67,8 @@
         <Button x:Name="Back" Content="Back" HorizontalAlignment="Left" Margin="125,27,-1,0" VerticalAlignment="Top" Width="76" Grid.Column="1" Click="Back_Click"/>
         <Button x:Name="LyricsEnableBtn" Content="Button" HorizontalAlignment="Left" Margin="154,12,0,0" VerticalAlignment="Top" Width="75" IsHitTestVisible="True" Click="LyricsEnableBtn_Click"/>
         <Button x:Name="speedButton" Content="2X" HorizontalAlignment="Left" Margin="271,17,0,0" VerticalAlignment="Top" Width="75" Click="speedButton_Click"/>
+        <Label x:Name="TotalTimeLabel" Content="00:00" HorizontalAlignment="Center" Margin="500,0,0,24" Grid.Row="1" HorizontalContentAlignment="Center" VerticalAlignment="Bottom" VerticalContentAlignment="Center" Foreground="White" ForceCursor="True"/>
+        <Label x:Name="CurrentTimeLabel" Content="00:00" HorizontalAlignment="Center" Margin="0,0,500,24" Grid.Row="1" HorizontalContentAlignment="Center" VerticalAlignment="Bottom" VerticalContentAlignment="Center" Foreground="White" ForceCursor="True"/>
 
     </Grid>
 </Window>
