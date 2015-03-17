@@ -173,12 +173,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\PlayBtn.png" />
-    <Resource Include="Images\addMusic.png" />
     <Resource Include="Images\nextBtn.png" />
-    <Resource Include="Images\pauseBtn.png" />
     <Resource Include="Images\previousBtn.png" />
-    <Resource Include="Images\sample.jpg" />
     <Content Include="Music.mdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
