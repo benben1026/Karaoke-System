@@ -37,8 +37,12 @@ namespace P2P_Karaoke_System
         private ImageSourceConverter imgSrcConverter;
         private ImageSource defaultImage;
 
-        public List<MusicCopy> musicDataList;
+        private string keyword;
+        public string Keyword { get { return keyword; } set { SearchBox.Text = keyword = value; } }
+
+        public static List<MusicCopy> musicDataList;
         public string[] ipListInput;
+        public static int InputIPNumber { get; set; }
 
         public MainWindow()
         {
@@ -57,7 +61,9 @@ namespace P2P_Karaoke_System
             timer.Interval = new TimeSpan(0, 0, 1);
 
             musicDataList = new List<MusicCopy>();
+
             ipListInput = new string[10];
+            InputIPNumber = 0;
             imgSrcConverter = new ImageSourceConverter();
             defaultImage = img.Source;
 
@@ -74,6 +80,8 @@ namespace P2P_Karaoke_System
                 foreach (var audio in audios)
                 {
                     musicList.Items.Add(audio);
+                    MusicCopy musicData = new MusicCopy(audio);
+                    musicDataList.Add(musicData);
                     Console.WriteLine(audio.Title);
                 }
             }
@@ -573,6 +581,49 @@ namespace P2P_Karaoke_System
                 ipListInput[8] = m.IP9;
                 ipListInput[9] = m.IP10;               
             }
+            for (int i = 0; i < 10; i++)
+            {
+                if (ipListInput[i] != "")
+                {
+                    InputIPNumber++;
+                }
+            }
+        }
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+
+            this.Keyword = SearchBox.Text;
+            Console.WriteLine(this.Keyword);
+            for (int i = 0; i < 10; i++)
+            {
+                Console.WriteLine("#" + ipListInput[i] + "#");
+            }
+            Console.WriteLine("count is: {0} {1}", ipListInput.Count(), InputIPNumber);
+
+            List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(this.Keyword, musicDataList);
+
+            if (InputIPNumber > 0) 
+            {
+                Local local = new Local(ipListInput, this.Keyword);
+                List<MusicCopy> peerSearchResult = local.StartSearch();
+                List<MusicCopy>[] searchResultArray = { searchResult, peerSearchResult };
+                searchResult = local.MergeMusicList(searchResultArray);
+            }
+            
+            // test search
+            int items = searchResult.Count();
+            Console.WriteLine(items);
+            for (int i = 0; i < items; i++)
+            {
+                Console.WriteLine("title is :" + searchResult[i].AudioData.Title);
+                Console.WriteLine("copyenum is :" + searchResult[i].CopyNumber);
+                for (int j = 0; j < searchResult[i].CopyNumber; j++)
+                {
+                    Console.WriteLine("From " + searchResult[i].CopyInfo[j].FileName + "  where  ip = " +searchResult[i].CopyInfo[j].IPAddress);
+                }
+            }
+           
         }
     }
 }

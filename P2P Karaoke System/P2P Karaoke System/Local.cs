@@ -17,6 +17,7 @@ namespace P2P_Karaoke_System
         private string[] ipList = null;
 
         private List<MusicCopy>[] searchResult;
+        private string keyword;
 
         private int sizePP;
         private bool ifError = false;
@@ -28,6 +29,14 @@ namespace P2P_Karaoke_System
         private MusicCopy musicDownload = null;
 
         public DataReceiver[] dataReceiverList;
+
+        public Local(string[] ipList, string searchKeyword)
+        {
+            this.ipList = ipList;
+            this.peerNum = ipList.Count();
+            this.searchResult = new List<MusicCopy>[peerNum];
+            this.keyword = searchKeyword;
+        }
 
         public Local(string[] ipList, MusicCopy music)
         {
@@ -65,7 +74,7 @@ namespace P2P_Karaoke_System
             }
         }
 
-        private byte[] ConstructSearchRequest(string keyword)
+        private byte[] ConstructSearchRequest()
         {
             //string request = "SEARCH&" + keyword + "&<EOR>";
             //return Encoding.UTF8.GetBytes(request);
@@ -98,10 +107,11 @@ namespace P2P_Karaoke_System
 
         }
 
-        public List<MusicCopy> StartSearch(string keyword)
+        public List<MusicCopy> StartSearch()
         {
-            string request = "SEARCH&" + keyword + "&<EOR>";
-            byte[] byteRequest = Encoding.UTF8.GetBytes(request);
+            //string request = "SEARCH&" + keyword + "&<EOR>";
+            //byte[] byteRequest = Encoding.UTF8.GetBytes(request);
+            Array.Clear(searchResult,0,10);
             Thread[] threadList = new Thread[ipList.Count()];
             Console.WriteLine("length = {0}", ipList.Count());
             Console.WriteLine("length = {0}", threadList.Count());
@@ -112,7 +122,7 @@ namespace P2P_Karaoke_System
                     continue;
                 }
                 Console.WriteLine(i);
-                threadList[i] = new Thread(() => this.SearchThread(i, byteRequest));
+                threadList[i] = new Thread(() => this.SearchThread(i));
                 threadList[i].Start();
                 Thread.Sleep(1);
             }
@@ -123,7 +133,7 @@ namespace P2P_Karaoke_System
             return MergeMusicList(searchResult);
         }
 
-        private void SearchThread(int userIndex, byte[] bytesSent)
+        private void SearchThread(int userIndex)
         {
             Console.WriteLine("Connecting to {0}", ipList[userIndex]);
             Socket s = this.ConnectSocket(ipList[userIndex]);
@@ -133,9 +143,10 @@ namespace P2P_Karaoke_System
                 return;
             }
             Console.WriteLine("{0}:Connection success", ipList[userIndex]);
-            s.Send(bytesSent, bytesSent.Length, 0);
 
-            
+            byte[] request = this.ConstructSearchRequest();
+            s.Send(request, request.Length, 0);
+
             while(true)
             {
                 int bytes = 0;
@@ -386,7 +397,7 @@ namespace P2P_Karaoke_System
             }
         }
 
-        private List<MusicCopy> MergeMusicList(List<MusicCopy>[] musicList)
+        public List<MusicCopy> MergeMusicList(List<MusicCopy>[] musicList)
         {
             int listItems = musicList.Length;
             List<MusicCopy> oldList = musicList[0];

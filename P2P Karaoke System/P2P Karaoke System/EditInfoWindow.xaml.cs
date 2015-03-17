@@ -20,13 +20,13 @@ namespace P2P_Karaoke_System
     /// </summary>
     public partial class EditInfoWindow : Window
     {
-        private string title;
+        private string audioTitle;
         private string singer;
         private string album;
         private string lrcPath;
         private string imagePath;
 
-        public string AudioTitle { get { return title; } set { titleBox.Text = title = value; } }
+        public string AudioTitle { get { return audioTitle; } set { titleBox.Text = audioTitle = value; } }
         public string Singer { get { return singer; } set { singerBox.Text = singer = value; } }
         public string Album { get { return album; } set { albumBox.Text = album = value; } }
         public string LrcPath { get { return lrcPath; } set { lrcBox.Text = lrcPath = value; } }
@@ -63,7 +63,7 @@ namespace P2P_Karaoke_System
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            this.Title = string.Copy(titleBox.Text);
+            this.AudioTitle = string.Copy(titleBox.Text);
             this.Singer = singerBox.Text;
             this.Album = albumBox.Text;
             this.LrcPath = lrcBox.Text;

@@ -224,7 +224,7 @@ namespace P2P_Karaoke_System
                     Console.WriteLine("type = {0}, size = {1}, realSize = {2}", type, payloadSize, byteReceived.Length);
                     if (type == 0x01)
                     {
-                        
+                        ProcessSearchRequest(byteReceived, handler, MainWindow.musicDataList);
                     }
                     else if (type == 0x02)
                     {
