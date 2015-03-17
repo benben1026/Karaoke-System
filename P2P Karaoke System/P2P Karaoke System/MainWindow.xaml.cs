@@ -385,9 +385,9 @@ namespace P2P_Karaoke_System
             */ 
              
             //waiting for conncetion...
-            Peer p = new Peer();
-            Thread test = new Thread(() => p.StartListening());
-            test.Start();
+            //Peer p = new Peer();
+            //Thread test = new Thread(() => p.StartListening());
+            //test.Start();
              
              
             //Get data from other peers
@@ -621,8 +621,10 @@ namespace P2P_Karaoke_System
             this.Keyword = SearchBox.Text;
             Console.WriteLine("keyword is: " + this.Keyword);
             List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(this.Keyword, musicDataList);
+
             if (InputIPNumber > 0) 
             {
+                Console.WriteLine("InputIPNumber is: {0} \n", InputIPNumber);
                 Local local = new Local(ipListInput, this.Keyword);
                 List<MusicCopy> peerSearchResult = local.StartSearch();
                 List<MusicCopy>[] searchResultArray = { searchResult, peerSearchResult };
