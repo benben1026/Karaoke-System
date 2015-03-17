@@ -22,6 +22,7 @@ namespace P2P_Karaoke_System
         private int sizePP;
         private bool ifError = false;
         private byte[] fileData = null;
+        private MusicStream dataStream = null;
         private int segmentSize = 4096;
         private int[] flag = null;
         //private int[][] dataReceived = null;
@@ -36,6 +37,7 @@ namespace P2P_Karaoke_System
             this.peerNum = ipListInput.Count();
             this.searchResult = new List<MusicCopy>[peerNum];
             this.keyword = searchKeyword;
+            this.dataStream = new MusicStream((int)this.musicDownload.AudioData.Size);
         }
 
         public Local(string[] ipList, MusicCopy music)
@@ -46,6 +48,11 @@ namespace P2P_Karaoke_System
             this.musicDownload = music;
         }
 
+        public MusicStream GetMusicStream()
+        {
+            return this.dataStream;
+        }
+
         public void UpdateIpList(string[] newIpList)
         {
             this.ipList = newIpList;
@@ -53,7 +60,7 @@ namespace P2P_Karaoke_System
 
         public Stream GetDataStream()
         {
-            return new MemoryStream(this.fileData);
+            return this.dataStream;
         }
 
         private Socket ConnectSocket(string serverIP)

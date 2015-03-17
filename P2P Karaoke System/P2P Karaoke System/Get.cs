@@ -116,7 +116,7 @@ namespace P2P_Karaoke_System
             return this.endByte;
         }
 
-        public bool CopyData(byte[] dst)
+        public bool CopyData(byte[] dst, MusicStream ms)
         {
             if (dst.Length < endByte)
             {
@@ -124,6 +124,7 @@ namespace P2P_Karaoke_System
                 return false;
             }
             this.data.CopyTo(dst, this.startByte);
+            ms.Write(this.data, this.startByte, this.endByte - this.startByte + 1);
             return true;
         }
 

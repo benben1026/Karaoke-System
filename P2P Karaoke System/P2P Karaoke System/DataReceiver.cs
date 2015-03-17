@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
 
 namespace P2P_Karaoke_System
 {
@@ -26,7 +27,9 @@ namespace P2P_Karaoke_System
         public string hashValue;
         public int filesize;
 
-        public DataReceiver(string ip, int port, int fromByte, int toByte, string filepath, string hashValue, int filesize, byte[] fileData)
+        private MusicStream ms;
+
+        public DataReceiver(string ip, int port, int fromByte, int toByte, string filepath, string hashValue, int filesize, byte[] fileData, MusicStream ms)
         {
             this.rawIP = ip;
             this.port = port;
@@ -40,6 +43,7 @@ namespace P2P_Karaoke_System
 
             this.status = 0;
             this.currentByte = fromByte;
+            this.ms = ms;
         }
 
         private void ConnectSocket()
@@ -89,7 +93,7 @@ namespace P2P_Karaoke_System
                 this.status = -3;
                 return -1;
             }
-            if (gres.CopyData(this.fileData))
+            if (gres.CopyData(this.fileData, this.ms))
             {
                 this.currentByte = gres.GetEndByte();
                 Console.WriteLine("{0}:Copy from {1} to {2}", this.rawIP, gres.GetStartByte(), gres.GetEndByte());
