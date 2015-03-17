@@ -173,6 +173,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\add.png" />
+    <Resource Include="Resources\delete.png" />
+    <Resource Include="Resources\edit.png" />
+    <Resource Include="Resources\icon-play.png" />
+    <Resource Include="Resources\next.png" />
+    <Resource Include="Resources\previous.png" />
+    <Resource Include="Resources\search.png" />
     <Resource Include="Resources\artwork_gray.png" />
     <Resource Include="Resources\artwork_white.png" />
     <Resource Include="Resources\chipmunk_off.png" />
