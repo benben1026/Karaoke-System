@@ -21,87 +21,6 @@ namespace P2P_Karaoke_System
 
         }
 
-        //public byte[] processRequest(string request)
-        //{
-        //    string output = null;
-        //    byte[] msg = new byte[1024];
-        //    string[] parameter = request.Split('&');
-        //    string method = parameter[0];
-        //    byte[] byteOut = null;
-        //    if (method.Equals("search", StringComparison.InvariantCultureIgnoreCase))
-        //    {
-        //        string keyword = parameter[1];
-        //        List<MusicCopy> musicList = new List<MusicCopy>();
-        //        // get the music list from UI(?)
-
-        //        List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(keyword, musicList);
-
-        //        Console.WriteLine("keyword = {0}", keyword);
-
-        //        // construct the output message
-        //        string header = "200 SEARCH\r\n";
-        //        string tail = "<END>";
-        //        int items = searchResult.Count();
-        //        output = header;
-        //        // search result data: properties delimited by &, file delimited by newline
-        //        for (int i = 0; i < items; i++)
-        //        {
-        //            output += searchResult[i].Filename + "&" + searchResult[i].Title + "&"
-        //                       + searchResult[i].Singer + "&" + searchResult[i].Album + "&"
-        //                       + searchResult[i].Hashvalue + "&" + Convert.ToString(searchResult[i].Size) + "&"
-        //                       + Convert.ToString(searchResult[i].Relevancy) + "\r\n";
-        //        }
-        //        output += tail;
-        //        byteOut = Encoding.UTF8.GetBytes(output);
-        //    }
-        //    else if (method.Equals("get", StringComparison.InvariantCultureIgnoreCase))
-        //    {
-        //        // parameters in the request
-        //        string filename = parameter[1];
-        //        string md5 = parameter[2];
-        //        string segID = parameter[3];
-
-        //        Console.WriteLine("filename = {0} md5 = {1}", filename, md5);
-
-        //        // check whether the file is modified
-        //        FileStream fs = new FileStream(filename, FileMode.Open);
-        //        RIPEMD160 myRIPEMD160 = RIPEMD160Managed.Create();
-        //        byte[] hashvalue = myRIPEMD160.ComputeHash(fs);
-        //        string hash = ConvertHashValue(hashvalue);
-
-        //        if (String.Compare(md5, hash, true) == 0)
-        //        {
-        //            // read the segment we need from the file
-        //            int segSize = Convert.ToInt32(segmentSize);
-        //            byte[] byteData = new byte[segSize];
-        //            fs.Seek(4, SeekOrigin.Begin);
-        //            fs.Read(byteData, (Convert.ToInt32(segID) * segSize), segSize);
-
-        //            // construct the output message
-        //            string header = "200 GET\r\n" + filename + "&" + md5 + "&" + segID + "\r\n"; //file_data<END>
-        //            string tail = "\r\n<END>";
-        //            byte[] byteHead = Encoding.UTF8.GetBytes(header);
-        //            byte[] byteTail = Encoding.UTF8.GetBytes(tail);
-
-        //            // merge output and file data
-        //            int offset = 0;
-        //            byteOut = new byte[byteHead.Length + byteData.Length + byteTail.Length];
-        //            Buffer.BlockCopy(byteHead, 0, byteOut, offset, byteHead.Length);
-        //            offset += byteHead.Length;
-        //            Buffer.BlockCopy(byteData, 0, byteOut, offset, byteData.Length);
-        //            offset += byteData.Length;
-        //            Buffer.BlockCopy(byteData, 0, byteOut, offset, byteTail.Length);
-
-        //        }
-        //    }
-        //    else
-        //    {
-        //        output = "500 \nINVALID REQUEST<END>";
-        //        byteOut = Encoding.UTF8.GetBytes(output);
-        //    }
-        //    return byteOut;
-        //}
-
         public static string ConvertHashValue(byte[] hashvalue)
         {
             var sb = new StringBuilder("");
@@ -145,7 +64,7 @@ namespace P2P_Karaoke_System
                 return;
             }
 
-            if (String.Compare(hash, greq.GetMd5(), true) != 0)
+            if ((String.Compare(hash, greq.GetMd5(), true) != 0) || (filename.IndexOf(".ppm", StringComparison.OrdinalIgnoreCase) > -1))
             {
                 GetResponse gres = new GetResponse(filename, hash);
                 gres.SetStatus(2);
@@ -257,7 +176,6 @@ namespace P2P_Karaoke_System
                 catch (Exception e)
                 {
                     Console.WriteLine("Socket Error:{0}", e.ToString());
-                    return;
                 }
             }
             

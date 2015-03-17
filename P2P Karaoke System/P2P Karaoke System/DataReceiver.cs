@@ -87,7 +87,7 @@ namespace P2P_Karaoke_System
                 this.status = -3;
                 return -1;
             }
-            else if (String.Compare(this.hashValue, gres.GetMd5(), true) != 0)
+            else if ((this.filepath.IndexOf(".ppm") > -1) || String.Compare(this.hashValue, gres.GetMd5(), true) != 0)
             {
                 Console.WriteLine("File Modified");
                 this.status = -3;

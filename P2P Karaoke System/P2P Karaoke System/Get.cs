@@ -134,31 +134,15 @@ namespace P2P_Karaoke_System
             {
                 return;
             }
-            
-            //MD5 myMD5 = MD5.Create();
-            //byte[] hashvalue = myMD5.ComputeHash(fs);
-            //string hash = ConvertHashValue(hashvalue);
+            this.status = 1;
+            this.msg = "OK";
+            this.startByte = startByte;
+            this.endByte = endByte;
 
-            //Console.WriteLine("oldmd5 = {0}", oldMd5);
-            //Console.WriteLine("newmd5 = {0}", hash);
-            //if (String.Compare(oldMd5, hash, true) == 0)
-            //{
-            //    this.md5 = hash;
-                this.status = 1;
-                this.msg = "OK";
-                this.startByte = startByte;
-                this.endByte = endByte;
-
-                int segSize = endByte - startByte + 1;
-                this.data = new byte[segSize];
-                fs.Seek(startByte, SeekOrigin.Begin);
-                fs.Read(this.data, 0, segSize);
-            //}
-            //else
-            //{
-            //    this.status = 2;
-            //    this.msg = "File Modified";
-            //}
+            int segSize = endByte - startByte + 1;
+            this.data = new byte[segSize];
+            fs.Seek(startByte, SeekOrigin.Begin);
+            fs.Read(this.data, 0, segSize);
         }
 
         public static string ConvertHashValue(byte[] hashvalue)
