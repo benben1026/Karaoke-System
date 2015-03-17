@@ -95,6 +95,7 @@
     <Compile Include="MusicCopy.cs" />
     <Compile Include="MusicData.cs" />
     <Compile Include="MusicSearchUtil.cs" />
+    <Compile Include="MusicStream.cs" />
     <Compile Include="P2P Setting.xaml.cs">
       <DependentUpon>P2P Setting.xaml</DependentUpon>
     </Compile>

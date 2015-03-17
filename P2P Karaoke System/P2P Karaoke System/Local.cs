@@ -37,7 +37,6 @@ namespace P2P_Karaoke_System
             this.peerNum = inputIPNumber;
             this.searchResult = new List<MusicCopy>[peerNum];
             this.keyword = searchKeyword;
-            this.dataStream = new MusicStream((int)this.musicDownload.AudioData.Size);
         }
 
         public Local(string[] ipList, MusicCopy music)
@@ -46,6 +45,7 @@ namespace P2P_Karaoke_System
             this.peerNum = ipList.Count();
             this.searchResult = new List<MusicCopy>[peerNum];
             this.musicDownload = music;
+            this.dataStream = new MusicStream((int)this.musicDownload.AudioData.Size);
         }
 
         public MusicStream GetMusicStream()
@@ -166,39 +166,47 @@ namespace P2P_Karaoke_System
             byte[] request = this.ConstructSearchRequest();
             s.Send(request, request.Length, 0);
 
-            while(true)
+            try
             {
-                int bytes = 0;
-                byte[] byteReceived = new byte[5];
-                for (int remain = 5; remain > 0; remain -= bytes)
+                while (true)
                 {
-                    bytes = s.Receive(byteReceived, 5 - remain, remain, 0);
-                }
-                int payloadSize = BitConverter.ToInt32(byteReceived, 1);
-                byte type = byteReceived[0];
-                byteReceived = new byte[payloadSize];
-                for (int remain = payloadSize; remain > 0; remain -= bytes)
-                {
-                    bytes = s.Receive(byteReceived, payloadSize - remain, remain, 0);
-                }
-
-                if (type == 0x11)
-                {
-                    searchResult[threadIndex] = ProcessSearchResponse(byteReceived, userIndex);
-                    if (searchResult[threadIndex] == null)
+                    int bytes = 0;
+                    byte[] byteReceived = new byte[5];
+                    for (int remain = 5; remain > 0; remain -= bytes)
                     {
-                        ifError = true; 
+                        bytes = s.Receive(byteReceived, 5 - remain, remain, 0);
                     }
-                    break;
-                }
-                else if (type == 0x12)
-                {
-                    
-                }
-            }
+                    int payloadSize = BitConverter.ToInt32(byteReceived, 1);
+                    byte type = byteReceived[0];
+                    byteReceived = new byte[payloadSize];
+                    for (int remain = payloadSize; remain > 0; remain -= bytes)
+                    {
+                        bytes = s.Receive(byteReceived, payloadSize - remain, remain, 0);
+                    }
 
-            s.Shutdown(SocketShutdown.Both);
-            s.Close();
+                    if (type == 0x11)
+                    {
+                        searchResult[threadIndex] = ProcessSearchResponse(byteReceived, userIndex);
+                        if (searchResult[threadIndex] == null)
+                        {
+                            ifError = true;
+                            break;
+                        } 
+                    }
+                    else if (type == 0x12)
+                    {
+
+                    }
+                }
+                s.Shutdown(SocketShutdown.Both);
+                s.Close();
+            }
+            catch (Exception e)
+            {
+                this.ifError = true;
+                Console.WriteLine(e.Message);
+                return;
+            }
         }
 
         public void StartGetMusic()
