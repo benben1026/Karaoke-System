@@ -40,6 +40,7 @@ namespace P2P_Karaoke_System
         private bool speed2XOn = false;
         private string currentPlayingPath = null;
         private int playingIndex = -1;
+        private bool lyricsContentShowing;
 
         private string keyword;
         public string Keyword { get { return keyword; } set { SearchBox.Text = keyword = value; } }
@@ -168,6 +169,7 @@ namespace P2P_Karaoke_System
                     AdjustVolume();
                     isPlaying = true;
                     PlayBtn.Content = FindResource("Pause");
+                    lyricsContentShowing = true;
                 }
             }
         }
@@ -186,7 +188,16 @@ namespace P2P_Karaoke_System
             {
                 try { thePlayer.Dispose(); }
                 finally { thePlayer = null; }
-            }  
+            }
+
+
+            for (int i = 1; i <= LyricsPanel.Children.Count; i++)
+            {
+                Label lyricsLabel = (Label)this.FindName("Lyrics" + i);
+                lyricsLabel.Content = "";
+            }
+            lyricsContentShowing = false;
+            
         }
 
         private void updateCurrentTimeLabel(int currentTime)
@@ -213,12 +224,16 @@ namespace P2P_Karaoke_System
             progressSlider.Value = currentTime;
             updateCurrentTimeLabel(currentTime);
 
-            //Lyrics
-            for (int i = 1; i <= 7; i++)//7 is the number of label
+            //Lyrics Change
+            if (lyricsReader.FileLoaded() && lyricsContentShowing)
             {
-                Label lyricsLabel = (Label) this.FindName("Lyrics" + i);
-                lyricsLabel.Content = lyricsReader.GetLyricsByTimeWithOffset(currentTime * 1000, i - 4); //the fourth label will get the current lyrics
+                for (int i = 1; i <= LyricsPanel.Children.Count; i++)
+                {
+                    Label lyricsLabel = (Label) this.FindName("Lyrics" + i);
+                    lyricsLabel.Content = lyricsReader.GetLyricsByTimeWithOffset(currentTime * 1000, i - 4); //the fourth label will get the current lyrics
+                }
             }
+            
         }
 
         public void CloseFile()
@@ -344,6 +359,7 @@ namespace P2P_Karaoke_System
                     lyricsPath = System.IO.Path.GetDirectoryName(audio.MediaPath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(audio.MediaPath) + ".lrc"; //consider same filename as music file
                 }
                 lyricsReader = new LrcReader(lyricsPath);
+                lyricsContentShowing = true;
             }
             catch (Exception err)
             {

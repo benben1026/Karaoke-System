@@ -86,7 +86,7 @@ namespace P2P_Karaoke_System {
 
         //The methods that can be used by UI
 
-        public bool LRCFileHasLoadedSuccessfully() {
+        public bool FileLoaded() {
             return fileLoadedSuccessfully;
         }
 
