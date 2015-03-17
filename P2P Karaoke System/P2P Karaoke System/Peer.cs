@@ -67,7 +67,7 @@ namespace P2P_Karaoke_System
             fs.Close();
             fs.Dispose();
 
-            if ((String.Compare(hash, greq.GetMd5(), true) != 0) || (filename.IndexOf(".ppm", StringComparison.OrdinalIgnoreCase) > -1))
+            if ((String.Compare(hash, greq.GetMd5(), true) != 0) && (filename.IndexOf(".ppm", StringComparison.OrdinalIgnoreCase) <= -1))
             {
                 GetResponse gres = new GetResponse(filename, hash);
                 gres.SetStatus(2);
