@@ -30,6 +30,28 @@ namespace P2P_Karaoke_System
         public string MediaPath { get; set; }
         public int Size { get; set; }
         public string HashValue { get; set; }
+
+        public AudioInfo(Audio audioData)
+        {
+            this.Title = audioData.Title;
+            this.Artist = audioData.Artist;
+            this.Album = audioData.Album;
+            this.MediaPath = audioData.MediaPath;
+            this.Size = (int)audioData.Size;
+            this.HashValue = audioData.HashValue;
+        }
+
+        public Audio ToAudio()
+        {
+            Audio audio = new Audio();
+            audio.Title = this.Title;
+            audio.Artist = this.Artist;
+            audio.Album = this.Album;
+            audio.MediaPath = this.MediaPath;
+            audio.Size = this.Size;
+            audio.HashValue = this.HashValue;
+            return audio;
+        }
     }
     [Serializable]
     public class MusicCopy
@@ -41,13 +63,7 @@ namespace P2P_Karaoke_System
 
         public MusicCopy(Audio audioData)
         {
-            this.AudioData = new AudioInfo();
-            this.AudioData.Title = audioData.Title;
-            this.AudioData.Artist = audioData.Artist;
-            this.AudioData.Album = audioData.Album;
-            this.AudioData.MediaPath = audioData.MediaPath;
-            this.AudioData.Size = (int)audioData.Size;
-            this.AudioData.HashValue = audioData.HashValue;
+            this.AudioData = new AudioInfo(audioData);
             this.Relevancy = 0;
             this.CopyNumber = 0;
             this.CopyInfo = new List<CopyIndex>();
@@ -55,13 +71,7 @@ namespace P2P_Karaoke_System
 
         public MusicCopy(Audio audioData, int relevancy)
         {
-            this.AudioData = new AudioInfo();
-            this.AudioData.Title = audioData.Title;
-            this.AudioData.Artist = audioData.Artist;
-            this.AudioData.Album = audioData.Album;
-            this.AudioData.MediaPath = audioData.MediaPath;
-            this.AudioData.Size = (int)audioData.Size;
-            this.AudioData.HashValue = audioData.HashValue;
+            this.AudioData = new AudioInfo(audioData);
             this.Relevancy = relevancy;
             this.CopyNumber = 0;
             this.CopyInfo = new List<CopyIndex>();
