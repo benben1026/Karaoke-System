@@ -15,6 +15,7 @@ namespace P2P_Karaoke_System
     {
         private static int segmentSize = 204800;
         // chunk size in bytes
+        private FileStream fs;
 
         public Peer()
         {
@@ -40,7 +41,7 @@ namespace P2P_Karaoke_System
             int startByte = greq.GetStartByte();
             int endByte = greq.GetEndByte();
 
-            FileStream fs;
+            //FileStream fs;
             string hash = "";
             try {
                 fs = new FileStream(filename, FileMode.Open);
@@ -175,6 +176,14 @@ namespace P2P_Karaoke_System
                 catch (Exception e)
                 {
                     Console.WriteLine("Socket Error:{0}", e.ToString());
+                    try
+                    {
+                        fs.Close();
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                 }
             }
             
