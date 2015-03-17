@@ -180,6 +180,7 @@ namespace P2P_Karaoke_System
             catch (Exception e)
             {
                 this.status = -3;
+                Console.WriteLine(e.ToString());
                 return;
             }
             this.status = 4;

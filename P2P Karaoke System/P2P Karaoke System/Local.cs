@@ -296,6 +296,12 @@ namespace P2P_Karaoke_System
                 fs.Write(fileData, 0, (int)this.musicDownload.AudioData.Size);
                 fs.Close();
                 Console.WriteLine("Download file succeeded.");
+
+                //var fileStream = File.Create("123.wma");
+                //this.dataStream.Seek(0, SeekOrigin.Begin);
+                //this.dataStream.CopyTo(fileStream);
+                //fileStream.Close();
+                //Console.WriteLine("File written.");
             }
             else
             {

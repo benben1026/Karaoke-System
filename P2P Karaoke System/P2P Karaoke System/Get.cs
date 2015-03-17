@@ -124,7 +124,7 @@ namespace P2P_Karaoke_System
                 return false;
             }
             this.data.CopyTo(dst, this.startByte);
-            ms.Write(this.data, this.startByte, this.endByte - this.startByte + 1);
+            ms.WriteSegment(this.data, 0, this.data.Length, this.startByte);
             return true;
         }
 

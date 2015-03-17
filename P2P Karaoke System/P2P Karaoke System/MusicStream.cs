@@ -15,6 +15,7 @@ namespace P2P_Karaoke_System
         private long pos;
         private AutoResetEvent are;
         private object streamLock;
+        private Mutex mutex;
 
         public MusicStream(int size)
         {
@@ -23,36 +24,48 @@ namespace P2P_Karaoke_System
             flag = new bool[size];
             are = new AutoResetEvent(false);
             streamLock = new object();
+            mutex = new Mutex();
         }
 
         public void WriteSegment(byte[] buffer, int offset, int count, int startPos)
         {
+            Console.WriteLine("Write to stream from {0} to {1}", startPos, startPos + count - 1);
+            mutex.WaitOne();
             Array.Copy(buffer, offset, fileData, startPos, count);
-            for (int i = offset; i < offset + count; i++)
+            for (int i = startPos; i < startPos + count; i++)
             {
                 this.flag[i] = true;
             }
+            mutex.ReleaseMutex();
             are.Set();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
             int read = 0;
+            mutex.WaitOne();
             lock (streamLock)
             {
-                if (pos >= fileData.Length) return -1;
                 for (int i = 0; i < count; i++, pos++, read++)
                 {
                     if (pos >= fileData.Length) break;
-                    if (!flag[pos])
+                    while (!flag[pos])
                     {
                         are.Reset();
+                        mutex.ReleaseMutex();
                         are.WaitOne(200);
-                        if (!flag[pos]) break;
+                        mutex.WaitOne();
+                        if (read > 0) break;
+                    }
+                    if (!flag[pos])
+                    {
+                        mutex.ReleaseMutex();
+                        break;
                     }
                     buffer[offset + i] = fileData[pos];
                 }
             }
+            mutex.ReleaseMutex();
             return read;
         }
 
@@ -104,6 +117,18 @@ namespace P2P_Karaoke_System
         public override void SetLength(long value)
         {
             throw new InvalidOperationException();
+        }
+
+        public override void Close()
+        {
+            mutex.WaitOne();
+            for (int i = 0; i < Length; i++)
+            {
+                this.flag[i] = true;
+            }
+            mutex.ReleaseMutex();
+            are.Set();
+            base.Close();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
