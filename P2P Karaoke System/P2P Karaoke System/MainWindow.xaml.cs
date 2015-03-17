@@ -96,13 +96,13 @@ namespace P2P_Karaoke_System
 
         private void Filler(IntPtr data, int size)
         {
-            byte[] b = new byte[size];
+            byte[] b = new byte[2*size];
             if (audioStream != null)
             {
                 int pos = 0;
-                while (pos < size)
+                while (pos < 2*size)
                 {
-                    int toget = size - pos;
+                    int toget = 2*size - pos;
                     int got = audioStream.Read(b, pos, toget);
                     if (got < toget)
                     {
@@ -117,6 +117,17 @@ namespace P2P_Karaoke_System
                 for (int i = 0; i < b.Length; i++)
                     b[i] = 0;
             }
+
+            long bytePerSample = format.wBitsPerSample/8;
+            long sampleCount = size / bytePerSample;
+            for (int i = 0; i < sampleCount; ++i)
+            {
+                for (int j = 0; j < bytePerSample; j++)
+                {
+                    b[i * bytePerSample + j] = b[i * bytePerSample * 2 + j];
+                }
+            }
+
             System.Runtime.InteropServices.Marshal.Copy(b, 0, data, size);
 
         }
