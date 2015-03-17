@@ -270,8 +270,13 @@ namespace P2P_Karaoke_System
             //Lyrics
             try
             {
-                //assuming same filename as music file
-                lyricsReader = new LrcReader(System.IO.Path.GetDirectoryName(audio.MediaPath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(audio.MediaPath) + ".lrc");
+                String lyricsPath;
+                if (audio.LyricsPath != null) {
+                    lyricsPath = audio.LyricsPath;
+                } else {
+                    lyricsPath = System.IO.Path.GetDirectoryName(audio.MediaPath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(audio.MediaPath) + ".lrc"; //consider same filename as music file
+                }
+                lyricsReader = new LrcReader(lyricsPath);
             }
             catch (Exception err)
             {
