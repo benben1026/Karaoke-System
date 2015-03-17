@@ -648,6 +648,7 @@ namespace P2P_Karaoke_System
                     CloseFile();
 
                 musicList.Items.RemoveAt(musicList.SelectedIndex);
+                musicDataList.Clear();
             }
         }
 
