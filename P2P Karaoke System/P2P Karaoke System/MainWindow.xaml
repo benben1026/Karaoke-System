@@ -6,6 +6,13 @@
         <JournalEntryListConverter x:Key="JournalEntryListConverter"/>
         <Image x:Key="Play" Height="46" Width="40" Source="Resources/play.png" />
         <Image x:Key="Pause" Height="46" Width="40" Source="Resources/pause.png" />
+        <Image x:Key="Chipmunk_on" Width="120" Height="30" Source="Resources/chipmunk_on.png" />
+        <Image x:Key="Chipmunk_off" Width="120" Height="30" Source="Resources/chipmunk_off.png" />
+        <Image x:Key="Lyrics_on" Width="120" Height="18" Source="Resources/lyrics_white.png" />
+        <Image x:Key="Lyrics_off" Width="120" Height="18" Source="Resources/lyrics_gray.png" />
+        <Image x:Key="Artwork_on" Width="120" Height="14" Source="Resources/artwork_white.png" />
+        <Image x:Key="Artwork_off" Width="120" Height="14" Source="Resources/artwork_gray.png" />
+
     </Window.Resources>
 
     <Grid Margin="0,0,-0.4,0.4" Background="#FF202028">
@@ -73,13 +80,14 @@
         </Button>
         <TextBox x:Name="SearchBox" HorizontalAlignment="Left" Height="23" Margin="5.6,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="129" Grid.Column="1" KeyDown="SearchBox_KeyDown" Background="#4C464646" Foreground="#FFC3C3C3"/>
         <Button x:Name="Back" Content="Back" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" HorizontalAlignment="Right" Margin="0,6,10,0" VerticalAlignment="Top" Width="50" Grid.Column="1" Click="Back_Click" Height="20" Foreground="White" FontSize="14"/>
-        <Button x:Name="LyricsEnableBtn" Content="Button" HorizontalAlignment="Left" Margin="154,12,0,0" VerticalAlignment="Top" Width="75" IsHitTestVisible="True" Click="LyricsEnableBtn_Click"/>
-        <Button x:Name="speedButton" Content="2X" HorizontalAlignment="Left" Margin="271,17,0,0" VerticalAlignment="Top" Width="75" Click="speedButton_Click"/>
         <Label x:Name="TotalTimeLabel" Content="00:00" HorizontalAlignment="Center" Margin="500,0,0,24" Grid.Row="1" HorizontalContentAlignment="Center" VerticalAlignment="Bottom" VerticalContentAlignment="Center" Foreground="White" ForceCursor="True"/>
         <Label x:Name="CurrentTimeLabel" Content="00:00" HorizontalAlignment="Center" Margin="0,0,500,24" Grid.Row="1" HorizontalContentAlignment="Center" VerticalAlignment="Bottom" VerticalContentAlignment="Center" Foreground="White" ForceCursor="True"/>
         <Label Content="Balance" HorizontalAlignment="Center" Margin="0,45,510,0" Grid.Row="1" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Right"/>
         <Label Content="Volume" HorizontalAlignment="Center" Margin="20,16,530,0" Grid.Row="1" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Right"/>
-        <StackPanel HorizontalAlignment="Center" Height="100" Margin="0" VerticalAlignment="Top" Width="400"/>
-
+        <WrapPanel HorizontalAlignment="Center" Height="60" Margin="0" VerticalAlignment="Top" Width="600" Background="#99000000">
+            <Button x:Name="LyricsBtn" HorizontalAlignment="Center" Margin="100,15,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" Click="LyricsEnableBtn_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="{DynamicResource Lyrics_on}" />
+            <Button x:Name="speedButton" HorizontalAlignment="Center" Margin="450,-30,0,0" VerticalAlignment="Center" Width="120" Click="speedButton_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Padding="0" Content="{DynamicResource Chipmunk_on}" />
+            <Button x:Name="ArtworkBtn" HorizontalAlignment="Center" Margin="240,-32,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" Click="LyricsDisableBtn_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="{DynamicResource Artwork_on}" />
+        </WrapPanel>
     </Grid>
 </Window>

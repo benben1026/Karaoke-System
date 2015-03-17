@@ -404,6 +404,11 @@ namespace P2P_Karaoke_System
                 LyricsPanel.Visibility = Visibility.Visible;
         }
 
+        private void LyricsDisableBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void speedButton_Click(object sender, RoutedEventArgs e)
         {
             if (speed2XOn) speed2XOn = false;
