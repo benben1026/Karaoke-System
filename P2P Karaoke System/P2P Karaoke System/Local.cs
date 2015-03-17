@@ -219,13 +219,13 @@ namespace P2P_Karaoke_System
             {
                 if (i == numOfPeerAvailable - 1)
                 {
-                    dataReceiverList[i] = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[i].UserIndex], port, i * sizePP, (int)this.musicDownload.AudioData.Size - 1, this.musicDownload.CopyInfo[i].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData);
+                    dataReceiverList[i] = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[i].UserIndex], port, i * sizePP, (int)this.musicDownload.AudioData.Size - 1, this.musicDownload.CopyInfo[i].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData, this.dataStream);
 
                     //threadList[i] = new Thread(() => this.GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, (int)music.AudioData.Size));
                 }
                 else
                 {
-                    dataReceiverList[i] = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[i].UserIndex], port, i * sizePP, (i + 1) * sizePP - 1, this.musicDownload.CopyInfo[i].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData);
+                    dataReceiverList[i] = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[i].UserIndex], port, i * sizePP, (i + 1) * sizePP - 1, this.musicDownload.CopyInfo[i].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData, this.dataStream);
                     //threadList[i] = new Thread(() => this.GetMusicThread(music.CopyInfo[i].UserIndex, i, i * sizePP, (i + 1) * sizePP - 1));
 
                 }
@@ -255,7 +255,7 @@ namespace P2P_Karaoke_System
                     if (dataReceiverList[i].status != 4 && dataReceiverList[i].status != 5)
                     {
                         dataReceiverList[i].status = 5;
-                        DataReceiver dr = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[j].UserIndex], port, dataReceiverList[i].currentByte, dataReceiverList[i].toByte, this.musicDownload.CopyInfo[j].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData);
+                        DataReceiver dr = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[j].UserIndex], port, dataReceiverList[i].currentByte, dataReceiverList[i].toByte, this.musicDownload.CopyInfo[j].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData, this.dataStream);
                         Thread t = new Thread(() => dr.start());
                         t.Start();
                         Thread.Sleep(1);
@@ -367,7 +367,7 @@ namespace P2P_Karaoke_System
                 Console.WriteLine("File Modified");
                 return -1;
             }
-            if (gres.CopyData(this.fileData))
+            if (gres.CopyData(this.fileData, this.dataStream))
             {
                 flag[threadIndex] = gres.GetEndByte();
                 Console.WriteLine("Copy from {0} to {1}", gres.GetStartByte(), gres.GetEndByte());
