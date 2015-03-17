@@ -180,7 +180,7 @@ namespace P2P_Karaoke_System
                     {
                         fs.Close();
                     }
-                    catch(Exception e)
+                    catch(Exception ex)
                     {
 
                     }
