@@ -479,6 +479,50 @@ namespace P2P_Karaoke_System
             return oldList;
         }
 
+        public List<MusicCopy> MergeMusicListTwo(List<MusicCopy>[] musicList)
+        {
+            List<MusicCopy> oldList = musicList[0];
+            int oldItems = oldList.Count();
+            if (oldItems == 0)
+            {
+                return musicList[1];
+            }
+
+            for (int j = 0; j < oldItems; j++)
+            {
+                oldList[j].CopyNumber = -1;
+            }
+
+            List<MusicCopy> newList = musicList[1];
+            if (newList == null)
+            {
+                return oldList;
+            }
+
+            int newItems = newList.Count();
+            bool duplicate;
+
+            for (int i = 0; i < newItems; i++)
+            {
+                duplicate = false;
+                for (int j = 0; j < oldItems; j++)
+                {
+                    if (newList[i].AudioData.HashValue == oldList[j].AudioData.HashValue && (String.Compare(newList[i].AudioData.Title, oldList[j].AudioData.Title, false) == 0))
+                    {
+                        duplicate = true;
+                        oldList[j].CopyNumber = -1;
+                    }
+                }
+                if (!duplicate)
+                {
+                    oldList.Add(newList[i]);
+                }
+            }
+            
+
+            return oldList;
+        }
+
         public static void InitialIpList()
         {
             //ipList = new string[peerNum];

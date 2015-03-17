@@ -656,6 +656,11 @@ namespace P2P_Karaoke_System
             }
             List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(this.Keyword, musicDataList);
 
+            for (int j = 0; j < searchResult.Count; j++)
+            {
+                searchResult[j].CopyNumber = -1;
+            }
+
             if (this.InputIPNumber > 0) 
             {
                 //Console.WriteLine("InputIPNumber is: {0} \n", this.InputIPNumber);
@@ -668,7 +673,7 @@ namespace P2P_Karaoke_System
                 if (peerSearchResult != null)
                 {
                     List<MusicCopy>[] searchResultArray = { searchResult, peerSearchResult };
-                    searchResult = local.MergeMusicList(searchResultArray);
+                    searchResult = local.MergeMusicListTwo(searchResultArray);
                 } 
             }
 
@@ -681,10 +686,12 @@ namespace P2P_Karaoke_System
             }
             else
             {
-                int items = searchResult.Count();
+                List<MusicCopy> sortedList = searchResult.OrderByDescending(m => m.Relevancy).ToList();
+
+                int items = sortedList.Count();
                 for (int i = 0; i < items; i++)
                 {
-                    searchList.Items.Add(searchResult[i]);
+                    searchList.Items.Add(sortedList[i]);
                 }
 
 
@@ -692,11 +699,11 @@ namespace P2P_Karaoke_System
                 Console.WriteLine(items);
                 for (int i = 0; i < items; i++)
                 {
-                    Console.WriteLine("title is :" + searchResult[i].AudioData.Title);
-                    Console.WriteLine("copyenum is :" + searchResult[i].CopyNumber);
-                    for (int j = 0; j < searchResult[i].CopyNumber; j++)
+                    Console.WriteLine("title is :" + sortedList[i].AudioData.Title);
+                    Console.WriteLine("copyenum is :" + sortedList[i].CopyNumber);
+                    for (int j = 0; j < sortedList[i].CopyNumber; j++)
                     {
-                        Console.WriteLine("From " + searchResult[i].CopyInfo[j].FileName + "  where  ip = " + searchResult[i].CopyInfo[j].IPAddress);
+                        Console.WriteLine("From " + sortedList[i].CopyInfo[j].FileName + "  where  ip = " + sortedList[i].CopyInfo[j].IPAddress);
                     }
                 }
             }
