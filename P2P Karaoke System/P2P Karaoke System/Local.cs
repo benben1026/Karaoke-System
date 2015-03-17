@@ -98,18 +98,24 @@ namespace P2P_Karaoke_System
 
         private Socket ConnectSocket(string serverIP)
         {
-            Console.WriteLine("serverIP is :" + serverIP);
-            IPAddress ip = IPAddress.Parse(serverIP);
-            IPEndPoint ipe = new IPEndPoint(ip, port);
-            Socket s = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            Console.WriteLine("4");
-            s.Connect(ipe);
-            Console.WriteLine("Socket connected");
-            if (s.Connected)
-            {
-                return s;
+            try { 
+                Console.WriteLine("serverIP is :" + serverIP);
+                IPAddress ip = IPAddress.Parse(serverIP);
+                IPEndPoint ipe = new IPEndPoint(ip, port);
+                Socket s = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                Console.WriteLine("4");
+                s.Connect(ipe);
+                Console.WriteLine("Socket connected");
+                if (s.Connected)
+                {
+                    return s;
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
+            catch (Exception e)
             {
                 return null;
             }

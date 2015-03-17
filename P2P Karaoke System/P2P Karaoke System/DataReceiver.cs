@@ -97,7 +97,7 @@ namespace P2P_Karaoke_System
             {
                 this.currentByte = gres.GetEndByte();
                 Console.WriteLine("{0}:Copy from {1} to {2}", this.rawIP, gres.GetStartByte(), gres.GetEndByte());
-                Console.WriteLine("current = {0}, toByte = {1}", this.currentByte, this.toByte);
+                //Console.WriteLine("current = {0}, toByte = {1}", this.currentByte, this.toByte);
                 if (this.currentByte == this.toByte)
                 {
                     return 1;
@@ -162,7 +162,7 @@ namespace P2P_Karaoke_System
                     else if (type == 0x12)
                     {
                         int t = this.ProcessGetResponse(byteReceived);
-                        Console.WriteLine("return value = {0}", t);
+                        //Console.WriteLine("return value = {0}", t);
                         if (t == 1)
                         {
                             break;
