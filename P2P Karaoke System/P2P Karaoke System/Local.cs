@@ -136,13 +136,10 @@ namespace P2P_Karaoke_System
 
                 userIndex = i;
                 threadIndex = count;
-                Console.WriteLine("abc: " + i + "  ipaddress: " + this.ipList[i]);
+                //Console.WriteLine("abc: " + i + "  ipaddress: " + this.ipList[i]);
                 threadList[count] = new Thread(() => this.SearchThread(userIndex, threadIndex));
                 threadList[count].Start();
                 count++;
-
-                Console.WriteLine("aaaaaa: {0}, {1}", i, count);
-
                 Thread.Sleep(1);
             }
             for (int i = 0; i < peerNum; i++)
@@ -168,36 +165,33 @@ namespace P2P_Karaoke_System
 
             try
             {
-                while (true)
+                int bytes = 0;
+                byte[] byteReceived = new byte[5];
+                for (int remain = 5; remain > 0; remain -= bytes)
                 {
-                    int bytes = 0;
-                    byte[] byteReceived = new byte[5];
-                    for (int remain = 5; remain > 0; remain -= bytes)
-                    {
-                        bytes = s.Receive(byteReceived, 5 - remain, remain, 0);
-                    }
-                    int payloadSize = BitConverter.ToInt32(byteReceived, 1);
-                    byte type = byteReceived[0];
-                    byteReceived = new byte[payloadSize];
-                    for (int remain = payloadSize; remain > 0; remain -= bytes)
-                    {
-                        bytes = s.Receive(byteReceived, payloadSize - remain, remain, 0);
-                    }
+                    bytes = s.Receive(byteReceived, 5 - remain, remain, 0);
+                }
+                int payloadSize = BitConverter.ToInt32(byteReceived, 1);
+                byte type = byteReceived[0];
+                byteReceived = new byte[payloadSize];
+                for (int remain = payloadSize; remain > 0; remain -= bytes)
+                {
+                    bytes = s.Receive(byteReceived, payloadSize - remain, remain, 0);
+                }
 
-                    if (type == 0x11)
+                if (type == 0x11)
+                {
+                    searchResult[threadIndex] = ProcessSearchResponse(byteReceived, userIndex);
+                    if (searchResult[threadIndex] == null)
                     {
-                        searchResult[threadIndex] = ProcessSearchResponse(byteReceived, userIndex);
-                        if (searchResult[threadIndex] == null)
-                        {
-                            ifError = true;
-                        }
-                        break;
-                    }
-                    else if (type == 0x12)
-                    {
-
+                        ifError = true;
                     }
                 }
+                else if (type == 0x12)
+                {
+
+                }
+               
                 s.Shutdown(SocketShutdown.Both);
                 s.Close();
             }
@@ -412,6 +406,7 @@ namespace P2P_Karaoke_System
         private List<MusicCopy> ProcessSearchResponse(byte[] obj, int userIndex)
         {
             SearchResponse sres = (SearchResponse)SearchResponse.ToObject(obj);
+            //Console.WriteLine("yoyo: " + sres.GetResult().Count);
             if (sres.GetStatus() != 1)
             {
                 Console.WriteLine("Error occured when getting search results: {0}", sres.GetMsg());
@@ -425,6 +420,7 @@ namespace P2P_Karaoke_System
                 {
                     CopyIndex adding = new CopyIndex(userIndex, searchResult[i].AudioData.MediaPath, ipList[userIndex]);
                     searchResult[i].CopyInfo.Add(adding);
+                    //Console.WriteLine("AHAH: " + searchResult[i].AudioData.MediaPath);
                 }
                 return searchResult;
             }
@@ -433,12 +429,30 @@ namespace P2P_Karaoke_System
         public List<MusicCopy> MergeMusicList(List<MusicCopy>[] musicList)
         {
             int listItems = musicList.Length;
-            List<MusicCopy> oldList = musicList[0];
+            int t = 0;
+            for (t = 0; t < listItems; t++)
+            {
+                if (musicList[t] == null)
+                {
+                    continue;
+                }
+                else break;
+            }
+            if (t >= listItems)
+            {
+                return null;
+            }
+            
+            List<MusicCopy> oldList = musicList[t];
             int oldItems = oldList.Count();
 
-            for (int k = 1; k < listItems; k++)
+            for (int k = (t+1); k < listItems; k++)
             {
                 List<MusicCopy> newList = musicList[k];
+                if(newList == null)
+                {
+                    continue;
+                }
 
                 int newItems = newList.Count();
                 bool duplicate;

@@ -655,31 +655,46 @@ namespace P2P_Karaoke_System
             {
                 Console.WriteLine("InputIPNumber is: {0} \n", this.InputIPNumber);
                 Local local = new Local(ipListInput, this.Keyword, this.InputIPNumber);
-                List<MusicCopy> peerSearchResult = local.StartSearch();
-                List<MusicCopy>[] searchResultArray = { searchResult, peerSearchResult };
-                searchResult = local.MergeMusicList(searchResultArray);
+                List<MusicCopy> peerSearchResult = null;
+
+                Thread test = new Thread(() => { peerSearchResult = local.StartSearch(); } );
+                test.Start();
+                test.Join();
+                if (peerSearchResult.Count != 0)
+                {
+                    List<MusicCopy>[] searchResultArray = { searchResult, peerSearchResult };
+                    searchResult = local.MergeMusicList(searchResultArray);
+                } 
             }
 
             musicList.Visibility = Visibility.Collapsed;
             searchList.Visibility = Visibility.Visible;
-            int items = searchResult.Count();
-            for (int i = 0; i < items; i++)
-            {
-                searchList.Items.Add(searchResult[i]);
-            }
 
-            // test search
-            Console.WriteLine(items);
-            for (int i = 0; i < items; i++)
+            if (searchResult.Count == 0)
             {
-                Console.WriteLine("title is :" + searchResult[i].AudioData.Title);
-                Console.WriteLine("copyenum is :" + searchResult[i].CopyNumber);
-                for (int j = 0; j < searchResult[i].CopyNumber; j++)
+
+            }
+            else
+            {
+                int items = searchResult.Count();
+                for (int i = 0; i < items; i++)
                 {
-                    Console.WriteLine("From " + searchResult[i].CopyInfo[j].FileName + "  where  ip = " +searchResult[i].CopyInfo[j].IPAddress);
+                    searchList.Items.Add(searchResult[i]);
+                }
+
+
+                // test search
+                Console.WriteLine(items);
+                for (int i = 0; i < items; i++)
+                {
+                    Console.WriteLine("title is :" + searchResult[i].AudioData.Title);
+                    Console.WriteLine("copyenum is :" + searchResult[i].CopyNumber);
+                    for (int j = 0; j < searchResult[i].CopyNumber; j++)
+                    {
+                        Console.WriteLine("From " + searchResult[i].CopyInfo[j].FileName + "  where  ip = " + searchResult[i].CopyInfo[j].IPAddress);
+                    }
                 }
             }
-           
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
@@ -696,6 +711,16 @@ namespace P2P_Karaoke_System
             {
                 Search_Click(sender, e);
             }
+        }
+
+        private void searchListItem_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            CloseFile();
+            MusicCopy musicCopy = (MusicCopy)((ListBoxItem)e.Source).Content;
+            Local local = new Local(ipListInput, musicCopy);
+            Thread test = new Thread(() => local.StartGetMusic());
+            test.Start();
+            Thread.Sleep(1);
         }
     }
 }

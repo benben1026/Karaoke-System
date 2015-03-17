@@ -18,7 +18,7 @@ namespace P2P_Karaoke_System {
 
         public static List<MusicCopy> SearchedMusicList(String searchString, List<MusicCopy> inputMusicList)
         {
-            Console.WriteLine("1: " + searchString + "\n");
+            //Console.WriteLine("1: " + searchString + "\n");
 
             int size = inputMusicList.Count();
             bool[] musicIsWantedRecord = new bool[size];  //Store the result of searching
@@ -27,12 +27,12 @@ namespace P2P_Karaoke_System {
             for (int i = 0; i < size; i++) {
                 inputMusicList[i].Relevancy = 0;
                 musicIsWantedRecord[i] = true;
-                Console.WriteLine("4: " + inputMusicList[i].AudioData.Title);
+                //Console.WriteLine("4: " + inputMusicList[i].AudioData.Title);
             }
 
             String[] searchWords = searchString.Split(' ');
             foreach (String s in searchWords) {
-                Console.WriteLine("2: " + s + "\n");
+                //Console.WriteLine("2: " + s + "\n");
 
                 for (int i = 0; i < size; i++) {
                 	// calculate the relevancy
@@ -52,10 +52,11 @@ namespace P2P_Karaoke_System {
             for (int i = 0; i < size; i++) {
                 if (musicIsWantedRecord[i]) {
                     outputMusicList.Add(inputMusicList[i]);
-                    Console.WriteLine("3: " + inputMusicList[i].AudioData.Title + "\n");
+                    //Console.WriteLine("3: " + inputMusicList[i].AudioData.Title + "\n");
 
                 }
             }
+            //Console.WriteLine("5: " + outputMusicList.Count);
             return outputMusicList;
         }
 
