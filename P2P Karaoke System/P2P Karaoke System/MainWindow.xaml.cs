@@ -398,21 +398,42 @@ namespace P2P_Karaoke_System
 
         private void LyricsEnableBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (LyricsPanel.Visibility == Visibility.Visible)
-                LyricsPanel.Visibility = Visibility.Collapsed;
-            else
-                LyricsPanel.Visibility = Visibility.Visible;
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                LyricsBtn.Content = FindResource("Lyrics_on");
+                ArtworkBtn.Content = FindResource("Artwork_off");
+            }));
+            LyricsPanel.Visibility = Visibility.Visible;
         }
 
         private void LyricsDisableBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                LyricsBtn.Content = FindResource("Lyrics_off");
+                ArtworkBtn.Content = FindResource("Artwork_on");
+            }));
+            LyricsPanel.Visibility = Visibility.Collapsed;
         }
 
         private void speedButton_Click(object sender, RoutedEventArgs e)
         {
-            if (speed2XOn) speed2XOn = false;
-            else speed2XOn = true;
+            if (speed2XOn) 
+            {
+                speed2XOn = false;
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    speedButton.Content = FindResource("Chipmunk_off");
+                }));
+            }
+            else 
+            {
+                speed2XOn = true;
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    speedButton.Content = FindResource("Chipmunk_on");
+                }));
+            }
         }
 
         private void AdjustVolume(object sender = null, RoutedPropertyChangedEventArgs<double> e = null)

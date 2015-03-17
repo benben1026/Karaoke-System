@@ -58,7 +58,7 @@
         </ListBox>
         <Slider x:Name="volumeSlider" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Top" Margin="0,20,360,0" Width="100" Maximum="100" ValueChanged="AdjustVolume" Value="100"/>
         <Slider x:Name="balanceSlider" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Top" Margin="0,50,360,0" Width="100" Maximum="100" Value="50" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="balanceSlider_ValueChanged"/>
-        <StackPanel x:Name="LyricsPanel" HorizontalAlignment="Center" Height="280" VerticalAlignment="Center" Width="460" Background="DimGray" Opacity="0.8">
+        <StackPanel x:Name="LyricsPanel" HorizontalAlignment="Center" Height="280" VerticalAlignment="Center" Width="460" Background="DimGray" Opacity="0.8" Visibility="Collapsed">
             <Label x:Name="Lyrics1" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="#7F000000" ForceCursor="True"/>
             <Label x:Name="Lyrics2" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="#B2000000" ForceCursor="True"/>
             <Label x:Name="Lyrics3" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="#E5000000" ForceCursor="True"/>
@@ -85,8 +85,8 @@
         <Label Content="Balance" HorizontalAlignment="Center" Margin="0,45,510,0" Grid.Row="1" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Right"/>
         <Label Content="Volume" HorizontalAlignment="Center" Margin="20,16,530,0" Grid.Row="1" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Right"/>
         <WrapPanel HorizontalAlignment="Center" Height="60" Margin="0" VerticalAlignment="Top" Width="600" Background="#99000000">
-            <Button x:Name="LyricsBtn" HorizontalAlignment="Center" Margin="100,15,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" Click="LyricsEnableBtn_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="{DynamicResource Lyrics_on}" />
-            <Button x:Name="speedButton" HorizontalAlignment="Center" Margin="450,-30,0,0" VerticalAlignment="Center" Width="120" Click="speedButton_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Padding="0" Content="{DynamicResource Chipmunk_on}" />
+            <Button x:Name="LyricsBtn" HorizontalAlignment="Center" Margin="100,15,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" Click="LyricsEnableBtn_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="{DynamicResource Lyrics_off}" />
+            <Button x:Name="speedButton" HorizontalAlignment="Center" Margin="450,-30,0,0" VerticalAlignment="Center" Width="120" Click="speedButton_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Padding="0" Content="{DynamicResource Chipmunk_off}" />
             <Button x:Name="ArtworkBtn" HorizontalAlignment="Center" Margin="240,-32,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" Click="LyricsDisableBtn_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="{DynamicResource Artwork_on}" />
         </WrapPanel>
     </Grid>
