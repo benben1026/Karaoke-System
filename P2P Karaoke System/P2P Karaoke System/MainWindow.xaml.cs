@@ -37,6 +37,7 @@ namespace P2P_Karaoke_System
         private string audioFormat = null;
         private ImageSourceConverter imgSrcConverter;
         private ImageSource defaultImage;
+        private bool speed2XOn = false;
 
         private string keyword;
         public string Keyword { get { return keyword; } set { SearchBox.Text = keyword = value; } }
@@ -97,13 +98,16 @@ namespace P2P_Karaoke_System
 
         private void Filler(IntPtr data, int size)
         {
-            byte[] b = new byte[2*size];
+            int speedFactor = 1;
+            if (speed2XOn) speedFactor = 2;
+
+            byte[] b = new byte[speedFactor * size];
             if (audioStream != null)
             {
                 int pos = 0;
-                while (pos < 2*size)
+                while (pos < speedFactor * size)
                 {
-                    int toget = 2*size - pos;
+                    int toget = speedFactor*size - pos;
                     int got = audioStream.Read(b, pos, toget);
                     if (got < toget)
                     {
@@ -119,13 +123,16 @@ namespace P2P_Karaoke_System
                     b[i] = 0;
             }
 
-            long bytePerSample = format.wBitsPerSample/8;
-            long sampleCount = size / bytePerSample;
-            for (int i = 0; i < sampleCount; ++i)
+            if (speed2XOn)
             {
-                for (int j = 0; j < bytePerSample; j++)
+                long bytePerSample = format.wBitsPerSample / 8;
+                long sampleCount = size / bytePerSample;
+                for (int i = 0; i < sampleCount; ++i)
                 {
-                    b[i * bytePerSample + j] = b[i * bytePerSample * 2 + j];
+                    for (int j = 0; j < bytePerSample; j++)
+                    {
+                        b[i * bytePerSample + j] = b[i * bytePerSample * 2 + j];
+                    }
                 }
             }
 
@@ -135,7 +142,7 @@ namespace P2P_Karaoke_System
 
         private void Play_Click(object sender = null, RoutedEventArgs e = null)
         {
-            if (audioFormat == null) return;
+            if (audioStream == null) return;
             if (isPlaying)
             {
                 if (thePlayer != null)
@@ -211,6 +218,12 @@ namespace P2P_Karaoke_System
         public void openFile(Audio audio)
         {
             CloseFile();
+            bool fileExists = File.Exists(audio.MediaPath);
+            if (!fileExists)
+            {
+                System.Windows.Forms.MessageBox.Show("File doesn't exist.");
+                return;
+            }
             audioFormat = System.IO.Path.GetExtension(audio.MediaPath);
             Console.WriteLine(audioFormat);
             progressSlider.Value = 0;
@@ -314,7 +327,7 @@ namespace P2P_Karaoke_System
 
         public int currentPosition()
         {
-            if (audioFormat == null)
+            if (audioStream == null)
                 return 0;
             else
                 return (int)(audioStream.Position / format.nAvgBytesPerSec);
@@ -347,6 +360,20 @@ namespace P2P_Karaoke_System
                 balanceSlider.IsSnapToTickEnabled = true;
 
             AdjustVolume();
+        }
+
+        private void LyricsEnableBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (LyricsPanel.Visibility == Visibility.Visible)
+                LyricsPanel.Visibility = Visibility.Collapsed;
+            else
+                LyricsPanel.Visibility = Visibility.Visible;
+        }
+
+        private void speedButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (speed2XOn) speed2XOn = false;
+            else speed2XOn = true;
         }
 
         private void AdjustVolume(object sender = null, RoutedPropertyChangedEventArgs<double> e = null)
