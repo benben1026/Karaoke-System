@@ -121,10 +121,29 @@ namespace P2P_Karaoke_System
             int startByte = greq.GetStartByte();
             int endByte = greq.GetEndByte();
 
-            FileStream fs = new FileStream(filename, FileMode.Open);
-            MD5 myMD5 = MD5.Create();
-            byte[] hashvalue = myMD5.ComputeHash(fs);
-            string hash = this.ConvertHashValue(hashvalue);
+            FileStream fs;
+            string hash = "";
+            try {
+                fs = new FileStream(filename, FileMode.Open);
+                MD5 myMD5 = MD5.Create();
+                byte[] hashvalue = myMD5.ComputeHash(fs);
+                hash = this.ConvertHashValue(hashvalue);
+            }
+            catch (FileNotFoundException ex)
+            {
+                GetResponse gres = new GetResponse(filename, hash);
+                gres.SetStatus(2);
+                gres.SetMsg("File Modified");
+                byte[] serialize = gres.ToByte();
+                byte[] type = { 0x12 };
+                byte[] size = BitConverter.GetBytes(serialize.Length);
+                byte[] response = new byte[5 + serialize.Length];
+                Buffer.BlockCopy(type, 0, response, 0, 1);
+                Buffer.BlockCopy(size, 0, response, 1, 4);
+                Buffer.BlockCopy(serialize, 0, response, 5, serialize.Length);
+                s.Send(response);
+                return;
+            }
 
             if (String.Compare(hash, greq.GetMd5(), true) != 0)
             {
@@ -151,7 +170,7 @@ namespace P2P_Karaoke_System
                 GetResponse gres = new GetResponse(filename, hash);
                 if (i + segmentSize >= endByte)
                 {
-                    gres.GetData(fs, md5, i, endByte - 1);
+                    gres.GetData(fs, md5, i, endByte);
                 }
                 else
                 {

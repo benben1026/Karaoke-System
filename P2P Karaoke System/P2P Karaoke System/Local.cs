@@ -227,7 +227,7 @@ namespace P2P_Karaoke_System
 
             for (int i = 0; i < numOfPeerAvailable; i++)
             {
-                threadList[i].Join(10000);
+                threadList[i].Join();
             }
             bool ok = false;
             while (!ok)
@@ -244,13 +244,13 @@ namespace P2P_Karaoke_System
                     ok = true;
                     if (dataReceiverList[i].status != 4 && dataReceiverList[i].status != 5)
                     {
-                        dataReceiverList[i].status = 4;
-                        DataReceiver dr = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[i].UserIndex], port, dataReceiverList[i].currentByte + 1, dataReceiverList[i].toByte, this.musicDownload.CopyInfo[i].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData);
+                        dataReceiverList[i].status = 5;
+                        DataReceiver dr = new DataReceiver(this.ipList[this.musicDownload.CopyInfo[j].UserIndex], port, dataReceiverList[i].currentByte, dataReceiverList[i].toByte, this.musicDownload.CopyInfo[j].FileName, this.musicDownload.AudioData.HashValue, (int)this.musicDownload.AudioData.Size, this.fileData);
                         Thread t = new Thread(() => dr.start());
                         t.Start();
                         Thread.Sleep(1);
                         t.Join();
-                        if (dr.status == 5)
+                        if (dr.status == 4)
                         {
                             ok = true;
                             continue;
