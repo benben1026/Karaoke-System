@@ -59,8 +59,8 @@ namespace P2P_Karaoke_System
             a.Artist = "";
             a.Album = "";
             a.HashValue = "";
-            a.Size = 270015;
-            MusicCopy cp = new MusicCopy(a);
+            MusicCopy cp = new MusicCopy(a, -2);
+            cp.AudioData.Size = 270015;
             CopyIndex t1 = new CopyIndex(0, "1.ppm", this.ipList[0]);
             CopyIndex t2 = new CopyIndex(1, "1.ppm", this.ipList[1]);
             CopyIndex t3 = new CopyIndex(2, "1.ppm", this.ipList[2]);
@@ -69,6 +69,7 @@ namespace P2P_Karaoke_System
             t.Add(t2);
             t.Add(t3);
             cp.CopyInfo = t;
+            this.musicDownload = cp;
         }
 
         public MusicStream GetMusicStream()

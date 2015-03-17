@@ -54,6 +54,15 @@ namespace P2P_Karaoke_System
             audioStream.Close();
         }
 
+        public AudioInfo(Audio audioData, int status)  
+        {
+            this.Title = audioData.Title;
+            this.Artist = audioData.Artist;
+            this.Album = audioData.Album;
+            this.MediaPath = audioData.MediaPath;
+            this.HashValue = audioData.HashValue;
+        }
+
         public Audio ToAudio()
         {
             Audio audio = new Audio();
@@ -84,6 +93,11 @@ namespace P2P_Karaoke_System
 
         public MusicCopy(Audio audioData, int relevancy)
         {
+            if (relevancy == -2)
+            {
+                this.AudioData = new AudioInfo(audioData, 1);
+                return;
+            }
             this.AudioData = new AudioInfo(audioData);
             this.Relevancy = relevancy;
             this.CopyNumber = 0;
