@@ -190,8 +190,8 @@ namespace P2P_Karaoke_System
                         if (searchResult[threadIndex] == null)
                         {
                             ifError = true;
-                            break;
-                        } 
+                        }
+                        break;
                     }
                     else if (type == 0x12)
                     {
