@@ -43,7 +43,7 @@ namespace P2P_Karaoke_System
 
         public static List<MusicCopy> musicDataList;
         public string[] ipListInput;
-        public static int InputIPNumber { get; set; }
+        public int InputIPNumber { get; set; }
 
         public MainWindow()
         {
@@ -64,7 +64,7 @@ namespace P2P_Karaoke_System
             musicDataList = new List<MusicCopy>();
 
             ipListInput = new string[10];
-            InputIPNumber = 0;
+            this.InputIPNumber = 0;
             imgSrcConverter = new ImageSourceConverter();
             defaultImage = img.Source;
 
@@ -606,11 +606,12 @@ namespace P2P_Karaoke_System
                 ipListInput[8] = m.IP9;
                 ipListInput[9] = m.IP10;               
             }
+            this.InputIPNumber = 0;
             for (int i = 0; i < 10; i++)
             {
                 if (ipListInput[i] != "")
                 {
-                    InputIPNumber++;
+                    this.InputIPNumber++;
                 }
             }
         }
@@ -622,10 +623,10 @@ namespace P2P_Karaoke_System
             Console.WriteLine("keyword is: " + this.Keyword);
             List<MusicCopy> searchResult = MusicSearchUtil.SearchedMusicList(this.Keyword, musicDataList);
 
-            if (InputIPNumber > 0) 
+            if (this.InputIPNumber > 0) 
             {
-                Console.WriteLine("InputIPNumber is: {0} \n", InputIPNumber);
-                Local local = new Local(ipListInput, this.Keyword);
+                Console.WriteLine("InputIPNumber is: {0} \n", this.InputIPNumber);
+                Local local = new Local(ipListInput, this.Keyword, this.InputIPNumber);
                 List<MusicCopy> peerSearchResult = local.StartSearch();
                 List<MusicCopy>[] searchResultArray = { searchResult, peerSearchResult };
                 searchResult = local.MergeMusicList(searchResultArray);

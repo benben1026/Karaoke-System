@@ -31,10 +31,10 @@ namespace P2P_Karaoke_System
 
         public DataReceiver[] dataReceiverList;
 
-        public Local(string[] ipListInput, string searchKeyword)
+        public Local(string[] ipListInput, string searchKeyword, int inputIPNumber)
         {
             this.ipList = ipListInput;
-            this.peerNum = ipListInput.Count();
+            this.peerNum = inputIPNumber;
             this.searchResult = new List<MusicCopy>[peerNum];
             this.keyword = searchKeyword;
             this.dataStream = new MusicStream((int)this.musicDownload.AudioData.Size);
@@ -65,6 +65,7 @@ namespace P2P_Karaoke_System
 
         private Socket ConnectSocket(string serverIP)
         {
+            Console.WriteLine("serverIP is :" + serverIP);
             IPAddress ip = IPAddress.Parse(serverIP);
             IPEndPoint ipe = new IPEndPoint(ip, port);
             Socket s = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -118,32 +119,40 @@ namespace P2P_Karaoke_System
         {
             //string request = "SEARCH&" + keyword + "&<EOR>";
             //byte[] byteRequest = Encoding.UTF8.GetBytes(request);
-            Array.Clear(searchResult,0,10);
-            Thread[] threadList = new Thread[ipList.Count()];
+            Array.Clear(searchResult,0,peerNum);
+            Thread[] threadList = new Thread[peerNum];
 
             //Console.WriteLine("length = {0}", ipList.Count());
             //Console.WriteLine("length = {0}", threadList.Count());
             int count = 0;
+            int userIndex = 0;
+            int threadIndex = 0;
             for (int i = 0; i < this.ipList.Count(); i++)
             {
                 if (String.IsNullOrEmpty(ipList[i]))
                 {
                     continue;
                 }
+
+                userIndex = i;
+                threadIndex = count;
                 Console.WriteLine("abc: " + i + "  ipaddress: " + this.ipList[i]);
-                threadList[i] = new Thread(() => this.SearchThread(i));
-                threadList[i].Start();
-                Thread.Sleep(1);
+                threadList[count] = new Thread(() => this.SearchThread(userIndex, threadIndex));
+                threadList[count].Start();
                 count++;
+
+                Console.WriteLine("aaaaaa: {0}, {1}", i, count);
+
+                Thread.Sleep(1);
             }
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < peerNum; i++)
             {
                 threadList[i].Join();
             }
             return MergeMusicList(searchResult);
         }
 
-        private void SearchThread(int userIndex)
+        private void SearchThread(int userIndex, int threadIndex)
         {
             Console.WriteLine("Connecting to {0}", this.ipList[userIndex]);
             Socket s = this.ConnectSocket(ipList[userIndex]);
@@ -175,8 +184,8 @@ namespace P2P_Karaoke_System
 
                 if (type == 0x11)
                 {
-                    searchResult[userIndex] = ProcessSearchResponse(byteReceived, userIndex);
-                    if (searchResult[userIndex] == null)
+                    searchResult[threadIndex] = ProcessSearchResponse(byteReceived, userIndex);
+                    if (searchResult[threadIndex] == null)
                     {
                         ifError = true; 
                     }

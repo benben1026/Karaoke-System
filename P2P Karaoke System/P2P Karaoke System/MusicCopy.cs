@@ -69,7 +69,7 @@ namespace P2P_Karaoke_System
 
         public override string ToString()
         {
-            return this.AudioData.Title + "\n" + this.AudioData.Album + "\n" + this.AudioData.Artist + " [ " + this.CopyNumber + " ]";
+            return this.AudioData.Title + "\n" + this.AudioData.Album + "\n" + this.AudioData.Artist + " [ " + (this.CopyNumber+1) + " ]";
         }
     }
 }
