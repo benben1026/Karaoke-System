@@ -257,6 +257,7 @@ namespace P2P_Karaoke_System
 
         public void CloseFile()
         {
+            updateInfoPanel("", "", "");
             Stop_Click();
             if (audioStream != null)
             {
@@ -441,7 +442,11 @@ namespace P2P_Karaoke_System
                 LyricsBtn.Content = FindResource("Lyrics_on");
                 ArtworkBtn.Content = FindResource("Artwork_off");
             }));
+            InfoOffBtn.Visibility = Visibility.Visible;
+            InfoOnBtn.Visibility = Visibility.Hidden;
+
             LyricsPanel.Visibility = Visibility.Visible;
+            MusicInfoPanel.Visibility = Visibility.Collapsed;
         }
 
         private void LyricsDisableBtn_Click(object sender, RoutedEventArgs e)
@@ -451,9 +456,26 @@ namespace P2P_Karaoke_System
                 LyricsBtn.Content = FindResource("Lyrics_off");
                 ArtworkBtn.Content = FindResource("Artwork_on");
             }));
-            LyricsPanel.Visibility = Visibility.Collapsed;
-        }
+            InfoOffBtn.Visibility = Visibility.Visible;
+            InfoOnBtn.Visibility = Visibility.Collapsed;
 
+            LyricsPanel.Visibility = Visibility.Collapsed;
+            MusicInfoPanel.Visibility = Visibility.Collapsed;
+        }
+        
+        private void InfoOnBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                LyricsBtn.Content = FindResource("Lyrics_off");
+                ArtworkBtn.Content = FindResource("Artwork_off");
+            }));
+            InfoOffBtn.Visibility = Visibility.Hidden;
+            InfoOnBtn.Visibility = Visibility.Visible;
+
+            LyricsPanel.Visibility = Visibility.Collapsed;
+            MusicInfoPanel.Visibility = Visibility.Visible;
+        }
         private void speedButton_Click(object sender, RoutedEventArgs e)
         {
             if (speed2XOn) 
@@ -770,6 +792,14 @@ namespace P2P_Karaoke_System
             currentPlayingPath = audio.MediaPath;
             openFile(audio);
             Play_Click();
+            updateInfoPanel(audio.Title, audio.Artist, audio.Album);
+        }
+
+        private void updateInfoPanel(string title, string singer, string album)
+        {
+            TitleLabel.Content = "Title: " + title;
+            SingerLabel.Content = "Singer: " + singer;
+            AlbumLabel.Content = "Album: " + album;
         }
 
         private void deleteButton_Click(object sender, RoutedEventArgs e)

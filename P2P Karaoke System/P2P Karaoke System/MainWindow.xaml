@@ -68,6 +68,14 @@
             <Label x:Name="Lyrics6" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="#B2000000" ForceCursor="True"/>
             <Label x:Name="Lyrics7" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="#7F000000" ForceCursor="True"/>
         </StackPanel>
+        <StackPanel x:Name="MusicInfoPanel" HorizontalAlignment="Center" Height="280" VerticalAlignment="Center" Width="460" Background="#FF8E8E8E" Opacity="0.8" Visibility="Collapsed">
+            <Label x:Name="info1" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="Black" ForceCursor="True" Background="#00000000"/>
+            <Label x:Name="TitleLabel" Height="40" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="Black" ForceCursor="True" Background="#00000000" Content="Title:" Width="300"/>
+            <Label x:Name="info2" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="Black" ForceCursor="True" Background="#00000000"/>
+            <Label x:Name="SingerLabel" Height="40" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="Black" ForceCursor="True" Background="#00000000" Content="Singer:" Width="300"/>
+            <Label x:Name="info3" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="Black" ForceCursor="True" Background="#00000000"/>
+            <Label x:Name="AlbumLabel" Height="40" VerticalContentAlignment="Center" FontSize="18" FontWeight="Medium" Foreground="Black" ForceCursor="True" Background="#00000000" Content="Album:" Width="300"/>
+        </StackPanel>
         <ListBox x:Name="searchList" Grid.Column="1" Background="#7F3A3C46" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Foreground="#FFD7D7D7" Margin="0,54,0,0">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
@@ -86,9 +94,11 @@
         <Label Content="Balance" HorizontalAlignment="Center" Margin="0,45,510,0" Grid.Row="1" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Right"/>
         <Label Content="Volume" HorizontalAlignment="Center" Margin="20,16,530,0" Grid.Row="1" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Right"/>
         <WrapPanel HorizontalAlignment="Center" Height="60" Margin="0" VerticalAlignment="Top" Width="600" Background="#99000000">
-            <Button x:Name="LyricsBtn" HorizontalAlignment="Center" Margin="100,15,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" Click="LyricsEnableBtn_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="{DynamicResource Lyrics_off}" />
+            <Button x:Name="LyricsBtn" HorizontalAlignment="Center" Margin="20,15,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" Click="LyricsEnableBtn_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="{DynamicResource Lyrics_off}" />
             <Button x:Name="speedButton" HorizontalAlignment="Center" Margin="450,-30,0,0" VerticalAlignment="Center" Width="120" Click="speedButton_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Padding="0" Content="{DynamicResource Chipmunk_off}" />
-            <Button x:Name="ArtworkBtn" HorizontalAlignment="Center" Margin="240,-32,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" Click="LyricsDisableBtn_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="{DynamicResource Artwork_on}" />
+            <Button x:Name="ArtworkBtn" HorizontalAlignment="Center" Margin="150,-32,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" Click="LyricsDisableBtn_Click" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="{DynamicResource Artwork_on}" />
+            <Button x:Name="InfoOnBtn" HorizontalAlignment="Center" Margin="300,-32,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="Information" Foreground="White" FontSize="18" Click="InfoOnBtn_Click" Visibility="Hidden" />
+            <Button x:Name="InfoOffBtn" HorizontalAlignment="Center" Margin="300,-32,0,0" VerticalAlignment="Top" Width="100" IsHitTestVisible="True" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="30" Content="Information" Foreground="#FF979797" FontSize="18" Click="InfoOnBtn_Click" />
         </WrapPanel>
     </Grid>
 </Window>
