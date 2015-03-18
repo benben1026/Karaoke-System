@@ -855,24 +855,33 @@ namespace P2P_Karaoke_System
                 searchResult[j].CopyNumber = -1;
             }
 
-            if (this.InputIPNumber > 0) 
+            Thread test = new Thread(() => updateList(searchResult));
+            test.Start();
+            Thread.Sleep(1);
+            musicList.Visibility = Visibility.Collapsed;
+            searchList.Visibility = Visibility.Visible;
+
+        }
+
+        private void updateList(List<MusicCopy> searchResult)
+        {
+            if (this.InputIPNumber > 0)
             {
                 //Console.WriteLine("InputIPNumber is: {0} \n", this.InputIPNumber);
                 Local local = new Local(ipListInput, this.Keyword, this.InputIPNumber);
                 List<MusicCopy> peerSearchResult = null;
 
-                Thread test = new Thread(() => { peerSearchResult = local.StartSearch(); } );
+                Thread test = new Thread(() => { peerSearchResult = local.StartSearch(); });
                 test.Start();
                 test.Join();
                 if (peerSearchResult != null)
                 {
                     List<MusicCopy>[] searchResultArray = { searchResult, peerSearchResult };
                     searchResult = local.MergeMusicListTwo(searchResultArray);
-                } 
+                }
             }
 
-            musicList.Visibility = Visibility.Collapsed;
-            searchList.Visibility = Visibility.Visible;
+           
 
             if (searchResult.Count == 0)
             {
@@ -885,24 +894,14 @@ namespace P2P_Karaoke_System
                 int items = sortedList.Count();
                 for (int i = 0; i < items; i++)
                 {
-                    searchList.Items.Add(sortedList[i]);
-                }
-
-
-                // test search
-                Console.WriteLine(items);
-                for (int i = 0; i < items; i++)
-                {
-                    Console.WriteLine("title is :" + sortedList[i].AudioData.Title);
-                    Console.WriteLine("copyenum is :" + sortedList[i].CopyNumber);
-                    for (int j = 0; j < sortedList[i].CopyNumber; j++)
+                    this.Dispatcher.Invoke((Action)(() =>
                     {
-                        Console.WriteLine("From " + sortedList[i].CopyInfo[j].FileName + "  where  ip = " + sortedList[i].CopyInfo[j].IPAddress);
-                    }
+                        searchList.Items.Add(sortedList[i]);
+                    }));
+
                 }
             }
         }
-
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             musicList.Visibility = Visibility.Visible;
