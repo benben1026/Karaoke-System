@@ -40,7 +40,7 @@ namespace P2P_Karaoke_System
             get { return imagePath; }
             set
             {
-                imagePath = value;              
+                tmpCoverPath = imagePath = value;              
             }
         }
 
@@ -76,8 +76,10 @@ namespace P2P_Karaoke_System
 
         private void OpenLRC_Click(object sender, RoutedEventArgs e)
         {
-            openLRCDialog.ShowDialog();
-            lrcBox.Text = openLRCDialog.FileName;
+            if ((bool)openLRCDialog.ShowDialog())
+            {
+                lrcBox.Text = openLRCDialog.FileName;
+            }
         }
 
         private void OpenIMG_Click(object sender, RoutedEventArgs e)

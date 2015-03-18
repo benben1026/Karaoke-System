@@ -640,6 +640,32 @@ namespace P2P_Karaoke_System
                 }
 
                 musicList.Items.Refresh();
+
+                // information changed, music copy should be updated as well
+
+                //test
+                for (int i = 0; i < musicDataList.Count(); i++)
+                {
+                    Console.Write("OLD: " + musicDataList[i].AudioData.Album);
+                }
+                    musicDataList.Clear();
+                try
+                {
+                    var musicQuery = from Audio audioUpdate in musicDB.Audios orderby audioUpdate.Order select audioUpdate;
+                    var audios = musicQuery.ToArray<Audio>();
+                    foreach (var audioUpdate in audios)
+                    {
+                        MusicCopy musicData = new MusicCopy(audioUpdate);
+                        musicDataList.Add(musicData);
+                        Console.WriteLine("Now update: " + audioUpdate.Title);
+                        Console.Write("To: " + musicData.AudioData.Album);
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Can't connect to the media database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
             }
         }
 
