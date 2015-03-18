@@ -113,6 +113,29 @@ namespace P2P_Karaoke_System
 
         }
 
+        public void GetTestImage()
+        {
+            try
+            {
+                this.ConnectSocket();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Fail to connect to {0}", this.rawIP);
+                this.status = -1;
+                return;
+            }
+            GetRequest gres = new GetRequest("1.ppm", "", this.fromByte, this.toByte);
+            byte[] obj = gres.ToByte();
+            byte[] type = { 0x02 };
+            byte[] size = BitConverter.GetBytes(obj.Length);
+            byte[] request = new byte[5 + obj.Length];
+            Buffer.BlockCopy(type, 0, request, 0, 1);
+            Buffer.BlockCopy(size, 0, request, 1, 4);
+            Buffer.BlockCopy(obj, 0, request, 5, obj.Length);
+
+        }
+
         public void start()
         {
             try

@@ -74,7 +74,7 @@ namespace P2P_Karaoke_System
         public WavStream(string fileName)
         {
             lockObject = new object();
-            stream = new FileStream(fileName, FileMode.Open);
+            stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
             ReadHeader();
         }
 

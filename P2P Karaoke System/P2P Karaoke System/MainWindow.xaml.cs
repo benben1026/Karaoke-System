@@ -485,14 +485,14 @@ namespace P2P_Karaoke_System
 
             /*
             //Test get response
-            FileStream fs = new FileStream("travel1.wma", FileMode.Open);
+            FileStream fs = new FileStream("travel1.wma", FileMode.Open, FileAccess.Read, FileShare.Read);
             GetResponse gres = new GetResponse("travel1.wma", "87ECA84BBFF77E54D21711A496857159CC5FA033");
             gres.GetData(fs, "87ECA84BBFF77E54D21711A496857159CC5FA033", 0, 1024);
             Console.WriteLine("status = {0}", gres.GetStatus());
             byte[] output = gres.ToByte();
             Console.WriteLine("size = {0}", output.Length);
-            */ 
-             
+            */
+
             //waiting for conncetion...
             //Peer p = new Peer();
             //Thread test = new Thread(() => p.StartListening());
@@ -611,7 +611,7 @@ namespace P2P_Karaoke_System
                 if (tag.JoinedPerformers.Length > 0) audio.Artist = tag.JoinedPerformers;
                 else audio.Artist = "Unknown Artist";
 
-                FileStream fs = new FileStream(audio.MediaPath, FileMode.Open);
+                FileStream fs = new FileStream(audio.MediaPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 MD5 myMD5 = MD5.Create();
                 byte[] hashvalue = myMD5.ComputeHash(fs);
                 audio.HashValue = Peer.ConvertHashValue(hashvalue);

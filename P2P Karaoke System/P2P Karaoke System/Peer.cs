@@ -44,7 +44,7 @@ namespace P2P_Karaoke_System
             //FileStream fs;
             string hash = "";
             try {
-                fs = new FileStream(filename, FileMode.Open);
+                fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
                 MD5 myMD5 = MD5.Create();
                 byte[] hashvalue = myMD5.ComputeHash(fs);
                 hash = Peer.ConvertHashValue(hashvalue);
@@ -114,7 +114,7 @@ namespace P2P_Karaoke_System
             }
             else
             {
-                FileStream audioStream = new FileStream(filename, FileMode.Open);
+                FileStream audioStream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
                 for (int i = startByte; i < endByte; i += segmentSize)
                 {
                     Console.WriteLine("Transmit no{0} packet", i);

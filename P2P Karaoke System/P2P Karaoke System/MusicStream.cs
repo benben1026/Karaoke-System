@@ -59,7 +59,6 @@ namespace P2P_Karaoke_System
                     }
                     if (!flag[pos])
                     {
-                        mutex.ReleaseMutex();
                         break;
                     }
                     buffer[offset + i] = fileData[pos];
