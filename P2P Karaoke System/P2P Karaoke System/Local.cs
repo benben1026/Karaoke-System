@@ -348,6 +348,15 @@ namespace P2P_Karaoke_System
 
         public void StopGetMusic()
         {
+            if (this.dataReceiverList == null)
+            {
+                return;
+            }
+            for (int i = 0; i < this.dataReceiverList.Length; i++)
+            {
+                this.dataReceiverList[i].Stop();
+            }
+            this.dataReceiverList = null;
             for (int i = 0; i < this.threadList.Length; i++)
             {
                 this.threadList[i].Abort();

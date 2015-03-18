@@ -258,7 +258,13 @@ namespace P2P_Karaoke_System
 
         public void Stop()
         {
-            this.handler.Shutdown(SocketShutdown.Both);
+            try {
+                this.handler.Shutdown(SocketShutdown.Both);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
     
     }
