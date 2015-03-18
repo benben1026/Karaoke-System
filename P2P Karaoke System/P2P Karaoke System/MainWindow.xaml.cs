@@ -469,11 +469,11 @@ namespace P2P_Karaoke_System
 
         private void p2p_Click(object sender, RoutedEventArgs e)
         {
-            if (ipListInput.Length != 3)
-            {
-                Console.WriteLine("Invalid size of ip list");
-                return;
-            }
+            //if (ipListInput.Length != 3)
+            //{
+            //    Console.WriteLine("Invalid size of ip list");
+            //    return;
+            //}
             Local.GetImageTest(ipListInput);
             
 
