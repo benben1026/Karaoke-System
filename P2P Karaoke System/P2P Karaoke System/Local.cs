@@ -567,6 +567,27 @@ namespace P2P_Karaoke_System
             return oldList;
         }
 
+        public static void GetImageTest(string[] ipList)
+        {
+            byte[] output = new byte[270015];
+            DataReceiver dr1 = new DataReceiver(ipList[0], 3280, 270015, output);
+            DataReceiver dr2 = new DataReceiver(ipList[1], 3280, 270015, output);
+            DataReceiver dr3 = new DataReceiver(ipList[2], 3280, 270015, output);
+            Thread t1 = new Thread(() => dr1.GetTestImage(0, 90004));
+            Thread t2 = new Thread(() => dr1.GetTestImage(90005, 180009));
+            Thread t3 = new Thread(() => dr1.GetTestImage(180010, 270014));
+            t1.Start();
+            t2.Start();
+            t3.Start();
+            Thread.Sleep(1);
+            t1.Join();
+            t2.Join();
+            t3.Join();
+            FileStream fs = new FileStream("1.ppm", FileMode.Create);
+            fs.Write(output, 0, output.Length);
+            fs.Close();
+        }
+
         public static void InitialIpList()
         {
             //ipList = new string[peerNum];

@@ -116,6 +116,11 @@ namespace P2P_Karaoke_System
             return this.endByte;
         }
 
+        public byte[] GetData()
+        {
+            return this.data;
+        }
+
         public bool CopyData(byte[] dst, MusicStream ms)
         {
             if (dst.Length < endByte)

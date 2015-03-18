@@ -29,6 +29,14 @@ namespace P2P_Karaoke_System
 
         private MusicStream ms;
 
+        public DataReceiver(string ip, int port, int filesize, byte[] fileData)
+        {
+            this.rawIP = ip;
+            this.port = port;
+            this.filesize = filesize;
+            this.fileData = fileData;
+        }
+
         public DataReceiver(string ip, int port, int fromByte, int toByte, string filepath, string hashValue, int filesize, byte[] fileData, MusicStream ms)
         {
             this.rawIP = ip;
@@ -113,7 +121,7 @@ namespace P2P_Karaoke_System
 
         }
 
-        public void GetTestImage()
+        public void GetTestImage(int start, int end)
         {
             try
             {
@@ -125,15 +133,54 @@ namespace P2P_Karaoke_System
                 this.status = -1;
                 return;
             }
-            GetRequest gres = new GetRequest("1.ppm", "", this.fromByte, this.toByte);
-            byte[] obj = gres.ToByte();
-            byte[] type = { 0x02 };
+            GetRequest greq = new GetRequest("1.ppm", "", start, end);
+            byte[] obj = greq.ToByte();
+            byte[] typer = { 0x02 };
             byte[] size = BitConverter.GetBytes(obj.Length);
             byte[] request = new byte[5 + obj.Length];
-            Buffer.BlockCopy(type, 0, request, 0, 1);
+            Buffer.BlockCopy(typer, 0, request, 0, 1);
             Buffer.BlockCopy(size, 0, request, 1, 4);
             Buffer.BlockCopy(obj, 0, request, 5, obj.Length);
+            this.handler.Send(request);
+            try
+            {
+                while (true)
+                {
+                    int bytes = 0;
+                    byte[] byteReceived = new byte[5];
+                    for (int remain = 5; remain > 0; remain -= bytes)
+                    {
+                        bytes = handler.Receive(byteReceived, 5 - remain, remain, 0);
+                    }
+                    int payloadSize = BitConverter.ToInt32(byteReceived, 1);
+                    byte type = byteReceived[0];
+                    byteReceived = new byte[payloadSize];
+                    for (int remain = payloadSize; remain > 0; remain -= bytes)
+                    {
+                        bytes = handler.Receive(byteReceived, payloadSize - remain, remain, 0);
+                    }
+                    //Console.WriteLine("type = {0}, size = {1}, realSize = {2}", type, payloadSize, byteReceived.Length);
+                    if (type == 0x11)
+                    {
 
+                    }
+                    else if (type == 0x12)
+                    {
+                        GetResponse gres = (GetResponse)GetResponse.toObject(byteReceived);
+                        gres.GetData().CopyTo(this.fileData, start);
+                        this.status = 4;
+                        break;
+                    }
+                }
+                handler.Shutdown(SocketShutdown.Both);
+                handler.Close();
+            }
+            catch (Exception e)
+            {
+                this.status = -3;
+                Console.WriteLine(e.ToString());
+                return;
+            }
         }
 
         public void start()

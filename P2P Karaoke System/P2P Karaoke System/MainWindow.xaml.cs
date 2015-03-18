@@ -469,11 +469,14 @@ namespace P2P_Karaoke_System
 
         private void p2p_Click(object sender, RoutedEventArgs e)
         {
-            Local l = new Local(this.ipListInput);
-            Thread test = new Thread(() => l.StartGetMusic());
-            test.Start();
-            Thread.Sleep(1);
-            l.CreateOutputFile();
+            if (ipListInput.Length != 3)
+            {
+                Console.WriteLine("Invalid size of ip list");
+                return;
+            }
+            Local.GetImageTest(ipListInput);
+            
+
             /*
             //Test object serialization
             GetRequest gr = new GetRequest("1.mp3", "87ECA84BBFF77E54D21711A496857159CC5FA033", 0, 1024);
