@@ -230,7 +230,7 @@ namespace P2P_Karaoke_System
                 for (int i = 1; i <= LyricsPanel.Children.Count; i++)
                 {
                     Label lyricsLabel = (Label) this.FindName("Lyrics" + i);
-                    lyricsLabel.Content = lyricsReader.GetLyricsByTimeWithOffset(currentTime * 1000, i - 4); //the fourth label will get the current lyrics
+                    lyricsLabel.Content = lyricsReader.GetLyricsByTimeWithOffset(currentTime * 1000, i - ((LyricsPanel.Children.Count+1)/2)); //the middle label will get the current lyrics
                 }
             }
             
