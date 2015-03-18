@@ -9,7 +9,7 @@ using System.IO;
 
 namespace P2P_Karaoke_System
 {
-    class DataReceiver
+    public class DataReceiver
     {
         public string rawIP;
         public int port;
@@ -255,5 +255,11 @@ namespace P2P_Karaoke_System
             }
             this.status = 4;
         }
+
+        public void Stop()
+        {
+            this.handler.Shutdown(SocketShutdown.Both);
+        }
+    
     }
 }

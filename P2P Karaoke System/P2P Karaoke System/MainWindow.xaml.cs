@@ -49,6 +49,8 @@ namespace P2P_Karaoke_System
         public string[] ipListInput;
         public int InputIPNumber { get; set; }
 
+        public Local searchLocal = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -187,6 +189,11 @@ namespace P2P_Karaoke_System
                 audioStream.Position = 0;
                 updateCurrentTimeLabel(0);
                 progressSlider.Value = 0;
+
+                if (this.searchLocal != null)
+                {
+                    this.searchLocal.StopGetMusic();
+                }
             }
 
             if (thePlayer != null)
@@ -915,12 +922,16 @@ namespace P2P_Karaoke_System
         private void searchListItem_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             CloseFile();
+            if (this.searchLocal != null)
+            {
+                this.searchLocal.StopGetMusic();
+            }
             MusicCopy musicCopy = (MusicCopy)((ListBoxItem)e.Source).Content;
-            Local local = new Local(ipListInput, musicCopy);
-            Thread test = new Thread(() => local.StartGetMusic());
+            this.searchLocal = new Local(ipListInput, musicCopy);
+            Thread test = new Thread(() => this.searchLocal.StartGetMusic());
             test.Start();
             Thread.Sleep(1);
-            openFile(local.GetAudio(), local.GetDataStream(), local.GetMusicCopy().AudioData.Format);
+            openFile(this.searchLocal.GetAudio(), this.searchLocal.GetDataStream(), this.searchLocal.GetMusicCopy().AudioData.Format);
             Play_Click();
         }
 

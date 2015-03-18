@@ -10,7 +10,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace P2P_Karaoke_System
 {
     [Serializable]
-    class SearchRequest
+    public class SearchRequest
     {
         private string keyword { get; set; }
 
@@ -45,7 +45,7 @@ namespace P2P_Karaoke_System
     }
 
     [Serializable]
-    class SearchResponse
+    public class SearchResponse
     {
         private ushort status;
         private string msg;

@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 
 namespace P2P_Karaoke_System
 {
-    class Peer
+    public class Peer
     {
         private static int segmentSize = 204800;
         // chunk size in bytes

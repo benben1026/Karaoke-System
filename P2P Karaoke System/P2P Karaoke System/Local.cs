@@ -10,7 +10,7 @@ using System.IO;
 
 namespace P2P_Karaoke_System
 {
-    class Local
+    public class Local
     {
         private static int port = 3280;
         private int peerNum;
@@ -30,6 +30,7 @@ namespace P2P_Karaoke_System
         private MusicCopy musicDownload = null;
 
         public DataReceiver[] dataReceiverList;
+        private Thread[] threadList;
 
         public Local(string[] ipListInput, string searchKeyword, int inputIPNumber)
         {
@@ -253,7 +254,7 @@ namespace P2P_Karaoke_System
             }
             ifGettingData = true;
             int numOfPeerAvailable = this.musicDownload.CopyInfo.Count();
-            Thread[] threadList = new Thread[numOfPeerAvailable];
+            threadList = new Thread[numOfPeerAvailable];
             this.dataReceiverList = new DataReceiver[numOfPeerAvailable];
             this.fileData = new byte[(int)this.musicDownload.AudioData.Size];
             this.sizePP = ((int)this.musicDownload.AudioData.Size - 1) / numOfPeerAvailable + 1; // celling
@@ -286,6 +287,10 @@ namespace P2P_Karaoke_System
             for (int i = 0; i < numOfPeerAvailable; i++)
             {
                 threadList[i].Join();
+            }
+            if (!this.ifGettingData)
+            {
+                return;
             }
             bool ok = false;
             while (!ok)
@@ -339,6 +344,15 @@ namespace P2P_Karaoke_System
                 Console.WriteLine("Fail to download file.");
             }
             ifGettingData = false;
+        }
+
+        public void StopGetMusic()
+        {
+            for (int i = 0; i < this.threadList.Length; i++)
+            {
+                this.threadList[i].Abort();
+            }
+            this.ifGettingData = false;
         }
 
         public void CreateOutputFile()

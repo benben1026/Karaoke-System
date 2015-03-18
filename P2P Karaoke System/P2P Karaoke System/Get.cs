@@ -10,7 +10,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace P2P_Karaoke_System
 {
     [Serializable]
-    class GetRequest
+    public class GetRequest
     {
         private string filename{ get; set; }
         private string md5 { get; set; }
@@ -65,7 +65,7 @@ namespace P2P_Karaoke_System
     }
 
     [Serializable]
-    class GetResponse
+    public class GetResponse
     {
         private ushort status;
         private string msg;
