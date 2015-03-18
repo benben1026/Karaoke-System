@@ -689,7 +689,10 @@ namespace P2P_Karaoke_System
                     MessageBox.Show("Datebase Connection Failure","Error",MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 if (currentPlayingPath == ((Audio)musicList.SelectedItem).MediaPath)
+                {
                     CloseFile();
+                    img.Source = defaultImage;
+                }
 
                 musicList.Items.RemoveAt(musicList.SelectedIndex);
                 musicDataList.Clear();
