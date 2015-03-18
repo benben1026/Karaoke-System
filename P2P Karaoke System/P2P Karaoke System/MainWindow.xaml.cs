@@ -687,8 +687,8 @@ namespace P2P_Karaoke_System
                 
                 Audio audio = new Audio();
                 TagLib.Tag tag = TagLib.File.Create(addFileDialog.FileName).Tag;
-                audio.Album = tag.Album == null ? "Unknown Album" : tag.Album;
-                audio.Title = tag.Title == null ? "Unknown Title" : tag.Title;
+                audio.Album = tag.Album == null ? "N/A" : tag.Album;
+                audio.Title = tag.Title == null ? "N/A" : tag.Title;
                 audio.ImagePath = null;
 
                 //if (tag.Pictures.Length > 0)
@@ -709,7 +709,7 @@ namespace P2P_Karaoke_System
                // Console.WriteLine(audios.MediaPath);
 
                 if (tag.JoinedPerformers.Length > 0) audio.Artist = tag.JoinedPerformers;
-                else audio.Artist = "Unknown Artist";
+                else audio.Artist = "N/A";
 
                 FileStream fs = new FileStream(audio.MediaPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 MD5 myMD5 = MD5.Create();
