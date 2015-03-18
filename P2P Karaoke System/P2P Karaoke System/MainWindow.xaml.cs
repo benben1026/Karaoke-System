@@ -544,16 +544,64 @@ namespace P2P_Karaoke_System
             if (musicList.SelectedIndex < 0) return;
             Audio audio = (Audio)musicList.SelectedItem;
             EditInfoWindow m = new EditInfoWindow();
+
+            m.MediaPath = audio.MediaPath;
             m.AudioTitle = audio.Title;
             m.Singer = audio.Artist;
             m.Album = audio.Album;
             m.LrcPath = audio.LyricsPath;
+
+            // set image path first
             if (audio.ImagePath != null)
             {
                 if (audio.ImagePath.Length > 0) m.ImagePath = audio.ImagePath;
                 else m.ImagePath = null;
             }
             else m.ImagePath = null;
+
+            // set the cover image source then
+            // because when adding file, the image path may not be added
+            audioFormat = System.IO.Path.GetExtension(m.MediaPath);
+
+            if (audioFormat.Equals(".wav"))
+            {
+                try
+                {
+                    m.CoverIMG.Source = (ImageSource)imgSrcConverter.ConvertFromString(m.ImagePath);
+                }
+                catch
+                {
+                    m.CoverIMG.Source = defaultImage;
+                }
+            }
+            else
+            {
+                try
+                {
+                    m.CoverIMG.Source = (ImageSource)imgSrcConverter.ConvertFromString(m.ImagePath);
+                }
+                catch
+                {
+                    TagLib.Tag tag = TagLib.File.Create(m.MediaPath).Tag;
+                    if (tag.Pictures.Length > 0)
+                    {
+                        using (MemoryStream albumArtworkMemStream = new MemoryStream(tag.Pictures[0].Data.Data))
+                        {
+                            BitmapImage albumImage = new BitmapImage();
+                            albumImage.BeginInit();
+                            albumImage.CacheOption = BitmapCacheOption.OnLoad;
+                            albumImage.StreamSource = albumArtworkMemStream;
+                            albumImage.EndInit();
+                            m.CoverIMG.Source = albumImage;
+                        }
+                    }
+                    else
+                    {
+                        m.CoverIMG.Source = defaultImage;
+                    }
+                }
+            }
+
             m.Owner = this;
             if (m.ShowDialog() == true)
             {
@@ -594,6 +642,8 @@ namespace P2P_Karaoke_System
                 TagLib.Tag tag = TagLib.File.Create(addFileDialog.FileName).Tag;
                 audio.Album = tag.Album == null ? "Unknown Album" : tag.Album;
                 audio.Title = tag.Title == null ? "Unknown Title" : tag.Title;
+                audio.ImagePath = null;
+
                 //if (tag.Pictures.Length > 0)
                 //{
                 //    using (MemoryStream albumArtworkMemStream = new MemoryStream(tag.Pictures[0].Data.Data))

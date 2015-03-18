@@ -7,12 +7,12 @@
             <ColumnDefinition Width="47*"/>
             <ColumnDefinition Width="547*"/>
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="197" Margin="299,10,0,0" VerticalAlignment="Top" Width="238"/>
+        <Image x:Name="CoverIMG" Grid.Column="1" HorizontalAlignment="Left" Height="184" Margin="316,10,0,0" VerticalAlignment="Top" Width="203"  Source="Resources/default.jpg" Stretch="UniformToFill"/>
         <Button x:Name="Submit" Content="Submit" HorizontalAlignment="Left" Margin="26,185,0,0" VerticalAlignment="Top" Width="75" Click="Submit_Click" Grid.Column="1"/>
         <Button x:Name="Cancel" Content="Cancel" HorizontalAlignment="Left" Margin="153,185,0,0" VerticalAlignment="Top" Width="75" Click="Cancel_Click" Grid.Column="1"/>
         <Button x:Name="OpenLRC" Content="Open" HorizontalAlignment="Left" Margin="202,131,0,0" VerticalAlignment="Top" Width="48" Grid.Column="1" Click="OpenLRC_Click"/>
-        <Button x:Name="OpenIMG" Content="Open" HorizontalAlignment="Left" Margin="330,169,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Click="OpenIMG_Click"/>
-        <Button x:Name="Delete" Content="Delete" HorizontalAlignment="Left" Margin="447,169,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Click="Delete_Click"/>
+        <Button x:Name="OpenIMG" Content="Open" HorizontalAlignment="Left" Margin="325,209,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Click="OpenIMG_Click"/>
+        <Button x:Name="Delete" Content="Delete" HorizontalAlignment="Left" Margin="433,209,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Click="Delete_Click"/>
         <TextBox x:Name="titleBox" HorizontalAlignment="Left" Height="23" Margin="60.281,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <TextBlock x:Name="TitleBlock" HorizontalAlignment="Left" Margin="32,28,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
         <TextBlock x:Name="SingerBlock" HorizontalAlignment="Left" Margin="32,60,0,0" TextWrapping="Wrap" Text="Singer" VerticalAlignment="Top" Width="55" Grid.ColumnSpan="2"/>
@@ -21,8 +21,6 @@
         <TextBox x:Name="albumBox" HorizontalAlignment="Left" Height="23" Margin="60.281,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <TextBlock x:Name="LRCBlock" HorizontalAlignment="Left" Margin="32,138,0,0" TextWrapping="Wrap" Text="LRC" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
         <TextBox x:Name="lrcBox" HorizontalAlignment="Left" Height="23" Margin="60,131,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
-        <Image x:Name="CoverIMG" Grid.Column="1" HorizontalAlignment="Left" Height="128" Margin="301,25,0,0" VerticalAlignment="Top" Width="209"/>
-        <WindowsFormsHost HorizontalAlignment="Left" Height="100" Margin="393,28,0,0" VerticalAlignment="Top" Width="100" Grid.Column="1"/>
 
     </Grid>
 </Window>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,30 +21,26 @@ namespace P2P_Karaoke_System
     /// </summary>
     public partial class EditInfoWindow : Window
     {
+        private string mediaPath;
         private string audioTitle;
         private string singer;
         private string album;
         private string lrcPath;
         private string imagePath;
+        private ImageSource defaultImage;
 
+        public string MediaPath { get { return mediaPath; } set { mediaPath = value; } }
         public string AudioTitle { get { return audioTitle; } set { titleBox.Text = audioTitle = value; } }
         public string Singer { get { return singer; } set { singerBox.Text = singer = value; } }
         public string Album { get { return album; } set { albumBox.Text = album = value; } }
         public string LrcPath { get { return lrcPath; } set { lrcBox.Text = lrcPath = value; } }
+
         public string ImagePath
         {
             get { return imagePath; }
             set
             {
-                imagePath = value;
-                try
-                {
-                    CoverIMG.Source = (ImageSource)imgSrcConverter.ConvertFromString(value);
-                }
-                catch
-                {
-                    CoverIMG.Source = null;
-                }
+                imagePath = value;              
             }
         }
 
@@ -59,6 +56,7 @@ namespace P2P_Karaoke_System
             openLRCDialog.Filter = "Lyrics File (*.lrc)|*.lrc";
             openImgDialog.Filter = "Image File (*.jpg, *.png, *.bmp)|*.jpg;*.png;*.bmp";
             imgSrcConverter = new ImageSourceConverter();
+            defaultImage = CoverIMG.Source;
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
@@ -69,7 +67,6 @@ namespace P2P_Karaoke_System
             this.LrcPath = lrcBox.Text;
             this.ImagePath = tmpCoverPath;
             this.DialogResult = true;
-
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -85,15 +82,30 @@ namespace P2P_Karaoke_System
 
         private void OpenIMG_Click(object sender, RoutedEventArgs e)
         {
-            openImgDialog.ShowDialog();
-            tmpCoverPath = openImgDialog.FileName;
-            CoverIMG.Source = (ImageSource)imgSrcConverter.ConvertFromString(tmpCoverPath);
+            if ((bool)openImgDialog.ShowDialog())
+            {
+                tmpCoverPath = openImgDialog.FileName;
+            }
+            else
+            {
+                tmpCoverPath = "";
+            }
+
+            try
+            {
+                CoverIMG.Source = (ImageSource)imgSrcConverter.ConvertFromString(tmpCoverPath);
+            }
+            catch
+            {
+                CoverIMG.Source = defaultImage;
+            }
+           
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             tmpCoverPath = "";
-            CoverIMG.Source = null;
+            CoverIMG.Source = defaultImage;
         }
     }
 
