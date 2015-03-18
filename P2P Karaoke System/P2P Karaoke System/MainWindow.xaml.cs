@@ -119,8 +119,8 @@ namespace P2P_Karaoke_System
                     int got = audioStream.Read(b, pos, toget);
                     if (got == 0)
                     {
-                        audioStream.Position = 0; // loop if the file ends
-                        Stop_Click();
+                        //audioStream.Position = 0; // loop if the file ends
+                        //Stop_Click();
                     }
                     pos += got;
                 }
@@ -182,7 +182,12 @@ namespace P2P_Karaoke_System
                 PlayBtn.Content = FindResource("Play");
             }));
 
-            if (audioStream != null) audioStream.Position = 0;
+            if (audioStream != null)
+            {
+                audioStream.Position = 0;
+                updateCurrentTimeLabel(0);
+                progressSlider.Value = 0;
+            }
 
             if (thePlayer != null)
             {
@@ -218,11 +223,18 @@ namespace P2P_Karaoke_System
                 string.Format("{0:00}:{1:00}:{2:00}", hr, min, sec) : string.Format("{0:00}:{1:00}", min, sec);
         }
 
-        void timer_Tick(object sender, EventArgs e)
+        void timer_Tick(object sender = null, EventArgs e = null)
         {
             int currentTime = currentPosition();
             progressSlider.Value = currentTime;
             updateCurrentTimeLabel(currentTime);
+
+            int totalTime = currentDuration();
+
+            if (currentTime >= totalTime)
+            {
+                Stop_Click();
+            }
 
             //Lyrics Change
             if (lyricsReader.FileLoaded() && lyricsContentShowing)
@@ -266,82 +278,84 @@ namespace P2P_Karaoke_System
             {
                 audioStream = new BufferedStream(musicStream);
                 format = fmt.Value;
-                return;
-            }
-
-            bool fileExists = File.Exists(audio.MediaPath);
-            if (!fileExists)
-            {
-                System.Windows.Forms.MessageBox.Show("File doesn't exist.");
-                return;
-            }
-            audioFormat = System.IO.Path.GetExtension(audio.MediaPath);
-            Console.WriteLine(audioFormat);
-            progressSlider.Value = 0;
-
-            if (audioFormat.Equals(".wav"))
-            {
-                try
-                {
-                    WavStream S = new WavStream(audio.MediaPath);
-                    if (S.Length <= 0)
-                        throw new Exception("Invalid WAV file");
-                    format = S.Format;
-                    Console.WriteLine(format);
-                    if (format.wFormatTag != (short)WavFormats.PCM && format.wFormatTag != (short)WavFormats.FLOAT)
-                        throw new Exception("Olny PCM files are supported");
-
-                    audioStream = S;
-                }
-                catch (Exception err)
-                {
-                    CloseFile();
-                    System.Windows.Forms.MessageBox.Show(err.Message);
-                }
-                
-                try
-                {
-                    img.Source = (ImageSource)imgSrcConverter.ConvertFromString(audio.ImagePath);
-                }
-                catch
-                {
-                    img.Source = defaultImage;
-                }
             }
             else
             {
-                NAudio.Wave.WaveStream pcm = new NAudio.Wave.AudioFileReader(audio.MediaPath);
-                format.wFormatTag = 3;
-                format.nChannels = (short)pcm.WaveFormat.Channels;
-                format.nSamplesPerSec = (int)pcm.WaveFormat.SampleRate;
-                format.nAvgBytesPerSec = (int)pcm.WaveFormat.AverageBytesPerSecond;
-                format.nBlockAlign = (short)pcm.WaveFormat.BlockAlign;
-                format.wBitsPerSample = (short)pcm.WaveFormat.BitsPerSample;
-                format.cbSize = (short)pcm.WaveFormat.ExtraSize;
-                audioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
 
-                try
+                bool fileExists = File.Exists(audio.MediaPath);
+                if (!fileExists)
                 {
-                    img.Source = (ImageSource)imgSrcConverter.ConvertFromString(audio.ImagePath);
+                    System.Windows.Forms.MessageBox.Show("File doesn't exist.");
+                    return;
                 }
-                catch
+                audioFormat = System.IO.Path.GetExtension(audio.MediaPath);
+                Console.WriteLine(audioFormat);
+                progressSlider.Value = 0;
+
+                if (audioFormat.Equals(".wav"))
                 {
-                    TagLib.Tag tag = TagLib.File.Create(audio.MediaPath).Tag;
-                    if (tag.Pictures.Length > 0)
+                    try
                     {
-                        using (MemoryStream albumArtworkMemStream = new MemoryStream(tag.Pictures[0].Data.Data))
-                        {
-                            BitmapImage albumImage = new BitmapImage();
-                            albumImage.BeginInit();
-                            albumImage.CacheOption = BitmapCacheOption.OnLoad;
-                            albumImage.StreamSource = albumArtworkMemStream;
-                            albumImage.EndInit();
-                            img.Source = albumImage;
-                        }
+                        WavStream S = new WavStream(audio.MediaPath);
+                        if (S.Length <= 0)
+                            throw new Exception("Invalid WAV file");
+                        format = S.Format;
+                        Console.WriteLine(format);
+                        if (format.wFormatTag != (short)WavFormats.PCM && format.wFormatTag != (short)WavFormats.FLOAT)
+                            throw new Exception("Olny PCM files are supported");
+
+                        audioStream = S;
                     }
-                    else
+                    catch (Exception err)
+                    {
+                        CloseFile();
+                        System.Windows.Forms.MessageBox.Show(err.Message);
+                    }
+
+                    try
+                    {
+                        img.Source = (ImageSource)imgSrcConverter.ConvertFromString(audio.ImagePath);
+                    }
+                    catch
                     {
                         img.Source = defaultImage;
+                    }
+                }
+                else
+                {
+                    NAudio.Wave.WaveStream pcm = new NAudio.Wave.AudioFileReader(audio.MediaPath);
+                    format.wFormatTag = 3;
+                    format.nChannels = (short)pcm.WaveFormat.Channels;
+                    format.nSamplesPerSec = (int)pcm.WaveFormat.SampleRate;
+                    format.nAvgBytesPerSec = (int)pcm.WaveFormat.AverageBytesPerSecond;
+                    format.nBlockAlign = (short)pcm.WaveFormat.BlockAlign;
+                    format.wBitsPerSample = (short)pcm.WaveFormat.BitsPerSample;
+                    format.cbSize = (short)pcm.WaveFormat.ExtraSize;
+                    audioStream = new NAudio.Wave.BlockAlignReductionStream(pcm);
+
+                    try
+                    {
+                        img.Source = (ImageSource)imgSrcConverter.ConvertFromString(audio.ImagePath);
+                    }
+                    catch
+                    {
+                        TagLib.Tag tag = TagLib.File.Create(audio.MediaPath).Tag;
+                        if (tag.Pictures.Length > 0)
+                        {
+                            using (MemoryStream albumArtworkMemStream = new MemoryStream(tag.Pictures[0].Data.Data))
+                            {
+                                BitmapImage albumImage = new BitmapImage();
+                                albumImage.BeginInit();
+                                albumImage.CacheOption = BitmapCacheOption.OnLoad;
+                                albumImage.StreamSource = albumArtworkMemStream;
+                                albumImage.EndInit();
+                                img.Source = albumImage;
+                            }
+                        }
+                        else
+                        {
+                            img.Source = defaultImage;
+                        }
                     }
                 }
             }
